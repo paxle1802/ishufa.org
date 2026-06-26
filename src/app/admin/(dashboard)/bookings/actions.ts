@@ -3,18 +3,31 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { db } from "@/lib/db";
-import { bookings, type BookingStatus } from "@/lib/db/schema";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { applyCustomerAggregate } from "@/lib/customers/apply-customer-aggregate";
+import { pooledDb } from "@/lib/db/pooled";
+import { bookings, shops, type BookingStatus } from "@/lib/db/schema";
+import { accruePoints, reversePoints } from "@/lib/loyalty/accrue-points";
+import {
+  consumePackageSession,
+  refundPackageSession,
+} from "@/lib/packages/consume-package";
 
 const ALLOWED: BookingStatus[] = ["confirmed", "completed", "no_show", "cancelled"];
 
-type Result = { ok: true } | { ok: false; error: string };
+type Result = { ok: true; warning?: string } | { ok: false; error: string };
 
-/** Admin đổi trạng thái booking — scope theo shopId từ session. */
+/**
+ * Đổi trạng thái booking trong 1 transaction (chokepoint của toàn hệ).
+ * Idempotent qua cổng so sánh status. Khi chuyển sang/khỏi `completed`:
+ *  - cộng/giảm tổng chi + lượt ghé của khách (CRM)
+ *  - cộng/hoàn điểm tích luỹ
+ *  - trừ/hoàn buổi gói combo (nếu admin chọn / booking đã gắn gói)
+ */
 export async function setBookingStatus(
   bookingId: string,
   status: BookingStatus,
+  opts?: { customerPackageId?: string },
 ): Promise<Result> {
   try {
     const { shopId } = await requireAdmin();
@@ -22,17 +35,76 @@ export async function setBookingStatus(
       return { ok: false, error: "Trạng thái không hợp lệ" };
     }
 
-    const updated = await db
-      .update(bookings)
-      .set({ status })
-      .where(and(eq(bookings.id, bookingId), eq(bookings.shopId, shopId)))
-      .returning({ id: bookings.id });
+    const result = await pooledDb.transaction(async (tx): Promise<Result> => {
+      const [b] = await tx
+        .select({
+          id: bookings.id,
+          status: bookings.status,
+          totalPrice: bookings.totalPrice,
+          customerName: bookings.customerName,
+          customerPhone: bookings.customerPhone,
+          startAt: bookings.startAt,
+          customerPackageId: bookings.customerPackageId,
+        })
+        .from(bookings)
+        .where(and(eq(bookings.id, bookingId), eq(bookings.shopId, shopId)))
+        .for("update");
 
-    if (updated.length === 0) return { ok: false, error: "Không tìm thấy booking" };
+      if (!b) return { ok: false, error: "Không tìm thấy booking" };
 
-    revalidatePath("/admin/bookings");
-    revalidatePath("/admin");
-    return { ok: true };
+      const prev = b.status;
+      if (prev === status) return { ok: true }; // no-op → idempotent
+
+      await tx.update(bookings).set({ status }).where(eq(bookings.id, b.id));
+
+      const delta = status === "completed" ? 1 : prev === "completed" ? -1 : 0;
+      let warning: string | undefined;
+
+      if (delta === 1) {
+        const customerId = await applyCustomerAggregate(
+          tx, shopId, b.customerPhone, b.customerName, b.totalPrice, b.startAt, 1,
+        );
+        const [shop] = await tx
+          .select({ earnRate: shops.loyaltyEarnRate })
+          .from(shops)
+          .where(eq(shops.id, shopId));
+        if (customerId && shop) {
+          await accruePoints(tx, shopId, shop.earnRate, customerId, b.id, b.totalPrice);
+        }
+        if (opts?.customerPackageId) {
+          const r = await consumePackageSession(tx, shopId, opts.customerPackageId);
+          if (r.consumed) {
+            await tx
+              .update(bookings)
+              .set({ customerPackageId: opts.customerPackageId })
+              .where(eq(bookings.id, b.id));
+          } else {
+            warning = r.warning;
+          }
+        }
+      } else if (delta === -1) {
+        const customerId = await applyCustomerAggregate(
+          tx, shopId, b.customerPhone, b.customerName, b.totalPrice, b.startAt, -1,
+        );
+        if (customerId) await reversePoints(tx, shopId, customerId, b.id);
+        if (b.customerPackageId) {
+          await refundPackageSession(tx, b.customerPackageId);
+          await tx
+            .update(bookings)
+            .set({ customerPackageId: null })
+            .where(eq(bookings.id, b.id));
+        }
+      }
+
+      return { ok: true, warning };
+    });
+
+    if (result.ok) {
+      revalidatePath("/admin/bookings");
+      revalidatePath("/admin");
+      revalidatePath("/admin/customers");
+    }
+    return result;
   } catch {
     return { ok: false, error: "Cập nhật thất bại, vui lòng thử lại." };
   }

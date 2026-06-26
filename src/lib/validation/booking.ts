@@ -24,6 +24,7 @@ export const createBookingSchema = customerSchema.extend({
   slug: z.string().min(1),
   serviceIds: z.array(z.string().uuid()).min(1, "Chọn ít nhất 1 dịch vụ").max(10),
   startAt: z.string().datetime("Thời điểm không hợp lệ"), // ISO UTC
+  promoCode: z.string().trim().toUpperCase().max(40).optional(),
 });
 export type CreateBookingInput = z.infer<typeof createBookingSchema>;
 

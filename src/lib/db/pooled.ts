@@ -12,3 +12,6 @@ import * as schema from "./schema";
 const pool = new Pool({ connectionString: env.DATABASE_URL });
 
 export const pooledDb = drizzle(pool, { schema });
+
+/** Kiểu transaction của pooledDb — cho các helper nhận `tx`. */
+export type Tx = Parameters<Parameters<typeof pooledDb.transaction>[0]>[0];

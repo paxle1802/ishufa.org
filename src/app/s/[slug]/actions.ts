@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 
 import { createBooking, SlotUnavailableError } from "@/lib/booking/create-booking";
+import { PromoInvalidError } from "@/lib/promotions/apply-promotion";
 import { getAvailability } from "@/lib/availability/get-availability";
 import { getShopBySlug, listActiveServices } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -68,7 +69,9 @@ export interface BookingSummary {
   cancelToken: string;
   startAt: string;
   endAt: string;
-  totalPrice: number;
+  totalPrice: number; // net (sau giảm giá)
+  originalTotal: number;
+  discountAmount: number;
   totalDurationMin: number;
   serviceNames: string[];
   shopName: string;
@@ -116,13 +119,13 @@ export async function createBookingAction(
   }
 
   try {
-    const { cancelToken } = await createBooking({
+    const created = await createBooking({
       shopId: shop.id,
       capacity: shop.capacity,
       startAt,
       endAt,
       totalDurationMin,
-      totalPrice,
+      totalPrice, // tổng gốc; createBooking trừ khuyến mãi → net
       customerName: data.customerName,
       customerPhone: data.customerPhone,
       note: data.note ? data.note : null,
@@ -131,15 +134,18 @@ export async function createBookingAction(
         priceSnapshot: s.price,
         durationSnapshot: s.durationMin,
       })),
+      promoCode: data.promoCode,
     });
 
     return {
       ok: true,
       booking: {
-        cancelToken,
+        cancelToken: created.cancelToken,
         startAt: startAt.toISOString(),
         endAt: endAt.toISOString(),
-        totalPrice,
+        totalPrice: created.totalPrice,
+        originalTotal: totalPrice,
+        discountAmount: created.discountAmount,
         totalDurationMin,
         serviceNames: chosen.map((s) => s.name),
         shopName: shop.name,
@@ -147,6 +153,9 @@ export async function createBookingAction(
       },
     };
   } catch (err) {
+    if (err instanceof PromoInvalidError) {
+      return { ok: false, error: err.message };
+    }
     if (err instanceof SlotUnavailableError) {
       return { ok: false, error: err.message };
     }
