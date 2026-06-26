@@ -1,0 +1,1 @@
+ALTER TABLE "staff" ADD COLUMN "commission_pct" integer DEFAULT 50 NOT NULL;

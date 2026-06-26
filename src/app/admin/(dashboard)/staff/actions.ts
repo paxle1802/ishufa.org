@@ -41,6 +41,28 @@ export async function updateStaff(staffId: string, input: unknown): Promise<Resu
   }
 }
 
+/** Đặt tỷ lệ ăn chia: % thợ hưởng (0–100), chủ shop hưởng phần còn lại. */
+export async function setStaffCommission(
+  staffId: string,
+  staffPct: number,
+): Promise<Result> {
+  try {
+    const { shopId } = await requireAdmin();
+    if (!Number.isInteger(staffPct) || staffPct < 0 || staffPct > 100) {
+      return { ok: false, error: "Tỷ lệ không hợp lệ" };
+    }
+    await db
+      .update(staff)
+      .set({ commissionPct: staffPct })
+      .where(and(eq(staff.id, staffId), eq(staff.shopId, shopId)));
+    revalidatePath("/admin/staff");
+    revalidatePath("/admin/revenue");
+    return { ok: true };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
 export async function deleteStaff(staffId: string): Promise<Result> {
   try {
     const { shopId } = await requireAdmin();
