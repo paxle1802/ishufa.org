@@ -2,11 +2,12 @@ import {
   getActivePackagesForPhones,
   listBookingsForDay,
 } from "@/lib/booking/queries";
+import { getShopById } from "@/lib/db/queries";
 import { getTodayStats } from "@/lib/db/queries-dashboard";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ActivePackage } from "./bookings/booking-status-control";
-import { BookingList } from "./bookings/booking-list";
+import { BookingList, type ShopBank } from "./bookings/booking-list";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 
@@ -19,10 +20,20 @@ export default async function AdminTodayPage() {
   const { shopId } = await requireAdmin();
   const day = todayVn();
 
-  const [bookings, stats] = await Promise.all([
+  const [bookings, stats, shop] = await Promise.all([
     listBookingsForDay(shopId, day),
     getTodayStats(shopId, day),
+    getShopById(shopId),
   ]);
+
+  const bank: ShopBank | null =
+    shop?.bankBin && shop.bankAccountNumber && shop.bankAccountName
+      ? {
+          bankBin: shop.bankBin,
+          accountNumber: shop.bankAccountNumber,
+          accountName: shop.bankAccountName,
+        }
+      : null;
 
   const rows = await getActivePackagesForPhones(
     shopId,
@@ -47,7 +58,7 @@ export default async function AdminTodayPage() {
         <StatCard label="KM chạy" value={String(stats.activePromos)} />
       </div>
 
-      <BookingList bookings={bookings} packagesByPhone={packagesByPhone} />
+      <BookingList bookings={bookings} packagesByPhone={packagesByPhone} bank={bank} />
     </div>
   );
 }
