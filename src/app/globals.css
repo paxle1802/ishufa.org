@@ -85,38 +85,41 @@
   --sidebar-ring: oklch(0.58 0.095 196);
 }
 
+/* Dark theme kiểu iProyal: nền teal-charcoal, surface teal đậm, viền teal mảnh,
+   chữ trắng, body xám-teal, primary teal sáng. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.72 0.11 192); /* teal sáng hơn cho nền tối */
-  --primary-foreground: oklch(0.2 0.03 200);
-  --secondary: oklch(0.269 0.02 200);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0.015 200);
-  --muted-foreground: oklch(0.708 0.02 196);
-  --accent: oklch(0.3 0.03 198);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.11 192);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  color-scheme: dark;
+  --background: oklch(0.17 0.015 200); /* charcoal-teal */
+  --foreground: oklch(0.97 0.008 196);
+  --card: oklch(0.225 0.025 199); /* surface teal đậm như thẻ ảnh */
+  --card-foreground: oklch(0.97 0.008 196);
+  --popover: oklch(0.225 0.025 199);
+  --popover-foreground: oklch(0.97 0.008 196);
+  --primary: oklch(0.78 0.12 192); /* teal sáng (như nút Copy list) */
+  --primary-foreground: oklch(0.18 0.025 200);
+  --secondary: oklch(0.27 0.028 199);
+  --secondary-foreground: oklch(0.97 0.008 196);
+  --muted: oklch(0.25 0.022 199);
+  --muted-foreground: oklch(0.74 0.025 197);
+  --accent: oklch(0.3 0.035 198);
+  --accent-foreground: oklch(0.97 0.008 196);
+  --destructive: oklch(0.66 0.2 25);
+  --border: oklch(0.36 0.04 197); /* viền teal mảnh, đủ đọc trên nền tối */
+  --input: oklch(0.3 0.03 199);
+  --ring: oklch(0.78 0.12 192);
+  --chart-1: oklch(0.78 0.12 192);
+  --chart-2: oklch(0.82 0.1 184);
+  --chart-3: oklch(0.6 0.08 200);
+  --chart-4: oklch(0.86 0.09 178);
+  --chart-5: oklch(0.5 0.06 205);
+  --sidebar: oklch(0.2 0.02 200);
+  --sidebar-foreground: oklch(0.97 0.008 196);
+  --sidebar-primary: oklch(0.78 0.12 192);
+  --sidebar-primary-foreground: oklch(0.18 0.025 200);
+  --sidebar-accent: oklch(0.3 0.035 198);
+  --sidebar-accent-foreground: oklch(0.97 0.008 196);
+  --sidebar-border: oklch(0.36 0.04 197);
+  --sidebar-ring: oklch(0.78 0.12 192);
 }
 
 @layer base {

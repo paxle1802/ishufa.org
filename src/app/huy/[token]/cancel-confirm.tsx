@@ -19,7 +19,7 @@ export function CancelConfirm({ token }: { token: string }) {
 
   if (done) {
     return (
-      <p className="rounded-xl border border-green-200 bg-green-50 p-4 text-center text-sm text-green-700">
+      <p className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-center text-sm text-green-300">
         Đã huỷ lịch hẹn thành công.
       </p>
     );
