@@ -7,7 +7,7 @@ import type { BookingStatus } from "@/lib/db/schema";
 import { formatLocal } from "@/lib/tz";
 import { cn } from "@/lib/utils";
 import type { BookingForDay } from "@/lib/booking/queries";
-import { BookingStatusControl } from "./booking-status-control";
+import { BookingStatusControl, type ActivePackage } from "./booking-status-control";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 
@@ -24,7 +24,13 @@ const STATUS_CLASS: Record<BookingStatus, string> = {
   cancelled: "bg-muted text-muted-foreground line-through",
 };
 
-export function BookingList({ bookings }: { bookings: BookingForDay[] }) {
+export function BookingList({
+  bookings,
+  packagesByPhone = {},
+}: {
+  bookings: BookingForDay[];
+  packagesByPhone?: Record<string, ActivePackage[]>;
+}) {
   if (bookings.length === 0) {
     return (
       <p className="rounded-xl border border-dashed py-8 text-center text-sm text-muted-foreground">
@@ -65,7 +71,11 @@ export function BookingList({ bookings }: { bookings: BookingForDay[] }) {
 
           <div className="mt-3 flex items-center justify-between">
             <span className="text-sm font-semibold">{vnd.format(b.totalPrice)}đ</span>
-            <BookingStatusControl bookingId={b.id} status={b.status} />
+            <BookingStatusControl
+              bookingId={b.id}
+              status={b.status}
+              activePackages={packagesByPhone[b.customerPhone] ?? []}
+            />
           </div>
         </li>
       ))}

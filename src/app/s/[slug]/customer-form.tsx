@@ -8,10 +8,20 @@ interface CustomerFormProps {
   name: string;
   phone: string;
   note: string;
-  onChange: (field: "name" | "phone" | "note", value: string) => void;
+  promoCode: string;
+  onChange: (
+    field: "name" | "phone" | "note" | "promoCode",
+    value: string,
+  ) => void;
 }
 
-export function CustomerForm({ name, phone, note, onChange }: CustomerFormProps) {
+export function CustomerForm({
+  name,
+  phone,
+  note,
+  promoCode,
+  onChange,
+}: CustomerFormProps) {
   return (
     <section className="px-4">
       <h2 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wide">
@@ -60,6 +70,18 @@ export function CustomerForm({ name, phone, note, onChange }: CustomerFormProps)
             onChange={(e) => onChange("note", e.target.value)}
             rows={3}
             className="resize-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="promo-code">Mã khuyến mãi (nếu có)</Label>
+          <Input
+            id="promo-code"
+            placeholder="VD: SALE10"
+            value={promoCode}
+            autoCapitalize="characters"
+            onChange={(e) => onChange("promoCode", e.target.value.toUpperCase())}
+            className="h-11 uppercase"
           />
         </div>
       </div>

@@ -104,11 +104,25 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
         </div>
 
         {/* Total price */}
-        <div className="flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2.5">
-          <span className="text-sm font-medium">Tổng thanh toán</span>
-          <span className="text-base font-bold" style={{ color: "var(--accent)" }}>
-            {vnd.format(booking.totalPrice)}đ
-          </span>
+        <div className="rounded-xl bg-muted/60 px-3 py-2.5">
+          {booking.discountAmount > 0 && (
+            <>
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>Tạm tính</span>
+                <span className="line-through">{vnd.format(booking.originalTotal)}đ</span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>Khuyến mãi</span>
+                <span>−{vnd.format(booking.discountAmount)}đ</span>
+              </div>
+            </>
+          )}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Tổng thanh toán</span>
+            <span className="text-base font-bold" style={{ color: "var(--accent)" }}>
+              {vnd.format(booking.totalPrice)}đ
+            </span>
+          </div>
         </div>
       </div>
 

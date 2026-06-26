@@ -1,10 +1,31 @@
-import { listBookingsForDay } from "@/lib/booking/queries";
+import {
+  getActivePackagesForPhones,
+  listBookingsForDay,
+} from "@/lib/booking/queries";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import type { ActivePackage } from "./booking-status-control";
 import { BookingList } from "./booking-list";
 import { DayPicker } from "./day-picker";
 
 function todayVn(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Saigon" }).format(new Date());
+}
+
+/** Gom gói combo còn hiệu lực theo SĐT cho danh sách booking. */
+async function packagesByPhoneFor(
+  shopId: string,
+  phones: string[],
+): Promise<Record<string, ActivePackage[]>> {
+  const rows = await getActivePackagesForPhones(shopId, [...new Set(phones)]);
+  const map: Record<string, ActivePackage[]> = {};
+  for (const r of rows) {
+    (map[r.phone] ??= []).push({
+      id: r.id,
+      name: r.name,
+      sessionsRemaining: r.sessionsRemaining,
+    });
+  }
+  return map;
 }
 
 export default async function BookingsPage({
@@ -18,6 +39,10 @@ export default async function BookingsPage({
 
   const bookings = await listBookingsForDay(shopId, day);
   const active = bookings.filter((b) => b.status !== "cancelled").length;
+  const packagesByPhone = await packagesByPhoneFor(
+    shopId,
+    bookings.map((b) => b.customerPhone),
+  );
 
   return (
     <div className="space-y-4">
@@ -26,7 +51,7 @@ export default async function BookingsPage({
         <p className="text-sm text-muted-foreground">{active} lịch trong ngày</p>
       </div>
       <DayPicker date={day} />
-      <BookingList bookings={bookings} />
+      <BookingList bookings={bookings} packagesByPhone={packagesByPhone} />
     </div>
   );
 }

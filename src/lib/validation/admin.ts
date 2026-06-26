@@ -33,6 +33,7 @@ export const bookingSettingsSchema = z.object({
   minLeadMin: z.coerce.number().int().min(0).max(1440),
   cancelCutoffMin: z.coerce.number().int().min(0).max(1440),
   gracePeriodMin: z.coerce.number().int().min(0).max(120),
+  loyaltyEarnRate: z.coerce.number().int().min(0).max(100),
 });
 export type BookingSettingsInput = z.infer<typeof bookingSettingsSchema>;
 
@@ -47,6 +48,7 @@ export const shopInfoSchema = z.object({
     .regex(/^0\d{9,10}$/, "Số điện thoại không hợp lệ")
     .optional()
     .or(z.literal("")),
+  email: z.string().trim().email("Email không hợp lệ").optional().or(z.literal("")),
   accentColor: z.string().regex(HEX, "Mã màu hex không hợp lệ (vd #7c3aed)"),
 });
 export type ShopInfoInput = z.infer<typeof shopInfoSchema>;

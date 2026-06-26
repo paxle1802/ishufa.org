@@ -19,16 +19,18 @@ interface Props {
     | "minLeadMin"
     | "cancelCutoffMin"
     | "gracePeriodMin"
+    | "loyaltyEarnRate"
   >;
 }
 
 const FIELDS = [
   { key: "slotIntervalMin", label: "Bước slot (phút)", min: 5, max: 120 },
-  { key: "capacity", label: "Số khách phục vụ song song", min: 1, max: 50 },
+  { key: "capacity", label: "Số thợ (phục vụ đồng thời)", min: 1, max: 50 },
   { key: "maxAdvanceDays", label: "Đặt trước tối đa (ngày)", min: 1, max: 365 },
   { key: "minLeadMin", label: "Đặt sớm tối thiểu (phút)", min: 0, max: 1440 },
   { key: "cancelCutoffMin", label: "Hạn huỷ trước (phút)", min: 0, max: 1440 },
   { key: "gracePeriodMin", label: "Thời gian ân hạn (phút)", min: 0, max: 120 },
+  { key: "loyaltyEarnRate", label: "Tích điểm (điểm / 1.000đ, 0 = tắt)", min: 0, max: 100 },
 ] as const;
 
 type SettingsKey = (typeof FIELDS)[number]["key"];
@@ -42,6 +44,7 @@ export function BookingSettingsForm({ shop }: Props) {
     minLeadMin: String(shop.minLeadMin),
     cancelCutoffMin: String(shop.cancelCutoffMin),
     gracePeriodMin: String(shop.gracePeriodMin),
+    loyaltyEarnRate: String(shop.loyaltyEarnRate),
   }));
   const [isPending, startTransition] = useTransition();
 

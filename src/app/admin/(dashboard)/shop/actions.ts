@@ -36,7 +36,8 @@ export async function saveShopInfo(input: ShopInfoInput): Promise<ActionResult> 
     const shop = await getShopById(shopId);
     if (!shop) return { ok: false, error: "Không tìm thấy salon" };
 
-    const { name, address, description, contactPhone, accentColor } = parsed.data;
+    const { name, address, description, contactPhone, email, accentColor } =
+      parsed.data;
 
     await db
       .update(shops)
@@ -45,6 +46,7 @@ export async function saveShopInfo(input: ShopInfoInput): Promise<ActionResult> 
         address: toNullable(address),
         description: toNullable(description),
         contactPhone: toNullable(contactPhone),
+        email: toNullable(email),
         accentColor,
       })
       .where(eq(shops.id, shopId));

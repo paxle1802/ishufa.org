@@ -28,6 +28,7 @@ export function ShopBrandingForm({ shop }: ShopBrandingFormProps) {
   const [address, setAddress] = useState(shop.address ?? "");
   const [description, setDescription] = useState(shop.description ?? "");
   const [contactPhone, setContactPhone] = useState(shop.contactPhone ?? "");
+  const [email, setEmail] = useState(shop.email ?? "");
   const [accentColor, setAccentColor] = useState(shop.accentColor);
   const [logoPreview, setLogoPreview] = useState<string | null>(shop.logoUrl ?? null);
 
@@ -75,6 +76,7 @@ export function ShopBrandingForm({ shop }: ShopBrandingFormProps) {
         address,
         description,
         contactPhone,
+        email,
         accentColor,
       });
       if (result.ok) {
@@ -177,6 +179,20 @@ export function ShopBrandingForm({ shop }: ShopBrandingFormProps) {
             onChange={(e) => setContactPhone(e.target.value)}
             placeholder="0901234567"
             inputMode="tel"
+            disabled={isPending}
+          />
+        </div>
+
+        {/* Email */}
+        <div className="space-y-1.5">
+          <Label htmlFor="shop-email">Email</Label>
+          <Input
+            id="shop-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="salon@email.com"
+            inputMode="email"
             disabled={isPending}
           />
         </div>

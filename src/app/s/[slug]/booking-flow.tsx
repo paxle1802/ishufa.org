@@ -28,6 +28,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
+  const [promoCode, setPromoCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<BookingSummary | null>(null);
 
@@ -82,10 +83,14 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
     );
   }
 
-  function handleFieldChange(field: "name" | "phone" | "note", value: string) {
+  function handleFieldChange(
+    field: "name" | "phone" | "note" | "promoCode",
+    value: string,
+  ) {
     if (field === "name") setName(value);
     else if (field === "phone") setPhone(value);
-    else setNote(value);
+    else if (field === "note") setNote(value);
+    else setPromoCode(value);
   }
 
   const canBook =
@@ -105,6 +110,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
         customerName: name.trim(),
         customerPhone: phone.trim(),
         note: note.trim() || undefined,
+        promoCode: promoCode.trim() || undefined,
       });
       if (!result.ok) {
         toast.error(result.error);
@@ -169,6 +175,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
           name={name}
           phone={phone}
           note={note}
+          promoCode={promoCode}
           onChange={handleFieldChange}
         />
       </div>
