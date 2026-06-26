@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CheckIcon, CopyIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CredentialFields } from "./credential-fields";
 import { createShop } from "./actions";
 
 type SuccessData = {
@@ -45,7 +46,6 @@ export function CreateShopForm() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [success, setSuccess] = useState<SuccessData | null>(null);
-  const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const set =
@@ -58,7 +58,6 @@ export function CreateShopForm() {
       // reset on close
       setForm(EMPTY_FORM);
       setSuccess(null);
-      setCopied(false);
     }
     setOpen(next);
   };
@@ -72,15 +71,6 @@ export function CreateShopForm() {
       } else {
         toast.error(result.error);
       }
-    });
-  };
-
-  const handleCopy = () => {
-    if (!success) return;
-    const text = `Email đăng nhập: ${success.loginEmail}\nMật khẩu: ${success.password}`;
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     });
   };
 
@@ -113,32 +103,13 @@ export function CreateShopForm() {
                 Shop <strong>{success.shopName}</strong> đã được tạo thành công.
               </p>
 
-              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-2">
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Email đăng nhập
-                  </p>
-                  <p className="font-mono text-sm font-semibold">{success.loginEmail}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Mật khẩu
-                  </p>
-                  <p className="font-mono text-sm font-semibold tracking-widest">
-                    {success.password}
-                  </p>
-                </div>
-              </div>
+              <CredentialFields loginEmail={success.loginEmail} password={success.password} />
 
               <p className="text-xs text-muted-foreground">
                 Gửi thông tin này cho chủ shop (mật khẩu chỉ hiển thị 1 lần).
               </p>
 
               <DialogFooter className="-mx-0 -mb-0 border-0 bg-transparent p-0 pt-1">
-                <Button type="button" variant="outline" size="sm" onClick={handleCopy}>
-                  {copied ? <CheckIcon /> : <CopyIcon />}
-                  {copied ? "Đã sao chép" : "Copy"}
-                </Button>
                 <Button type="button" size="sm" onClick={handleDone}>
                   Xong
                 </Button>
