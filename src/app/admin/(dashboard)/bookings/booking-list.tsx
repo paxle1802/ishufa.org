@@ -82,16 +82,8 @@ export function BookingList({
           )}
 
           <div className="mt-3 flex items-center justify-between">
-            <span className="text-sm font-semibold">{vnd.format(b.totalPrice)}đ</span>
-            <BookingStatusControl
-              bookingId={b.id}
-              status={b.status}
-              activePackages={packagesByPhone[b.customerPhone] ?? []}
-            />
-          </div>
-
-          {bank && b.status !== "cancelled" && b.totalPrice > 0 && (
-            <div className="mt-2 flex justify-end">
+            <span className="text-base font-bold">{vnd.format(b.totalPrice)}đ</span>
+            {bank && b.status !== "cancelled" && b.totalPrice > 0 && (
               <PaymentQrDialog
                 bankBin={bank.bankBin}
                 accountNumber={bank.accountNumber}
@@ -99,8 +91,16 @@ export function BookingList({
                 amount={b.totalPrice}
                 addInfo={`TT ${b.id.slice(0, 8).toUpperCase()}`}
               />
-            </div>
-          )}
+            )}
+          </div>
+
+          <div className="mt-3">
+            <BookingStatusControl
+              bookingId={b.id}
+              status={b.status}
+              activePackages={packagesByPhone[b.customerPhone] ?? []}
+            />
+          </div>
         </li>
       ))}
     </ul>
