@@ -22,6 +22,7 @@ interface ServiceFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   service?: Service | null;
+  staff: { id: string; name: string }[];
 }
 
 type FormState = {
@@ -31,6 +32,7 @@ type FormState = {
   category: string;
   description: string;
   imageUrl: string;
+  staffId: string;
   sortOrder: string;
   active: boolean;
 };
@@ -43,12 +45,13 @@ function buildInitialState(service?: Service | null): FormState {
     category: service?.category ?? "",
     description: service?.description ?? "",
     imageUrl: service?.imageUrl ?? "",
+    staffId: service?.staffId ?? "",
     sortOrder: service?.sortOrder?.toString() ?? "0",
     active: service?.active ?? true,
   };
 }
 
-export function ServiceForm({ open, onOpenChange, service }: ServiceFormProps) {
+export function ServiceForm({ open, onOpenChange, service, staff }: ServiceFormProps) {
   const [form, setForm] = useState<FormState>(() => buildInitialState(service));
   const [isPending, startTransition] = useTransition();
 
@@ -59,8 +62,11 @@ export function ServiceForm({ open, onOpenChange, service }: ServiceFormProps) {
   };
 
   const set = (field: keyof FormState) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +78,7 @@ export function ServiceForm({ open, onOpenChange, service }: ServiceFormProps) {
       category: form.category,
       description: form.description,
       imageUrl: form.imageUrl,
+      staffId: form.staffId || null,
       sortOrder: Number(form.sortOrder),
       active: form.active,
     };
@@ -136,14 +143,32 @@ export function ServiceForm({ open, onOpenChange, service }: ServiceFormProps) {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="svc-category">Danh mục</Label>
-            <Input
-              id="svc-category"
-              value={form.category}
-              onChange={set("category")}
-              placeholder="Tóc, Da mặt, Nail..."
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="svc-category">Danh mục</Label>
+              <Input
+                id="svc-category"
+                value={form.category}
+                onChange={set("category")}
+                placeholder="Tóc, Da mặt..."
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="svc-staff">Thợ thực hiện</Label>
+              <select
+                id="svc-staff"
+                value={form.staffId}
+                onChange={set("staffId")}
+                className="h-9 w-full rounded-lg border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
+              >
+                <option value="">Chưa gán</option>
+                {staff.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="space-y-1">

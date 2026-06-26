@@ -1,0 +1,1 @@
+ALTER TABLE "shops" ADD COLUMN "revenue_mode" text DEFAULT 'combined' NOT NULL;

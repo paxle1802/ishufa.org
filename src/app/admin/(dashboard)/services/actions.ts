@@ -32,7 +32,7 @@ export async function createService(input: ServiceInput): Promise<ActionResult> 
     const shop = await getShopById(shopId);
     if (!shop) return { ok: false, error: "Không tìm thấy salon" };
 
-    const { name, price, durationMin, category, description, imageUrl, active, sortOrder } =
+    const { name, price, durationMin, category, description, imageUrl, staffId, active, sortOrder } =
       parsed.data;
 
     await db.insert(services).values({
@@ -43,6 +43,7 @@ export async function createService(input: ServiceInput): Promise<ActionResult> 
       category: toNullableString(category),
       description: toNullableString(description),
       imageUrl: toNullableString(imageUrl),
+      staffId: staffId ?? null,
       active,
       sortOrder,
     });
@@ -69,7 +70,7 @@ export async function updateService(
     const shop = await getShopById(shopId);
     if (!shop) return { ok: false, error: "Không tìm thấy salon" };
 
-    const { name, price, durationMin, category, description, imageUrl, active, sortOrder } =
+    const { name, price, durationMin, category, description, imageUrl, staffId, active, sortOrder } =
       parsed.data;
 
     await db
@@ -81,6 +82,7 @@ export async function updateService(
         category: toNullableString(category),
         description: toNullableString(description),
         imageUrl: toNullableString(imageUrl),
+        staffId: staffId ?? null,
         active,
         sortOrder,
       })

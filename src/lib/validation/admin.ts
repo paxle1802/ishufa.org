@@ -20,6 +20,8 @@ export const serviceSchema = z.object({
   category: z.string().trim().max(60).optional().or(z.literal("")),
   description: z.string().trim().max(1000).optional().or(z.literal("")),
   imageUrl: z.string().url("URL ảnh không hợp lệ").optional().or(z.literal("")),
+  // Thợ thực hiện dịch vụ (để chia doanh thu). null = chưa gán.
+  staffId: z.string().uuid().nullable().optional(),
   active: z.coerce.boolean().default(true),
   sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
 });

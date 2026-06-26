@@ -17,9 +17,10 @@ const fmtVnd = (amount: number) =>
 
 interface ServicesManagerProps {
   services: Service[];
+  staff: { id: string; name: string }[];
 }
 
-export function ServicesManager({ services: initial }: ServicesManagerProps) {
+export function ServicesManager({ services: initial, staff }: ServicesManagerProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Service | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -89,6 +90,9 @@ export function ServicesManager({ services: initial }: ServicesManagerProps) {
                     </div>
                     <p className="mt-0.5 text-sm text-muted-foreground">
                       {fmtVnd(svc.price)} · {svc.durationMin} phút
+                      {svc.staffId && staff.find((s) => s.id === svc.staffId)
+                        ? ` · ${staff.find((s) => s.id === svc.staffId)!.name}`
+                        : ""}
                     </p>
                     {svc.description && (
                       <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
@@ -142,6 +146,7 @@ export function ServicesManager({ services: initial }: ServicesManagerProps) {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         service={editing}
+        staff={staff}
       />
     </>
   );

@@ -53,6 +53,8 @@ export const shops = pgTable(
     gracePeriodMin: integer("grace_period_min").notNull().default(10),
     // Tích điểm: số điểm cộng cho mỗi 1.000đ chi tiêu (0 = tắt).
     loyaltyEarnRate: integer("loyalty_earn_rate").notNull().default(0),
+    // Chế độ doanh thu chủ shop xem: 'per_staff' (chia theo thợ) | 'combined' (gộp).
+    revenueMode: text("revenue_mode").notNull().default("combined"),
     active: boolean("active").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()

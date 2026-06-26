@@ -8,13 +8,17 @@ function fmt(amount: number) {
 
 interface Props {
   report: StaffRevenueReport;
+  /** Gộp: chỉ hiện tổng, không tách theo thợ. */
+  combined?: boolean;
 }
 
-export function StaffRevenueTable({ report }: Props) {
+export function StaffRevenueTable({ report, combined = false }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between">
-        <h2 className="font-semibold text-foreground">Doanh thu theo thợ</h2>
+        <h2 className="font-semibold text-foreground">
+          {combined ? "Doanh thu" : "Doanh thu theo thợ"}
+        </h2>
         <span className="text-xs text-muted-foreground">
           {report.bookingCount} booking
         </span>
@@ -26,7 +30,7 @@ export function StaffRevenueTable({ report }: Props) {
           <span className="font-semibold text-sm">{fmt(report.total)}</span>
         </div>
 
-        {report.rows.length === 0 ? (
+        {combined ? null : report.rows.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             Chưa có doanh thu trong kỳ
           </p>

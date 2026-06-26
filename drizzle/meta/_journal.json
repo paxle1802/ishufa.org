@@ -36,6 +36,13 @@
       "when": 1782459878223,
       "tag": "0004_parallel_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782462693878,
+      "tag": "0005_free_energizer",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 
 import { db } from "./index";
 import { shops, staff } from "./schema";
@@ -12,10 +12,18 @@ export function listStaff(shopId: string) {
     .orderBy(asc(staff.sortOrder), asc(staff.name));
 }
 
-/** Danh sách shop (cho super admin chọn). */
+/** Danh sách shop (cho super admin). */
 export function getAllShops() {
   return db
-    .select({ id: shops.id, name: shops.name, slug: shops.slug, active: shops.active })
+    .select({
+      id: shops.id,
+      name: shops.name,
+      slug: shops.slug,
+      contactPhone: shops.contactPhone,
+      email: shops.email,
+      active: shops.active,
+      createdAt: shops.createdAt,
+    })
     .from(shops)
-    .orderBy(asc(shops.name));
+    .orderBy(desc(shops.createdAt));
 }
