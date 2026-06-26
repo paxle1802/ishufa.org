@@ -1,8 +1,12 @@
+import { ScanLine } from "lucide-react";
+import Link from "next/link";
+
 import { autoCancelStaleBookings } from "@/lib/booking/auto-cancel";
 import {
   getActivePackagesForPhones,
   listBookingsForDay,
 } from "@/lib/booking/queries";
+import { Button } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getShopById } from "@/lib/db/queries";
 import type { ActivePackage } from "./booking-status-control";
@@ -59,9 +63,15 @@ export default async function BookingsPage({
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold">Lịch hẹn</h1>
-        <p className="text-sm text-muted-foreground">{active} lịch trong ngày</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold">Lịch hẹn</h1>
+          <p className="text-sm text-muted-foreground">{active} lịch trong ngày</p>
+        </div>
+        <Button render={<Link href="/admin/checkin" />} variant="outline" size="sm" className="gap-1.5">
+          <ScanLine className="size-4" />
+          Quét QR
+        </Button>
       </div>
       <DayPicker date={day} />
       <BookingList bookings={bookings} packagesByPhone={packagesByPhone} bank={bank} />

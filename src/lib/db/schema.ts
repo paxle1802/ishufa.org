@@ -88,6 +88,23 @@ export const staff = pgTable(
   (t) => [index("staff_shop_idx").on(t.shopId)],
 );
 
+/** Chi phí hằng ngày của shop (để tính lợi nhuận = doanh thu − chi phí). */
+export const expenses = pgTable(
+  "expenses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    shopId: uuid("shop_id")
+      .notNull()
+      .references(() => shops.id, { onDelete: "cascade" }),
+    date: text("date").notNull(), // yyyy-MM-dd theo giờ địa phương
+    amount: integer("amount").notNull(), // VND
+    note: text("note"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("expenses_shop_date_idx").on(t.shopId, t.date)],
+);
+export type Expense = typeof expenses.$inferSelect;
+
 // --- Dịch vụ ---
 export const services = pgTable(
   "services",

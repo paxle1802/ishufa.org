@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, LayoutGrid, QrCode, ScanLine } from "lucide-react";
+import { CalendarDays, LayoutGrid, QrCode } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,7 +11,6 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Hôm nay", icon: LayoutGrid },
   { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
   { href: "/admin/thu-tien", label: "Thanh toán", icon: QrCode },
-  { href: "/admin/checkin", label: "Quét QR", icon: ScanLine },
 ] as const;
 
 export function AdminNav() {

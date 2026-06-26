@@ -19,9 +19,8 @@ interface Staff {
   sortOrder: number;
 }
 
-// Tỷ lệ Chủ–Thợ; lưu theo % THỢ hưởng.
+// Tỷ lệ Chủ–Thợ; lưu theo % THỢ hưởng. (Có thêm "Tuỳ chọn" để nhập số bất kỳ.)
 const RATIOS = [
-  { owner: 30, staff: 70 },
   { owner: 40, staff: 60 },
   { owner: 50, staff: 50 },
 ];
@@ -33,6 +32,7 @@ export function StaffManager({ staff }: { staff: Staff[] }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [ratioId, setRatioId] = useState<string | null>(null); // row đang mở chọn tỷ lệ
+  const [customStaff, setCustomStaff] = useState(""); // % thợ tuỳ chọn
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,7 +165,11 @@ export function StaffManager({ staff }: { staff: Staff[] }) {
                       <Button
                         size="sm"
                         variant={ratioId === s.id ? "default" : "outline"}
-                        onClick={() => setRatioId(ratioId === s.id ? null : s.id)}
+                        onClick={() => {
+                          const open = ratioId === s.id ? null : s.id;
+                          setRatioId(open);
+                          setCustomStaff(String(s.commissionPct));
+                        }}
                         disabled={isPending}
                       >
                         Tỷ lệ {100 - s.commissionPct}–{s.commissionPct}
@@ -186,7 +190,7 @@ export function StaffManager({ staff }: { staff: Staff[] }) {
                     <p className="mb-2 text-xs text-muted-foreground">
                       Tỷ lệ ăn chia (Chủ – Thợ):
                     </p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {RATIOS.map((r) => {
                         const active = s.commissionPct === r.staff;
                         return (
@@ -211,6 +215,32 @@ export function StaffManager({ staff }: { staff: Staff[] }) {
                           </button>
                         );
                       })}
+                    </div>
+
+                    {/* Tuỳ chọn: nhập % thợ bất kỳ */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">Tuỳ chọn — Thợ:</span>
+                      <Input
+                        inputMode="numeric"
+                        value={customStaff}
+                        onChange={(e) => setCustomStaff(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                        className="h-9 w-16 text-center"
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        % · Chủ {Math.max(0, 100 - (Number(customStaff) || 0))}%
+                      </span>
+                      <Button
+                        size="sm"
+                        className="ml-auto"
+                        disabled={
+                          isPending ||
+                          customStaff === "" ||
+                          Number(customStaff) > 100
+                        }
+                        onClick={() => handleSetRatio(s, Number(customStaff))}
+                      >
+                        Lưu
+                      </Button>
                     </div>
                   </div>
                 )}

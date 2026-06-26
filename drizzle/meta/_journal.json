@@ -85,6 +85,13 @@
       "when": 1782490754408,
       "tag": "0011_next_owl",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1782497708887,
+      "tag": "0012_thick_electro",
+      "breakpoints": true
     }
   ]
 }
