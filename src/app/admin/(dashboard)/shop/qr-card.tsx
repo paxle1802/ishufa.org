@@ -21,9 +21,10 @@ interface QrCardProps {
   shopName: string;
 }
 
-const QR_SIZE = 240;
-const FONT_SIZE = 16;
-const CAPTION_PAD = 12;
+const QR_SIZE = 240; // canvas hiển thị trên màn hình
+const EXPORT_SIZE = 1024; // QR xuất ra để in (nét)
+const EXPORT_FONT = 64; // cỡ chữ tên shop khi xuất
+const EXPORT_PAD = 40; // đệm trên/dưới tên shop khi xuất
 
 export function QrCard({ appUrl, slug, shopName }: QrCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,28 +44,42 @@ export function QrCard({ appUrl, slug, shopName }: QrCardProps) {
     });
   }, [targetUrl]);
 
-  /** Vẽ QR + tên shop ra canvas rồi trả về Blob PNG. */
-  function buildImageBlob(): Promise<Blob | null> {
-    const sourceCanvas = canvasRef.current;
-    if (!sourceCanvas) return Promise.resolve(null);
+  /**
+   * Render QR ở độ phân giải cao (1024px) + tên shop bên dưới rồi trả Blob PNG.
+   * Vẽ MỚI ở EXPORT_SIZE thay vì phóng to canvas hiển thị 240px (tránh nhoè khi in).
+   */
+  async function buildImageBlob(): Promise<Blob | null> {
+    // 1) Vẽ QR nét vào canvas tạm ở độ phân giải xuất.
+    const qrCanvas = document.createElement("canvas");
+    await QRCode.toCanvas(qrCanvas, targetUrl, {
+      width: EXPORT_SIZE,
+      margin: 2,
+      color: { dark: "#000000", light: "#ffffff" },
+    });
 
-    const captionHeight = FONT_SIZE + CAPTION_PAD * 2;
+    // 2) Ghép tên shop bên dưới.
+    const captionHeight = EXPORT_FONT + EXPORT_PAD * 2;
     const dl = document.createElement("canvas");
-    dl.width = QR_SIZE;
-    dl.height = QR_SIZE + captionHeight;
+    dl.width = EXPORT_SIZE;
+    dl.height = EXPORT_SIZE + captionHeight;
 
     const ctx = dl.getContext("2d");
-    if (!ctx) return Promise.resolve(null);
+    if (!ctx) return null;
 
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, dl.width, dl.height);
-    ctx.drawImage(sourceCanvas, 0, 0, QR_SIZE, QR_SIZE);
+    ctx.drawImage(qrCanvas, 0, 0, EXPORT_SIZE, EXPORT_SIZE);
 
     ctx.fillStyle = "#0f172a";
-    ctx.font = `${FONT_SIZE}px sans-serif`;
+    ctx.font = `bold ${EXPORT_FONT}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(shopName, QR_SIZE / 2, QR_SIZE + CAPTION_PAD + FONT_SIZE / 2, QR_SIZE - 16);
+    ctx.fillText(
+      shopName,
+      EXPORT_SIZE / 2,
+      EXPORT_SIZE + EXPORT_PAD + EXPORT_FONT / 2,
+      EXPORT_SIZE - EXPORT_PAD * 2,
+    );
 
     return new Promise((resolve) => dl.toBlob(resolve, "image/png"));
   }
