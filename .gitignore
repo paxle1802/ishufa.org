@@ -91,3 +91,4 @@ external/
 
 # Git worktrees (local development only)
 worktrees/
+.env*.local

@@ -1,8 +1,5 @@
-import { config } from "dotenv";
-
-// Nạp env trước khi import db (db client đọc env lúc khởi tạo).
-config({ path: ".env.local" });
-
+// Env được nạp qua `tsx --env-file=.env.local` (xem script "seed" trong package.json),
+// chạy trước mọi import nên db client đọc được env lúc khởi tạo.
 import { eq } from "drizzle-orm";
 import { db } from "../src/lib/db";
 import {
