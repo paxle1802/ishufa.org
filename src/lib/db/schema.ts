@@ -45,6 +45,10 @@ export const shops = pgTable(
     email: text("email"),
     accentColor: text("accent_color").notNull().default("#F26430"),
     logoUrl: text("logo_url"),
+    // Tài khoản nhận tiền (VietQR): BIN ngân hàng + số TK + tên chủ TK.
+    bankBin: text("bank_bin"),
+    bankAccountNumber: text("bank_account_number"),
+    bankAccountName: text("bank_account_name"),
     slotIntervalMin: integer("slot_interval_min").notNull().default(30),
     capacity: integer("capacity").notNull().default(1),
     maxAdvanceDays: integer("max_advance_days").notNull().default(30),

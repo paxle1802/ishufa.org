@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getShopById } from "@/lib/db/queries";
 
+import { BankForm } from "./bank-form";
 import { QrCard } from "./qr-card";
 import { ShopBrandingForm } from "./shop-branding-form";
 
@@ -29,6 +30,8 @@ export default async function ShopPage() {
       </div>
 
       <ShopBrandingForm shop={shop} />
+
+      <BankForm shop={shop} />
 
       <QrCard appUrl={appUrl} slug={shop.slug} shopName={shop.name} />
     </div>

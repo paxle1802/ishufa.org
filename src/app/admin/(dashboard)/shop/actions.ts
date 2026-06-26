@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { getShopById } from "@/lib/db/queries";
 import { shops } from "@/lib/db/schema";
 import { shopInfoSchema, type ShopInfoInput } from "@/lib/validation/admin";
+import { bankSchema, type BankInput } from "@/lib/validation/bank";
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -55,6 +56,34 @@ export async function saveShopInfo(input: ShopInfoInput): Promise<ActionResult> 
     return { ok: true };
   } catch (err) {
     console.error("[saveShopInfo]", err);
+    return { ok: false, error: "Lỗi server, vui lòng thử lại" };
+  }
+}
+
+/** Lưu tài khoản nhận tiền (VietQR) của shop. */
+export async function saveBankInfo(input: BankInput): Promise<ActionResult> {
+  try {
+    const { shopId } = await requireAdmin();
+
+    const parsed = bankSchema.safeParse(input);
+    if (!parsed.success) {
+      return { ok: false, error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    }
+
+    const shop = await getShopById(shopId);
+    if (!shop) return { ok: false, error: "Không tìm thấy salon" };
+
+    const { bankBin, bankAccountNumber, bankAccountName } = parsed.data;
+    await db
+      .update(shops)
+      .set({ bankBin, bankAccountNumber, bankAccountName })
+      .where(eq(shops.id, shopId));
+
+    revalidatePath("/admin/shop");
+    revalidatePath("/admin/thu-tien");
+    return { ok: true };
+  } catch (err) {
+    console.error("[saveBankInfo]", err);
     return { ok: false, error: "Lỗi server, vui lòng thử lại" };
   }
 }

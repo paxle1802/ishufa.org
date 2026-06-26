@@ -50,6 +50,13 @@
       "when": 1782464415284,
       "tag": "0006_typical_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1782477664778,
+      "tag": "0007_hot_skullbuster",
+      "breakpoints": true
     }
   ]
 }

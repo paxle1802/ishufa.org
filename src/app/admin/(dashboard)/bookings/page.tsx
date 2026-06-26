@@ -3,8 +3,9 @@ import {
   listBookingsForDay,
 } from "@/lib/booking/queries";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { getShopById } from "@/lib/db/queries";
 import type { ActivePackage } from "./booking-status-control";
-import { BookingList } from "./booking-list";
+import { BookingList, type ShopBank } from "./booking-list";
 import { DayPicker } from "./day-picker";
 
 function todayVn(): string {
@@ -37,6 +38,16 @@ export default async function BookingsPage({
   const { date } = await searchParams;
   const day = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : todayVn();
 
+  const shop = await getShopById(shopId);
+  const bank: ShopBank | null =
+    shop?.bankBin && shop.bankAccountNumber && shop.bankAccountName
+      ? {
+          bankBin: shop.bankBin,
+          accountNumber: shop.bankAccountNumber,
+          accountName: shop.bankAccountName,
+        }
+      : null;
+
   const bookings = await listBookingsForDay(shopId, day);
   const active = bookings.filter((b) => b.status !== "cancelled").length;
   const packagesByPhone = await packagesByPhoneFor(
@@ -51,7 +62,7 @@ export default async function BookingsPage({
         <p className="text-sm text-muted-foreground">{active} lịch trong ngày</p>
       </div>
       <DayPicker date={day} />
-      <BookingList bookings={bookings} packagesByPhone={packagesByPhone} />
+      <BookingList bookings={bookings} packagesByPhone={packagesByPhone} bank={bank} />
     </div>
   );
 }

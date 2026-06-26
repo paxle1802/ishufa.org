@@ -3,6 +3,7 @@
 import { Phone } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { PaymentQrDialog } from "@/components/admin/payment-qr-dialog";
 import type { BookingStatus } from "@/lib/db/schema";
 import { formatLocal } from "@/lib/tz";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,13 @@ import type { BookingForDay } from "@/lib/booking/queries";
 import { BookingStatusControl, type ActivePackage } from "./booking-status-control";
 
 const vnd = new Intl.NumberFormat("vi-VN");
+
+/** Tài khoản nhận tiền của shop (đã cấu hình đủ). */
+export interface ShopBank {
+  bankBin: string;
+  accountNumber: string;
+  accountName: string;
+}
 
 const STATUS_LABEL: Record<BookingStatus, string> = {
   confirmed: "Đã xác nhận",
@@ -27,9 +35,11 @@ const STATUS_CLASS: Record<BookingStatus, string> = {
 export function BookingList({
   bookings,
   packagesByPhone = {},
+  bank = null,
 }: {
   bookings: BookingForDay[];
   packagesByPhone?: Record<string, ActivePackage[]>;
+  bank?: ShopBank | null;
 }) {
   if (bookings.length === 0) {
     return (
@@ -77,6 +87,18 @@ export function BookingList({
               activePackages={packagesByPhone[b.customerPhone] ?? []}
             />
           </div>
+
+          {bank && b.status !== "cancelled" && b.totalPrice > 0 && (
+            <div className="mt-2 flex justify-end">
+              <PaymentQrDialog
+                bankBin={bank.bankBin}
+                accountNumber={bank.accountNumber}
+                accountName={bank.accountName}
+                amount={b.totalPrice}
+                addInfo={`TT ${b.id.slice(0, 8).toUpperCase()}`}
+              />
+            </div>
+          )}
         </li>
       ))}
     </ul>
