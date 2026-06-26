@@ -44,7 +44,7 @@ export function SummaryBar({
           disabled={!canBook || submitting}
           onClick={onBook}
           aria-label="Đặt lịch ngay"
-          className="flex h-12 min-w-[120px] shrink-0 items-center justify-center rounded-xl px-5 text-base font-bold text-white shadow-lg transition-opacity disabled:opacity-40"
+          className="flex h-12 min-w-[120px] shrink-0 items-center justify-center rounded-full px-6 text-base font-bold text-white shadow-lg transition-opacity disabled:opacity-40"
           style={{ backgroundColor: "var(--accent)" }}
         >
           {submitting ? (

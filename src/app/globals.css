@@ -48,41 +48,52 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Bảng màu theo phong cách iProyal: teal #008C99 primary, chữ dark-teal #004047,
-   nền sáng, accent teal nhạt, bo góc vừa. Light-mode chủ đạo. */
+/* Phong cách soft premium (tham chiếu ảnh): nền trắng ngà ấm, card trắng bo góc
+   lớn + bóng mềm, chữ near-black, nút primary charcoal đậm, accent cam-đào,
+   ring cam. Light-mode. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.3 0.045 197); /* dark teal #004047 */
+  --background: oklch(0.95 0.006 70); /* warm off-white */
+  --foreground: oklch(0.24 0.006 60); /* near-black ấm */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.3 0.045 197);
+  --card-foreground: oklch(0.24 0.006 60);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.3 0.045 197);
-  --primary: oklch(0.58 0.095 196); /* teal #008C99 */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.02 196);
-  --secondary-foreground: oklch(0.3 0.045 197);
-  --muted: oklch(0.97 0.008 196);
-  --muted-foreground: oklch(0.5 0.025 197);
-  --accent: oklch(0.95 0.025 196);
-  --accent-foreground: oklch(0.34 0.05 197);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.01 197);
-  --input: oklch(0.9 0.01 197);
-  --ring: oklch(0.58 0.095 196);
-  --chart-1: oklch(0.58 0.095 196);
-  --chart-2: oklch(0.7 0.1 190);
-  --chart-3: oklch(0.45 0.07 200);
-  --chart-4: oklch(0.78 0.09 185);
-  --chart-5: oklch(0.36 0.055 200);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.985 0.005 196);
-  --sidebar-foreground: oklch(0.3 0.045 197);
-  --sidebar-primary: oklch(0.58 0.095 196);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.95 0.025 196);
-  --sidebar-accent-foreground: oklch(0.34 0.05 197);
-  --sidebar-border: oklch(0.9 0.01 197);
-  --sidebar-ring: oklch(0.58 0.095 196);
+  --popover-foreground: oklch(0.24 0.006 60);
+  --primary: oklch(0.27 0.006 60); /* charcoal đậm (nút pill) */
+  --primary-foreground: oklch(0.98 0.004 80);
+  --secondary: oklch(0.95 0.008 65);
+  --secondary-foreground: oklch(0.27 0.006 60);
+  --muted: oklch(0.955 0.007 65);
+  --muted-foreground: oklch(0.58 0.012 60);
+  --accent: oklch(0.93 0.04 55); /* cam-đào nhạt (hover/nhấn nhẹ) */
+  --accent-foreground: oklch(0.34 0.08 45);
+  --destructive: oklch(0.58 0.22 27);
+  --border: oklch(0.91 0.006 65);
+  --input: oklch(0.91 0.006 65);
+  --ring: oklch(0.68 0.17 42); /* cam */
+  --chart-1: oklch(0.68 0.17 42);
+  --chart-2: oklch(0.78 0.13 55);
+  --chart-3: oklch(0.55 0.1 38);
+  --chart-4: oklch(0.85 0.1 65);
+  --chart-5: oklch(0.45 0.02 60);
+  --radius: 1rem; /* bo góc lớn cho card mềm */
+  --sidebar: oklch(0.97 0.006 70);
+  --sidebar-foreground: oklch(0.24 0.006 60);
+  --sidebar-primary: oklch(0.27 0.006 60);
+  --sidebar-primary-foreground: oklch(0.98 0.004 80);
+  --sidebar-accent: oklch(0.93 0.04 55);
+  --sidebar-accent-foreground: oklch(0.34 0.08 45);
+  --sidebar-border: oklch(0.91 0.006 65);
+  --sidebar-ring: oklch(0.68 0.17 42);
+}
+
+/* Gradient cam-đào cho hero/feature card (như thẻ "Welcome Back") */
+.brand-gradient {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.66 0.18 38) 0%,
+    oklch(0.74 0.16 50) 45%,
+    oklch(0.82 0.1 62) 100%
+  );
 }
 
 /* Dark theme kiểu iProyal: nền teal-charcoal, surface teal đậm, viền teal mảnh,
@@ -132,26 +143,28 @@
   }
   body {
     @apply text-foreground;
-    /* Nền tối có các vầng sáng teal → tạo chiều sâu cho hiệu ứng glass */
+    /* Nền trắng ngà ấm, có vầng cam rất nhẹ ở góc cho chiều sâu */
     background:
-      radial-gradient(60% 45% at 18% -5%, oklch(0.4 0.08 194 / 0.35), transparent 70%),
-      radial-gradient(55% 45% at 105% 8%, oklch(0.42 0.09 184 / 0.28), transparent 70%),
+      radial-gradient(70% 40% at 100% -5%, oklch(0.8 0.09 55 / 0.18), transparent 70%),
       var(--background);
     background-attachment: fixed;
   }
-  /* Liquid glass: mọi Card trong mờ + làm mờ hậu cảnh + viền sáng nhẹ */
+  /* Card trắng, bo góc lớn, đổ bóng mềm (soft premium) */
   [data-slot="card"] {
-    backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    box-shadow: inset 0 1px 0 0 oklch(1 0 0 / 0.06);
+    box-shadow:
+      0 1px 2px oklch(0.3 0.02 60 / 0.04),
+      0 8px 24px oklch(0.3 0.02 60 / 0.06);
   }
 }
 
 @layer components {
-  /* Tiện ích glass cho bề mặt tuỳ biến (chip, item, thanh nav...) */
+  /* Frosted sáng cho bề mặt tuỳ biến (chip, item, thanh nav, hero overlay) */
   .glass {
-    background-color: var(--card);
-    backdrop-filter: blur(14px) saturate(1.4);
-    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    background-color: oklch(1 0 0 / 0.72);
+    backdrop-filter: blur(16px) saturate(1.3);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    box-shadow:
+      0 1px 2px oklch(0.3 0.02 60 / 0.04),
+      0 8px 24px oklch(0.3 0.02 60 / 0.06);
   }
 }

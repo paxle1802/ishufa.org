@@ -131,24 +131,27 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
 
   return (
     <div className="mx-auto max-w-md pb-28">
-      {/* Shop header */}
-      <header className="px-4 pb-5 pt-6">
-        {shop.logoUrl && (
-          <img
-            src={shop.logoUrl}
-            alt={`Logo ${shop.name}`}
-            className="mb-3 h-14 w-14 rounded-xl object-cover"
-          />
-        )}
-        <h1 className="text-2xl font-bold leading-snug">{shop.name}</h1>
-        {shop.address && (
-          <p className="mt-1 text-base text-muted-foreground">{shop.address}</p>
-        )}
-        {shop.description && (
-          <p className="mt-2 text-base text-muted-foreground leading-relaxed">
-            {shop.description}
-          </p>
-        )}
+      {/* Shop header — thẻ gradient cam-đào, chữ trắng */}
+      <header className="px-4 pt-5">
+        <div className="brand-gradient relative overflow-hidden rounded-3xl p-5 text-white shadow-lg">
+          {shop.logoUrl && (
+            <img
+              src={shop.logoUrl}
+              alt={`Logo ${shop.name}`}
+              className="mb-3 h-12 w-12 rounded-2xl object-cover ring-2 ring-white/40"
+            />
+          )}
+          <p className="text-sm font-medium text-white/80">Đặt lịch tại</p>
+          <h1 className="mt-1 text-2xl font-bold leading-snug">{shop.name}</h1>
+          {shop.address && (
+            <p className="mt-1.5 text-sm text-white/90">{shop.address}</p>
+          )}
+          {shop.description && (
+            <p className="mt-2 text-sm leading-relaxed text-white/85">
+              {shop.description}
+            </p>
+          )}
+        </div>
       </header>
 
       <div className="flex flex-col gap-6">

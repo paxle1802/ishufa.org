@@ -18,9 +18,9 @@ const STATUS_LABEL: Record<BookingStatus, string> = {
   cancelled: "Đã huỷ",
 };
 const STATUS_CLASS: Record<BookingStatus, string> = {
-  confirmed: "bg-primary/15 text-primary",
-  completed: "bg-green-500/15 text-green-300",
-  no_show: "bg-amber-500/15 text-amber-300",
+  confirmed: "bg-blue-100 text-blue-700",
+  completed: "bg-green-100 text-green-700",
+  no_show: "bg-amber-100 text-amber-700",
   cancelled: "bg-muted text-muted-foreground line-through",
 };
 

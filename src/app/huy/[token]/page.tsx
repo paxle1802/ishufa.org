@@ -44,7 +44,7 @@ export default async function CancelPage({
             Lịch hẹn này {STATUS_DONE[booking.status] ?? "không thể huỷ"}.
           </p>
         ) : cutoff ? (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-center text-sm text-amber-200">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-center text-sm text-amber-800">
             Đã quá hạn huỷ trực tuyến.
             {booking.shop.contactPhone && (
               <>
