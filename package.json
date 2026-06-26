@@ -26,6 +26,7 @@
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
     "drizzle-orm": "^0.45.2",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^1.21.0",
     "nanoid": "^5.1.16",
     "next": "16.2.9",

@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { saveOrShareImage } from "@/lib/save-image";
 
 interface QrCardProps {
   appUrl: string;
@@ -84,42 +85,13 @@ export function QrCard({ appUrl, slug, shopName }: QrCardProps) {
     return new Promise((resolve) => dl.toBlob(resolve, "image/png"));
   }
 
-  function downloadBlob(blob: Blob) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `qr-${slug}.png`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  /**
-   * iOS: dùng Web Share API (file ảnh) → share sheet có "Save Image" lưu vào
-   * Photos. Desktop/không hỗ trợ chia sẻ file → tải PNG.
-   */
+  /** iOS → share sheet "Save Image"; desktop → tải PNG (xem @/lib/save-image). */
   async function handleSave() {
     setSaving(true);
     try {
       const blob = await buildImageBlob();
       if (!blob) return;
-
-      const file = new File([blob], `qr-${slug}.png`, { type: "image/png" });
-      const nav = navigator as Navigator & {
-        canShare?: (data: ShareData) => boolean;
-      };
-
-      if (nav.canShare?.({ files: [file] })) {
-        try {
-          await nav.share({ files: [file], title: `Mã QR đặt lịch ${shopName}` });
-          return;
-        } catch (err) {
-          // Người dùng huỷ share sheet → không coi là lỗi.
-          if (err instanceof DOMException && err.name === "AbortError") return;
-          // Lỗi khác → rơi xuống tải file.
-        }
-      }
-
-      downloadBlob(blob);
+      await saveOrShareImage(blob, `qr-${slug}.png`, `Mã QR đặt lịch ${shopName}`);
     } catch (err) {
       console.error("[QrCard] save error", err);
       toast.error("Không lưu được ảnh QR, vui lòng thử lại.");

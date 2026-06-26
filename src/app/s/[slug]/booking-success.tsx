@@ -3,6 +3,7 @@
 import { buildIcs } from "@/lib/ics";
 import { formatLocal } from "@/lib/tz";
 import type { BookingSummary } from "./actions";
+import { CheckinQr } from "./checkin-qr";
 import type { PublicShop } from "./types";
 
 const vnd = new Intl.NumberFormat("vi-VN");
@@ -59,8 +60,11 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
           </svg>
         </span>
         <h1 className="text-xl font-bold">Đặt lịch thành công!</h1>
-        <p className="text-sm text-muted-foreground">
-          Chúng tôi sẽ liên hệ xác nhận lịch hẹn của bạn.
+        <p className="text-sm font-medium">
+          Vui lòng có mặt tại salon ít nhất 5 phút trước giờ hẹn.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Lịch đặt chỗ của bạn sẽ bị huỷ nếu đến muộn 10 phút so với giờ hẹn.
         </p>
       </div>
 
@@ -125,6 +129,9 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
           </div>
         </div>
       </div>
+
+      {/* Mã QR đặt chỗ — khách lưu lại, tới salon giơ ra để shop quét */}
+      <CheckinQr token={booking.cancelToken} shortCode={shortCode} />
 
       {/* Actions */}
       <div className="mt-5 flex flex-col gap-3">

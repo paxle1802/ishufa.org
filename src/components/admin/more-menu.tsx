@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   Package,
   QrCode,
+  ScanLine,
   Store,
   Ticket,
   Users2,
@@ -25,6 +26,7 @@ import {
 import { authClient } from "@/lib/auth/client";
 
 const MORE_ITEMS = [
+  { href: "/admin/checkin", label: "Quét QR khách", icon: ScanLine },
   { href: "/admin/thu-tien", label: "Thu tiền (VietQR)", icon: QrCode },
   { href: "/admin/staff", label: "Thợ", icon: Users2 },
   { href: "/admin/schedule", label: "Lịch & cấu hình", icon: CalendarClock },
