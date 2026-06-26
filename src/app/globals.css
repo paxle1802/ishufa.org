@@ -48,39 +48,41 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Bảng màu theo phong cách iProyal: teal #008C99 primary, chữ dark-teal #004047,
+   nền sáng, accent teal nhạt, bo góc vừa. Light-mode chủ đạo. */
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.3 0.045 197); /* dark teal #004047 */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.3 0.045 197);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.3 0.045 197);
+  --primary: oklch(0.58 0.095 196); /* teal #008C99 */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.95 0.02 196);
+  --secondary-foreground: oklch(0.3 0.045 197);
+  --muted: oklch(0.97 0.008 196);
+  --muted-foreground: oklch(0.5 0.025 197);
+  --accent: oklch(0.95 0.025 196);
+  --accent-foreground: oklch(0.34 0.05 197);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.9 0.01 197);
+  --input: oklch(0.9 0.01 197);
+  --ring: oklch(0.58 0.095 196);
+  --chart-1: oklch(0.58 0.095 196);
+  --chart-2: oklch(0.7 0.1 190);
+  --chart-3: oklch(0.45 0.07 200);
+  --chart-4: oklch(0.78 0.09 185);
+  --chart-5: oklch(0.36 0.055 200);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.985 0.005 196);
+  --sidebar-foreground: oklch(0.3 0.045 197);
+  --sidebar-primary: oklch(0.58 0.095 196);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.95 0.025 196);
+  --sidebar-accent-foreground: oklch(0.34 0.05 197);
+  --sidebar-border: oklch(0.9 0.01 197);
+  --sidebar-ring: oklch(0.58 0.095 196);
 }
 
 .dark {
@@ -90,18 +92,18 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --primary: oklch(0.72 0.11 192); /* teal sáng hơn cho nền tối */
+  --primary-foreground: oklch(0.2 0.03 200);
+  --secondary: oklch(0.269 0.02 200);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --muted: oklch(0.269 0.015 200);
+  --muted-foreground: oklch(0.708 0.02 196);
+  --accent: oklch(0.3 0.03 198);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.72 0.11 192);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

@@ -49,7 +49,7 @@ async function main() {
       address: "123 Đường ABC, Quận 1, TP.HCM",
       description: "Salon mẫu để thử nghiệm đặt lịch.",
       contactPhone: "0900000000",
-      accentColor: "#7c3aed",
+      accentColor: "#008C99",
       capacity: 2,
       slotIntervalMin: 30,
     })

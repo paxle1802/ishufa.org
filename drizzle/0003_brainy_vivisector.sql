@@ -1,0 +1,1 @@
+ALTER TABLE "shops" ALTER COLUMN "accent_color" SET DEFAULT '#008C99';

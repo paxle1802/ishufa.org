@@ -43,7 +43,7 @@ export const shops = pgTable(
     description: text("description"),
     contactPhone: text("contact_phone"),
     email: text("email"),
-    accentColor: text("accent_color").notNull().default("#0f172a"),
+    accentColor: text("accent_color").notNull().default("#008C99"),
     logoUrl: text("logo_url"),
     slotIntervalMin: integer("slot_interval_min").notNull().default(30),
     capacity: integer("capacity").notNull().default(1),
