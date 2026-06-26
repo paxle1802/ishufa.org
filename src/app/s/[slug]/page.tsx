@@ -38,6 +38,17 @@ export default async function PublicBookingPage({
     description: s.description,
   }));
 
+  if (services.length === 0) {
+    return (
+      <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-2 px-4 text-center">
+        <h1 className="text-xl font-bold">{publicShop.name}</h1>
+        <p className="text-sm text-muted-foreground">
+          Salon chưa mở dịch vụ đặt lịch. Vui lòng quay lại sau.
+        </p>
+      </main>
+    );
+  }
+
   return (
     <div style={{ ["--accent" as string]: publicShop.accentColor }}>
       <BookingFlow shop={publicShop} services={services} />
