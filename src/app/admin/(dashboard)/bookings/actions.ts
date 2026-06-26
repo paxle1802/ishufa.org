@@ -13,7 +13,13 @@ import {
   refundPackageSession,
 } from "@/lib/packages/consume-package";
 
-const ALLOWED: BookingStatus[] = ["confirmed", "completed", "no_show", "cancelled"];
+const ALLOWED: BookingStatus[] = [
+  "confirmed",
+  "arrived",
+  "completed",
+  "no_show",
+  "cancelled",
+];
 
 type Result = { ok: true; warning?: string } | { ok: false; error: string };
 

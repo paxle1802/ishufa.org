@@ -57,6 +57,13 @@
       "when": 1782477664778,
       "tag": "0007_hot_skullbuster",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1782482971483,
+      "tag": "0008_mute_sunspot",
+      "breakpoints": true
     }
   ]
 }

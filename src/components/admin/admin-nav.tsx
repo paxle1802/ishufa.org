@@ -11,7 +11,7 @@ import { MoreMenu } from "./more-menu";
 const NAV_ITEMS = [
   { href: "/admin", label: "Hôm nay", icon: LayoutGrid, color: "text-blue-500", bg: "bg-blue-500/10" },
   { href: "/admin/bookings", label: "Bookings", icon: CalendarDays, color: "text-indigo-500", bg: "bg-indigo-500/10" },
-  { href: "/admin/thu-tien", label: "Thu tiền", icon: QrCode, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+  { href: "/admin/thu-tien", label: "Thanh toán", icon: QrCode, color: "text-emerald-500", bg: "bg-emerald-500/10" },
   { href: "/admin/checkin", label: "Quét QR", icon: ScanLine, color: "text-orange-500", bg: "bg-orange-500/10" },
 ] as const;
 

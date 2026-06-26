@@ -21,12 +21,14 @@ export interface ShopBank {
 
 const STATUS_LABEL: Record<BookingStatus, string> = {
   confirmed: "Đã xác nhận",
+  arrived: "Đã đến",
   completed: "Hoàn tất",
   no_show: "Vắng mặt",
   cancelled: "Đã huỷ",
 };
 const STATUS_CLASS: Record<BookingStatus, string> = {
   confirmed: "bg-blue-100 text-blue-700",
+  arrived: "bg-violet-100 text-violet-700",
   completed: "bg-green-100 text-green-700",
   no_show: "bg-amber-100 text-amber-700",
   cancelled: "bg-muted text-muted-foreground line-through",

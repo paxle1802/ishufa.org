@@ -11,6 +11,7 @@ import { setBookingStatus } from "./actions";
 
 const OPTIONS: { value: BookingStatus; label: string }[] = [
   { value: "confirmed", label: "Đã xác nhận" },
+  { value: "arrived", label: "Đã đến" },
   { value: "completed", label: "Hoàn tất" },
   { value: "no_show", label: "Vắng mặt" },
   { value: "cancelled", label: "Đã huỷ" },

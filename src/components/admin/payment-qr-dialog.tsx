@@ -29,7 +29,7 @@ export function PaymentQrDialog({
   accountName,
   amount,
   addInfo,
-  label = "QR thu tiền",
+  label = "QR thanh toán",
 }: PaymentQrDialogProps) {
   const [open, setOpen] = useState(false);
 
@@ -43,7 +43,7 @@ export function PaymentQrDialog({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Thu tiền qua VietQR</DialogTitle>
+            <DialogTitle>Thanh toán qua VietQR</DialogTitle>
           </DialogHeader>
           <PaymentQr
             bankBin={bankBin}

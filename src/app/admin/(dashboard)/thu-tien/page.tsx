@@ -23,7 +23,7 @@ export default async function ThuTienPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-xl font-semibold">Thu tiền</h1>
+        <h1 className="text-xl font-semibold">Thanh toán</h1>
         <p className="text-sm text-muted-foreground">
           Nhập số tiền để tạo mã VietQR cho khách chuyển khoản.
         </p>

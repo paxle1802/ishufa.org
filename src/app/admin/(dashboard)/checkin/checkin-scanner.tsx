@@ -17,12 +17,14 @@ import { lookupBookingByCode, type ScannedBooking } from "./actions";
 const vnd = new Intl.NumberFormat("vi-VN");
 const STATUS_LABEL: Record<BookingStatus, string> = {
   confirmed: "Đã xác nhận",
+  arrived: "Đã đến",
   completed: "Hoàn tất",
   no_show: "Vắng mặt",
   cancelled: "Đã huỷ",
 };
 const STATUS_CLASS: Record<BookingStatus, string> = {
   confirmed: "bg-blue-100 text-blue-700",
+  arrived: "bg-violet-100 text-violet-700",
   completed: "bg-green-100 text-green-700",
   no_show: "bg-amber-100 text-amber-700",
   cancelled: "bg-muted text-muted-foreground",
@@ -88,17 +90,16 @@ export function CheckinScanner() {
     }
   }
 
-  function markCompleted() {
+  function markArrived() {
     if (!result) return;
     startTransition(async () => {
-      const res = await setBookingStatus(result.id, "completed");
+      const res = await setBookingStatus(result.id, "arrived");
       if (!res.ok) {
         toast.error(res.error);
         return;
       }
-      if (res.warning) toast.warning(res.warning);
-      else toast.success("Đã đánh dấu hoàn tất");
-      setResult({ ...result, status: "completed" });
+      toast.success("Đã xác nhận khách đến");
+      setResult({ ...result, status: "arrived" });
     });
   }
 
@@ -173,8 +174,8 @@ export function CheckinScanner() {
             </div>
 
             {result.status === "confirmed" && (
-              <Button className="w-full" disabled={pending} onClick={markCompleted}>
-                Đánh dấu hoàn tất
+              <Button className="w-full" disabled={pending} onClick={markArrived}>
+                Xác nhận khách đã tới
               </Button>
             )}
             <Button
