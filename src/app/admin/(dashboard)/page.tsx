@@ -1,13 +1,8 @@
-import {
-  getActivePackagesForPhones,
-  listBookingsForDay,
-} from "@/lib/booking/queries";
-import { getShopById } from "@/lib/db/queries";
+import { listBookingsForDay } from "@/lib/booking/queries";
 import { getTodayStats } from "@/lib/db/queries-dashboard";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { Card, CardContent } from "@/components/ui/card";
-import type { ActivePackage } from "./bookings/booking-status-control";
-import { BookingList, type ShopBank } from "./bookings/booking-list";
+import { TodayAppointments } from "./today-appointments";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 
@@ -15,50 +10,37 @@ function todayVn(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Saigon" }).format(new Date());
 }
 
-/** Dashboard "Hôm nay": thống kê nhanh + lịch hẹn trong ngày. */
+/** Dashboard "Hôm nay": thống kê chung + danh sách lịch hẹn (chỉ đọc). */
 export default async function AdminTodayPage() {
   const { shopId } = await requireAdmin();
   const day = todayVn();
 
-  const [bookings, stats, shop] = await Promise.all([
+  const [bookings, stats] = await Promise.all([
     listBookingsForDay(shopId, day),
     getTodayStats(shopId, day),
-    getShopById(shopId),
   ]);
 
-  const bank: ShopBank | null =
-    shop?.bankBin && shop.bankAccountNumber && shop.bankAccountName
-      ? {
-          bankBin: shop.bankBin,
-          accountNumber: shop.bankAccountNumber,
-          accountName: shop.bankAccountName,
-        }
-      : null;
-
-  const rows = await getActivePackagesForPhones(
-    shopId,
-    [...new Set(bookings.map((b) => b.customerPhone))],
-  );
-  const packagesByPhone: Record<string, ActivePackage[]> = {};
-  for (const r of rows) {
-    (packagesByPhone[r.phone] ??= []).push({
-      id: r.id,
-      name: r.name,
-      sessionsRemaining: r.sessionsRemaining,
-    });
-  }
+  const done = bookings.filter((b) => b.status === "completed").length;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <h1 className="text-xl font-semibold">Hôm nay</h1>
 
-      <div className="grid grid-cols-3 gap-2">
+      {/* Thống kê chung */}
+      <div className="grid grid-cols-2 gap-2.5">
         <StatCard label="Doanh thu" value={`${vnd.format(stats.revenue)}đ`} />
         <StatCard label="Lịch hẹn" value={String(stats.bookingsToday)} />
-        <StatCard label="KM chạy" value={String(stats.activePromos)} />
+        <StatCard label="Đã thu tiền" value={String(done)} />
+        <StatCard label="KM đang chạy" value={String(stats.activePromos)} />
       </div>
 
-      <BookingList bookings={bookings} packagesByPhone={packagesByPhone} bank={bank} />
+      {/* Lịch hẹn hôm nay — chỉ đọc, thao tác nằm ở tab Bookings */}
+      <div>
+        <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+          Lịch hẹn hôm nay
+        </h2>
+        <TodayAppointments bookings={bookings} />
+      </div>
     </div>
   );
 }
@@ -66,9 +48,9 @@ export default async function AdminTodayPage() {
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <Card>
-      <CardContent className="p-3 text-center">
-        <p className="truncate text-base font-bold">{value}</p>
-        <p className="text-xs text-muted-foreground">{label}</p>
+      <CardContent className="p-4 text-center">
+        <p className="font-heading truncate text-2xl font-semibold">{value}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
       </CardContent>
     </Card>
   );
