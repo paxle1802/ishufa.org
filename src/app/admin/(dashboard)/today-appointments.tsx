@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 
-// Gộp trạng thái về 3 badge yêu cầu: đang làm / đã thu tiền / huỷ (+ vắng).
+// confirmed = đã đặt (chưa tới) · arrived = đang làm · completed = đã thu tiền · cancelled = huỷ.
 const BADGE: Record<BookingStatus, { label: string; cls: string }> = {
-  confirmed: { label: "Đang làm", cls: "bg-blue-100 text-blue-700" },
-  arrived: { label: "Đang làm", cls: "bg-blue-100 text-blue-700" },
+  confirmed: { label: "Đã đặt", cls: "bg-blue-100 text-blue-700" },
+  arrived: { label: "Đang làm", cls: "bg-violet-100 text-violet-700" },
   completed: { label: "Đã thu tiền", cls: "bg-green-100 text-green-700" },
   cancelled: { label: "Huỷ", cls: "bg-muted text-muted-foreground line-through" },
   no_show: { label: "Huỷ", cls: "bg-muted text-muted-foreground line-through" },
