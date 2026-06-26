@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Shop } from "@/lib/db/schema";
+import { normalizeAccountName } from "@/lib/vietqr/account-name";
 import { BANKS } from "@/lib/vietqr/banks";
 
 import { saveBankInfo } from "./actions";
@@ -85,8 +86,9 @@ export function BankForm({ shop }: { shop: Shop }) {
           <Input
             id="bank-account-name"
             value={accountName}
-            onChange={(e) => setAccountName(e.target.value)}
+            onChange={(e) => setAccountName(normalizeAccountName(e.target.value))}
             placeholder="VD: NGUYEN THI HUONG"
+            autoCapitalize="characters"
           />
         </div>
       </CardContent>
