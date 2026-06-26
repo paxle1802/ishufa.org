@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth/client";
@@ -19,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,16 +30,16 @@ export default function AdminLoginPage() {
       email: resolveLoginEmail(email),
       password,
     });
-    setLoading(false);
 
     if (error) {
       toast.error("Đăng nhập thất bại", {
-        description: "Email hoặc mật khẩu không đúng.",
+        description: "Số điện thoại hoặc mật khẩu không đúng.",
       });
+      setLoading(false);
       return;
     }
-    router.push("/admin");
-    router.refresh();
+    // Hard navigation: server đọc session tươi rồi vào dashboard (tránh treo soft-nav).
+    window.location.assign("/admin");
   }
 
   return (

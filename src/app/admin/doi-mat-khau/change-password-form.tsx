@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -11,23 +10,21 @@ import { Label } from "@/components/ui/label";
 import { forceSetPassword } from "./actions";
 
 export function ChangePasswordForm() {
-  const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    startTransition(async () => {
-      const res = await forceSetPassword(password, confirm);
-      if (!res.ok) {
-        toast.error(res.error);
-        return;
-      }
-      toast.success("Đã đổi mật khẩu");
-      router.push("/admin");
-      router.refresh();
-    });
+    setPending(true);
+    const res = await forceSetPassword(password, confirm);
+    if (!res.ok) {
+      toast.error(res.error);
+      setPending(false);
+      return;
+    }
+    // Hard navigation: server đọc lại session tươi (đã bỏ cờ đổi mật khẩu).
+    window.location.assign("/admin");
   }
 
   return (
