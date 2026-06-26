@@ -1,23 +1,19 @@
-import { Pool } from "@neondatabase/serverless";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { drizzle } from "drizzle-orm/neon-serverless";
 
+import { pooledDb } from "@/lib/db/pooled";
 import * as schema from "@/lib/db/schema";
 import { env } from "@/lib/env";
 
 /**
- * Better Auth cần transaction (tạo user + account) nên dùng neon-serverless
- * (Pool qua websocket) — khác db chính dùng neon-http (stateless, no transaction).
+ * Better Auth cần transaction (tạo user + account) nên dùng pooledDb
+ * (neon-serverless/websocket) — khác db chính neon-http (no transaction).
  */
-const pool = new Pool({ connectionString: env.DATABASE_URL });
-const authDb = drizzle(pool, { schema });
-
 export const auth = betterAuth({
   baseURL: env.NEXT_PUBLIC_APP_URL,
   secret: env.BETTER_AUTH_SECRET,
-  database: drizzleAdapter(authDb, {
+  database: drizzleAdapter(pooledDb, {
     provider: "pg",
     schema: {
       user: schema.user,
