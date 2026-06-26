@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
-import { Download } from "lucide-react";
+import { ImageDown } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +27,7 @@ const CAPTION_PAD = 12;
 
 export function QrCard({ appUrl, slug, shopName }: QrCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [saving, setSaving] = useState(false);
   const targetUrl = `${appUrl}/s/${slug}`;
 
   useEffect(() => {
@@ -41,42 +43,74 @@ export function QrCard({ appUrl, slug, shopName }: QrCardProps) {
     });
   }, [targetUrl]);
 
-  function handleDownload() {
+  /** Vẽ QR + tên shop ra canvas rồi trả về Blob PNG. */
+  function buildImageBlob(): Promise<Blob | null> {
     const sourceCanvas = canvasRef.current;
-    if (!sourceCanvas) return;
+    if (!sourceCanvas) return Promise.resolve(null);
 
-    // Build a download canvas: QR + caption text below
     const captionHeight = FONT_SIZE + CAPTION_PAD * 2;
     const dl = document.createElement("canvas");
     dl.width = QR_SIZE;
     dl.height = QR_SIZE + captionHeight;
 
     const ctx = dl.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) return Promise.resolve(null);
 
-    // White background
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, dl.width, dl.height);
-
-    // Copy QR from the displayed canvas
     ctx.drawImage(sourceCanvas, 0, 0, QR_SIZE, QR_SIZE);
 
-    // Draw shop name caption
     ctx.fillStyle = "#0f172a";
     ctx.font = `${FONT_SIZE}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(
-      shopName,
-      QR_SIZE / 2,
-      QR_SIZE + CAPTION_PAD + FONT_SIZE / 2,
-      QR_SIZE - 16,
-    );
+    ctx.fillText(shopName, QR_SIZE / 2, QR_SIZE + CAPTION_PAD + FONT_SIZE / 2, QR_SIZE - 16);
 
+    return new Promise((resolve) => dl.toBlob(resolve, "image/png"));
+  }
+
+  function downloadBlob(blob: Blob) {
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = dl.toDataURL("image/png");
+    a.href = url;
     a.download = `qr-${slug}.png`;
     a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * iOS: dùng Web Share API (file ảnh) → share sheet có "Save Image" lưu vào
+   * Photos. Desktop/không hỗ trợ chia sẻ file → tải PNG.
+   */
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const blob = await buildImageBlob();
+      if (!blob) return;
+
+      const file = new File([blob], `qr-${slug}.png`, { type: "image/png" });
+      const nav = navigator as Navigator & {
+        canShare?: (data: ShareData) => boolean;
+      };
+
+      if (nav.canShare?.({ files: [file] })) {
+        try {
+          await nav.share({ files: [file], title: `Mã QR đặt lịch ${shopName}` });
+          return;
+        } catch (err) {
+          // Người dùng huỷ share sheet → không coi là lỗi.
+          if (err instanceof DOMException && err.name === "AbortError") return;
+          // Lỗi khác → rơi xuống tải file.
+        }
+      }
+
+      downloadBlob(blob);
+    } catch (err) {
+      console.error("[QrCard] save error", err);
+      toast.error("Không lưu được ảnh QR, vui lòng thử lại.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -91,9 +125,15 @@ export function QrCard({ appUrl, slug, shopName }: QrCardProps) {
       </CardContent>
 
       <CardFooter>
-        <Button variant="outline" size="sm" onClick={handleDownload} className="w-full gap-2">
-          <Download />
-          Tải PNG
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full gap-2"
+        >
+          <ImageDown />
+          {saving ? "Đang lưu..." : "Lưu vào ảnh"}
         </Button>
       </CardFooter>
     </Card>
