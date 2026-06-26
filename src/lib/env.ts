@@ -10,10 +10,15 @@ const serverSchema = z.object({
   BETTER_AUTH_SECRET: z.string().min(16, "BETTER_AUTH_SECRET cần >= 16 ký tự"),
   // Tùy chọn ở local; bắt buộc khi dùng upload logo (Vercel Blob)
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  // Web Push (VAPID) — tùy chọn; thiếu thì tính năng thông báo đẩy tự tắt.
+  VAPID_PUBLIC_KEY: z.string().optional(),
+  VAPID_PRIVATE_KEY: z.string().optional(),
+  VAPID_SUBJECT: z.string().optional(),
 });
 
 const clientSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().optional(),
 });
 
 function parseEnv() {

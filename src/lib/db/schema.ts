@@ -105,6 +105,25 @@ export const expenses = pgTable(
 );
 export type Expense = typeof expenses.$inferSelect;
 
+/** Đăng ký Web Push của thiết bị chủ shop (nhận thông báo đặt/huỷ lịch). */
+export const pushSubscriptions = pgTable(
+  "push_subscriptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    shopId: uuid("shop_id")
+      .notNull()
+      .references(() => shops.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("push_subscriptions_endpoint_uniq").on(t.endpoint),
+    index("push_subscriptions_shop_idx").on(t.shopId),
+  ],
+);
+
 // --- Dịch vụ ---
 export const services = pgTable(
   "services",

@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 
 import { autoCancelStaleBookings } from "@/lib/booking/auto-cancel";
 import { createBooking, SlotUnavailableError } from "@/lib/booking/create-booking";
+import { sendShopNotification } from "@/lib/push/send";
+import { formatLocal } from "@/lib/tz";
 import { PromoInvalidError } from "@/lib/promotions/apply-promotion";
 import { getAvailability } from "@/lib/availability/get-availability";
 import { getShopBySlug, listActiveServices } from "@/lib/db/queries";
@@ -141,6 +143,19 @@ export async function createBookingAction(
       })),
       promoCode: data.promoCode,
     });
+
+    // Thông báo đẩy cho chủ shop (best-effort, không chặn luồng đặt).
+    try {
+      await sendShopNotification(shop.id, {
+        title: "Có khách đặt lịch mới",
+        body: `${data.customerName} · ${formatLocal(startAt, "HH:mm dd/MM")} · ${chosen
+          .map((s) => s.name)
+          .join(", ")}`,
+        url: "/admin/bookings",
+      });
+    } catch {
+      /* bỏ qua lỗi gửi thông báo */
+    }
 
     return {
       ok: true,
