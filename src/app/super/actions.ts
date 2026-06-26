@@ -9,6 +9,7 @@ import { requireSuperAdmin } from "@/lib/auth/require-admin";
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db";
 import { account, shops, user } from "@/lib/db/schema";
+import { loginIdentifierFromEmail, phoneToLoginEmail } from "@/lib/phone-login";
 import { slugify } from "@/lib/slug";
 import { createShopSchema } from "@/lib/validation/shop-provision";
 
@@ -29,13 +30,6 @@ async function uniqueSlug(base: string): Promise<string> {
   return `${base}-${nanoid(5)}`;
 }
 
-async function uniqueEmail(base: string): Promise<string> {
-  const existing = await db.select({ id: user.id }).from(user).where(eq(user.email, base));
-  if (existing.length === 0) return base;
-  const [local, domain] = base.split("@");
-  return `${local}-${nanoid(4)}@${domain}`;
-}
-
 /** Super admin tạo shop mới + tài khoản chủ shop (sinh mật khẩu trả về 1 lần). */
 export async function createShop(input: unknown): Promise<CreateResult> {
   try {
@@ -46,10 +40,18 @@ export async function createShop(input: unknown): Promise<CreateResult> {
     }
     const { shopName, ownerName, ownerPhone, ownerEmail } = parsed.data;
 
+    // Chủ shop đăng nhập bằng SĐT (lưu nội bộ dạng <sđt>@ishufa.app).
+    const loginEmail = phoneToLoginEmail(ownerPhone);
+    const taken = await db
+      .select({ id: user.id })
+      .from(user)
+      .where(eq(user.email, loginEmail))
+      .limit(1);
+    if (taken.length > 0) {
+      return { ok: false, error: "Số điện thoại này đã được dùng cho shop khác" };
+    }
+
     const slug = await uniqueSlug(slugify(shopName));
-    const loginEmail = await uniqueEmail(
-      ownerEmail && ownerEmail.length > 0 ? ownerEmail : `owner+${slug}@ishufa.app`,
-    );
     const password = genPassword();
 
     const ctx = await auth.$context;
@@ -84,7 +86,8 @@ export async function createShop(input: unknown): Promise<CreateResult> {
     });
 
     revalidatePath("/super");
-    return { ok: true, shopName, slug, loginEmail, password };
+    // Hiển thị SĐT (định danh chủ shop dùng để đăng nhập), không lộ email nội bộ.
+    return { ok: true, shopName, slug, loginEmail: loginIdentifierFromEmail(loginEmail), password };
   } catch (e) {
     console.error("[createShop]", e);
     return { ok: false, error: "Tạo shop thất bại, vui lòng thử lại." };
@@ -120,7 +123,7 @@ export async function resetShopPassword(shopId: string): Promise<ResetResult> {
       .where(eq(user.id, owner.id));
 
     revalidatePath("/super");
-    return { ok: true, loginEmail: owner.email, password };
+    return { ok: true, loginEmail: loginIdentifierFromEmail(owner.email), password };
   } catch (e) {
     console.error("[resetShopPassword]", e);
     return { ok: false, error: "Reset mật khẩu thất bại." };

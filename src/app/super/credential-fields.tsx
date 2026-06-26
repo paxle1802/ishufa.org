@@ -51,7 +51,7 @@ export function CredentialFields({
 }) {
   return (
     <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-4">
-      <CopyRow label="Email đăng nhập" value={loginEmail} />
+      <CopyRow label="Số điện thoại đăng nhập" value={loginEmail} />
       <CopyRow label="Mật khẩu" value={password} />
     </div>
   );
