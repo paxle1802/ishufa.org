@@ -92,3 +92,8 @@ external/
 # Git worktrees (local development only)
 worktrees/
 .env*.local
+
+# Playwright
+test-results/
+playwright-report/
+.playwright/
