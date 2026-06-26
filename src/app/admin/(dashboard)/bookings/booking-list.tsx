@@ -3,7 +3,6 @@
 import { Phone } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { PaymentQrDialog } from "@/components/admin/payment-qr-dialog";
 import type { BookingStatus } from "@/lib/db/schema";
 import { formatLocal } from "@/lib/tz";
 import { cn } from "@/lib/utils";
@@ -81,23 +80,17 @@ export function BookingList({
             <p className="mt-1 text-sm italic text-muted-foreground">“{b.note}”</p>
           )}
 
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-3 flex items-center justify-end">
             <span className="text-base font-bold">{vnd.format(b.totalPrice)}đ</span>
-            {bank && b.status !== "cancelled" && b.totalPrice > 0 && (
-              <PaymentQrDialog
-                bankBin={bank.bankBin}
-                accountNumber={bank.accountNumber}
-                accountName={bank.accountName}
-                amount={b.totalPrice}
-                addInfo={`TT ${b.id.slice(0, 8).toUpperCase()}`}
-              />
-            )}
           </div>
 
           <div className="mt-3">
             <BookingStatusControl
               bookingId={b.id}
               status={b.status}
+              amount={b.totalPrice}
+              addInfo={`TT ${b.id.slice(0, 8).toUpperCase()}`}
+              bank={bank}
               activePackages={packagesByPhone[b.customerPhone] ?? []}
             />
           </div>
