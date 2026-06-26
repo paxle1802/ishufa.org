@@ -8,6 +8,13 @@
       "when": 1782370406687,
       "tag": "0000_tricky_magus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782444645140,
+      "tag": "0001_little_namor",
+      "breakpoints": true
     }
   ]
 }

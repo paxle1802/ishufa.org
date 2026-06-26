@@ -1,20 +1,25 @@
 // Env được nạp qua `tsx --env-file=.env.local` (xem script "seed" trong package.json),
 // chạy trước mọi import nên db client đọc được env lúc khởi tạo.
 import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import { auth } from "../src/lib/auth/server";
 import { db } from "../src/lib/db";
 import {
+  account,
   closures,
   services,
   shops,
+  user,
   workingHours,
 } from "../src/lib/db/schema";
 
 /**
- * Seed 1 shop demo: dịch vụ mẫu + giờ mở cửa (có nghỉ trưa) + 1 ngày nghỉ.
+ * Seed 1 shop demo: dịch vụ mẫu + giờ mở cửa (có nghỉ trưa) + 1 ngày nghỉ + admin.
  * Chạy: pnpm seed
- * Admin (Better Auth) được seed ở Phase 3.
  */
 const DEMO_SLUG = "demo";
+const ADMIN_EMAIL = "admin@demo.shufabook";
+const ADMIN_PASSWORD = "admin12345"; // MVP demo — đổi sau khi đăng nhập lần đầu.
 
 const SERVICES = [
   { name: "Cắt tóc nam", price: 80_000, durationMin: 30, category: "Cắt", sortOrder: 1 },
@@ -68,7 +73,32 @@ async function main() {
 
   console.log(`✓ Đã seed shop "${shop.name}" (slug: ${shop.slug}, id: ${shop.id})`);
   console.log(`  - ${SERVICES.length} dịch vụ, ${hourRows.length} khoảng giờ, 1 ngày nghỉ`);
-  console.log("  Lưu ý: admin login được seed ở Phase 3 (Better Auth).");
+
+  // --- Admin (Better Auth) ---
+  // Signup public bị tắt nên tạo trực tiếp: hash password bằng context Better Auth,
+  // insert user + account (provider "credential"). Xoá admin cũ để chạy lại idempotent.
+  await db.delete(user).where(eq(user.email, ADMIN_EMAIL));
+
+  const ctx = await auth.$context;
+  const hashed = await ctx.password.hash(ADMIN_PASSWORD);
+  const userId = nanoid();
+
+  await db.insert(user).values({
+    id: userId,
+    name: "Admin Demo",
+    email: ADMIN_EMAIL,
+    emailVerified: true,
+    shopId: shop.id,
+  });
+  await db.insert(account).values({
+    id: nanoid(),
+    accountId: userId,
+    providerId: "credential",
+    userId,
+    password: hashed,
+  });
+
+  console.log(`✓ Đã tạo admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD} (gắn shop ${shop.slug})`);
 }
 
 main()

@@ -17,7 +17,7 @@ import {
  * Schema multi-tenant cho ShufaBook.
  * Mọi bảng nghiệp vụ đều gắn shop_id để tách dữ liệu theo tenant.
  * Tiền lưu dạng số nguyên (VND, đồng). Thời điểm lưu timestamptz (UTC).
- * Bảng Better Auth (user/session/account/verification) thêm ở Phase 3.
+ * Bảng Better Auth (user/session/account/verification) ở ./auth-schema, re-export cuối file.
  */
 
 export const bookingStatus = pgEnum("booking_status", [
@@ -197,3 +197,6 @@ export type Closure = typeof closures.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
 export type BookingItem = typeof bookingItems.$inferSelect;
 export type BookingStatus = (typeof bookingStatus.enumValues)[number];
+
+// Bảng auth (Better Auth) — re-export để drizzle-kit + db client gom chung schema.
+export * from "./auth-schema";
