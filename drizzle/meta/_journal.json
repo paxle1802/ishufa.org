@@ -43,6 +43,13 @@
       "when": 1782462693878,
       "tag": "0005_free_energizer",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782464415284,
+      "tag": "0006_typical_tarantula",
+      "breakpoints": true
     }
   ]
 }

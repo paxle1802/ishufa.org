@@ -19,6 +19,8 @@ export const user = pgTable("user", {
   shopId: uuid("shop_id").references(() => shops.id, { onDelete: "cascade" }),
   // 'owner' = chủ shop; 'super_admin' = quản trị nền tảng (mọi shop).
   role: text("role").notNull().default("owner"),
+  // Bắt buộc đổi mật khẩu (mới tạo / sau khi super admin reset) trước khi dùng.
+  mustChangePassword: boolean("must_change_password").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

@@ -7,6 +7,7 @@ import { getAllShops } from "@/lib/db/queries-staff";
 import { formatLocal } from "@/lib/tz";
 
 import { CreateShopForm } from "./create-shop-form";
+import { ResetPasswordButton } from "./reset-password-button";
 
 export default async function SuperPage() {
   await requireSuperAdmin();
@@ -44,6 +45,9 @@ export default async function SuperPage() {
                   <Badge variant={shop.active ? "default" : "outline"} className="shrink-0 mt-0.5">
                     {shop.active ? "Hoạt động" : "Tắt"}
                   </Badge>
+                </div>
+                <div className="mt-2 flex justify-end">
+                  <ResetPasswordButton shopId={shop.id} />
                 </div>
               </CardContent>
             </Card>

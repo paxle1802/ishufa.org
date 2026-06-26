@@ -26,7 +26,10 @@ export default function AdminLoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await authClient.signIn.email({ email, password });
+    // Cho phép đăng nhập bằng email hoặc số điện thoại (super admin dùng SĐT).
+    const id = email.trim();
+    const loginEmail = /^0?\d{8,14}$/.test(id) ? `${id}@ishufa.app` : id;
+    const { error } = await authClient.signIn.email({ email: loginEmail, password });
     setLoading(false);
 
     if (error) {
@@ -49,11 +52,11 @@ export default function AdminLoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email hoặc số điện thoại</Label>
               <Input
                 id="email"
-                type="email"
-                autoComplete="email"
+                type="text"
+                autoComplete="username"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

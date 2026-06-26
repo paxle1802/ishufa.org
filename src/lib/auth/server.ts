@@ -33,6 +33,8 @@ export const auth = betterAuth({
       shopId: { type: "string", required: false, input: false },
       // 'owner' | 'super_admin' — phân quyền; client không set được.
       role: { type: "string", required: false, input: false },
+      // Bắt buộc đổi mật khẩu lần đầu / sau reset.
+      mustChangePassword: { type: "boolean", required: false, input: false },
     },
   },
   plugins: [nextCookies()],

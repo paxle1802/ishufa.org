@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
@@ -73,6 +73,7 @@ export async function createShop(input: unknown): Promise<CreateResult> {
       emailVerified: true,
       role: "owner",
       shopId: shop.id,
+      mustChangePassword: true, // bắt buộc đổi ở lần đăng nhập đầu
     });
     await db.insert(account).values({
       id: nanoid(),
@@ -87,5 +88,41 @@ export async function createShop(input: unknown): Promise<CreateResult> {
   } catch (e) {
     console.error("[createShop]", e);
     return { ok: false, error: "Tạo shop thất bại, vui lòng thử lại." };
+  }
+}
+
+type ResetResult =
+  | { ok: true; loginEmail: string; password: string }
+  | { ok: false; error: string };
+
+/** Super admin reset mật khẩu chủ shop → sinh mật khẩu mới + buộc đổi khi đăng nhập. */
+export async function resetShopPassword(shopId: string): Promise<ResetResult> {
+  try {
+    await requireSuperAdmin();
+    const [owner] = await db
+      .select({ id: user.id, email: user.email })
+      .from(user)
+      .where(and(eq(user.shopId, shopId), eq(user.role, "owner")))
+      .limit(1);
+    if (!owner) return { ok: false, error: "Shop chưa có tài khoản chủ" };
+
+    const password = genPassword();
+    const ctx = await auth.$context;
+    const hashed = await ctx.password.hash(password);
+
+    await db
+      .update(account)
+      .set({ password: hashed })
+      .where(and(eq(account.userId, owner.id), eq(account.providerId, "credential")));
+    await db
+      .update(user)
+      .set({ mustChangePassword: true })
+      .where(eq(user.id, owner.id));
+
+    revalidatePath("/super");
+    return { ok: true, loginEmail: owner.email, password };
+  } catch (e) {
+    console.error("[resetShopPassword]", e);
+    return { ok: false, error: "Reset mật khẩu thất bại." };
   }
 }
