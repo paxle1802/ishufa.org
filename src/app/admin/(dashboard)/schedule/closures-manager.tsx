@@ -60,8 +60,8 @@ export function ClosuresManager({ closures: initial }: Props) {
       <CardContent className="space-y-4">
         {/* Add form */}
         <div className="space-y-2">
-          <div className="flex gap-2">
-            <div className="flex-1 space-y-1">
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="min-w-0 space-y-1 sm:flex-1">
               <Label htmlFor="closure-date" className="text-xs">
                 Ngày
               </Label>
@@ -73,7 +73,7 @@ export function ClosuresManager({ closures: initial }: Props) {
                 className="h-9 w-full rounded-md border px-3 text-sm"
               />
             </div>
-            <div className="flex-[2] space-y-1">
+            <div className="min-w-0 space-y-1 sm:flex-[2]">
               <Label htmlFor="closure-reason" className="text-xs">
                 Lý do (tuỳ chọn)
               </Label>
