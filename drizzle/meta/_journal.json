@@ -64,6 +64,13 @@
       "when": 1782482971483,
       "tag": "0008_mute_sunspot",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1782484184083,
+      "tag": "0009_striped_slyde",
+      "breakpoints": true
     }
   ]
 }

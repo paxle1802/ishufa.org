@@ -1,0 +1,1 @@
+ALTER TABLE "shops" ALTER COLUMN "min_lead_min" SET DEFAULT 15;

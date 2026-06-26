@@ -154,7 +154,17 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
         </div>
       </header>
 
-      <div className="flex flex-col gap-6">
+      {/* Thông báo lưu ý cho khách ngay khi vào trang */}
+      <div className="px-4 pt-3">
+        <div className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3.5 text-sm leading-relaxed text-amber-900">
+          <p className="font-semibold">⏰ Vui lòng có mặt trước giờ hẹn ít nhất 5 phút.</p>
+          <p className="mt-0.5 text-amber-800">
+            Lịch hẹn sẽ tự huỷ nếu bạn đến muộn quá 10 phút so với giờ đặt.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-3 flex flex-col gap-6">
         <ServicePicker
           services={services}
           selectedIds={selectedServiceIds}
