@@ -1,35 +1,33 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { listBookingsForDay } from "@/lib/booking/queries";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { BookingList } from "./bookings/booking-list";
 
-/**
- * Trang "Hôm nay" — tạm thời ở Phase 3 (shell + auth).
- * Bookings/dịch vụ/lịch sẽ thêm ở Phase 4 & 6.
- */
-export default function AdminTodayPage() {
+function todayVn(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Saigon" }).format(new Date());
+}
+
+/** Dashboard "Hôm nay": lịch hẹn trong ngày của shop. */
+export default async function AdminTodayPage() {
+  const { shopId } = await requireAdmin();
+  const day = todayVn();
+  const bookings = await listBookingsForDay(shopId, day);
+
+  const active = bookings.filter((b) => b.status !== "cancelled");
+  const now = Date.now();
+  // Nhắc grace: booking confirmed đã qua giờ bắt đầu (khách có thể đang trễ).
+  const late = active.filter(
+    (b) => b.status === "confirmed" && b.startAt.getTime() < now,
+  ).length;
+
   return (
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-semibold">Hôm nay</h1>
         <p className="text-sm text-muted-foreground">
-          Tổng quan lịch hẹn trong ngày.
+          {active.length} lịch hẹn{late > 0 ? ` · ${late} đã tới/quá giờ` : ""}
         </p>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Chưa có dữ liệu</CardTitle>
-          <CardDescription>
-            Phần quản lý booking sẽ được bổ sung ở các phase tiếp theo.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          Đăng nhập thành công. Khung quản trị đã sẵn sàng.
-        </CardContent>
-      </Card>
+      <BookingList bookings={bookings} />
     </div>
   );
 }
