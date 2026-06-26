@@ -4,18 +4,7 @@ import { cn } from "@/lib/utils";
 import type { PublicService } from "./types";
 
 const vnd = new Intl.NumberFormat("vi-VN");
-
-// Bảng màu thẻ (nền trong suốt) — luân phiên theo thứ tự dịch vụ.
-const PALETTE = [
-  { bg: "bg-rose-500/10", border: "border-rose-400/40", text: "text-rose-600", dot: "bg-rose-500", ring: "ring-rose-500" },
-  { bg: "bg-amber-500/10", border: "border-amber-400/40", text: "text-amber-600", dot: "bg-amber-500", ring: "ring-amber-500" },
-  { bg: "bg-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-600", dot: "bg-emerald-500", ring: "ring-emerald-500" },
-  { bg: "bg-sky-500/10", border: "border-sky-400/40", text: "text-sky-600", dot: "bg-sky-500", ring: "ring-sky-500" },
-  { bg: "bg-violet-500/10", border: "border-violet-400/40", text: "text-violet-600", dot: "bg-violet-500", ring: "ring-violet-500" },
-  { bg: "bg-fuchsia-500/10", border: "border-fuchsia-400/40", text: "text-fuchsia-600", dot: "bg-fuchsia-500", ring: "ring-fuchsia-500" },
-  { bg: "bg-teal-500/10", border: "border-teal-400/40", text: "text-teal-600", dot: "bg-teal-500", ring: "ring-teal-500" },
-  { bg: "bg-orange-500/10", border: "border-orange-400/40", text: "text-orange-600", dot: "bg-orange-500", ring: "ring-orange-500" },
-];
+const formatPrice = (price: number) => vnd.format(price) + "đ";
 
 interface ServicePickerProps {
   services: PublicService[];
@@ -23,16 +12,13 @@ interface ServicePickerProps {
   onToggle: (id: string) => void;
 }
 
-const formatPrice = (price: number) => vnd.format(price) + "đ";
-
 export function ServicePicker({ services, selectedIds, onToggle }: ServicePickerProps) {
   return (
     <section className="px-4">
       <h2 className="mb-3 text-lg font-bold tracking-wide text-foreground">Chọn dịch vụ</h2>
-      <div className="grid grid-cols-2 gap-3">
-        {services.map((service, i) => {
+      <div className="flex flex-col gap-3">
+        {services.map((service) => {
           const selected = selectedIds.includes(service.id);
-          const c = PALETTE[i % PALETTE.length];
           return (
             <button
               key={service.id}
@@ -40,39 +26,41 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
               aria-pressed={selected}
               onClick={() => onToggle(service.id)}
               className={cn(
-                "relative flex min-h-[128px] flex-col rounded-2xl border p-4 text-left backdrop-blur-sm transition-all",
-                c.bg,
-                c.border,
-                selected && cn("ring-2 ring-offset-2", c.ring),
+                // 1 dịch vụ / 1 hàng, cao bằng nhau; dùng màu thương hiệu (--accent).
+                "relative flex min-h-[92px] w-full flex-col justify-center rounded-2xl border p-4 text-left transition-colors",
+                selected
+                  ? "border-[var(--accent)] bg-[var(--accent)]/10 ring-1 ring-[var(--accent)]"
+                  : "glass border-border hover:bg-muted/40",
               )}
             >
-              {/* dấu chọn */}
               {selected && (
                 <span
-                  className={cn(
-                    "absolute right-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-full",
-                    c.dot,
-                  )}
+                  className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full"
+                  style={{ backgroundColor: "var(--accent)" }}
+                  aria-hidden
                 >
-                  <svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden>
+                  <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
                     <path d="M1 5l3.5 3.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
               )}
 
-              {/* tên dịch vụ — chữ to chiếm phần trên */}
-              <span className={cn("pr-7 text-xl font-extrabold leading-tight", c.text)}>
+              {/* Tên dịch vụ — chữ to */}
+              <span className="pr-8 text-lg font-bold leading-snug text-foreground">
                 {service.name}
               </span>
 
-              {/* giá + thời gian ở đáy thẻ */}
-              <span className="mt-auto pt-3">
-                <span className="block text-lg font-bold text-foreground">
+              {/* Giá + thời gian ước tính */}
+              <span className="mt-1 flex items-baseline gap-2">
+                <span
+                  className={cn(
+                    "text-base font-bold",
+                    selected ? "text-[var(--accent)]" : "text-foreground",
+                  )}
+                >
                   {formatPrice(service.price)}
                 </span>
-                <span className="block text-sm text-muted-foreground">
-                  ~ {service.durationMin} phút
-                </span>
+                <span className="text-sm text-muted-foreground">· ~ {service.durationMin} phút</span>
               </span>
             </button>
           );
