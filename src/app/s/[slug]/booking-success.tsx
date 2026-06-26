@@ -45,11 +45,10 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
       {/* Success icon */}
       <div className="mb-6 flex flex-col items-center gap-3 text-center">
         <span
-          className="flex h-16 w-16 items-center justify-center rounded-full"
-          style={{ backgroundColor: "var(--accent)" }}
+          className="flex h-20 w-20 items-center justify-center rounded-full bg-primary"
           aria-hidden="true"
         >
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
             <path
               d="M7 16l7 7 11-13"
               stroke="white"
@@ -59,7 +58,7 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
             />
           </svg>
         </span>
-        <h1 className="text-xl font-bold">Đặt lịch thành công!</h1>
+        <h1 className="font-heading text-3xl font-semibold">Đặt lịch thành công!</h1>
         <p className="text-sm font-medium">
           Vui lòng có mặt tại salon ít nhất 5 phút trước giờ hẹn.
         </p>
@@ -123,7 +122,7 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
           )}
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Tổng thanh toán</span>
-            <span className="text-base font-bold" style={{ color: "var(--accent)" }}>
+            <span className="font-heading text-xl font-semibold text-foreground">
               {vnd.format(booking.totalPrice)}đ
             </span>
           </div>
@@ -138,8 +137,7 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
         <button
           type="button"
           onClick={() => downloadIcs(booking)}
-          className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[var(--accent)] text-sm font-semibold transition-opacity hover:opacity-80"
-          style={{ color: "var(--accent)" }}
+          className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-input text-sm font-semibold text-foreground transition-colors hover:bg-muted/60"
           aria-label="Tải file lịch .ics về thiết bị"
         >
           <svg

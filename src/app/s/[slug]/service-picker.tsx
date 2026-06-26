@@ -15,7 +15,9 @@ interface ServicePickerProps {
 export function ServicePicker({ services, selectedIds, onToggle }: ServicePickerProps) {
   return (
     <section className="px-4">
-      <h2 className="mb-3 text-lg font-bold tracking-wide text-foreground">Chọn dịch vụ</h2>
+      <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+        Chọn dịch vụ
+      </h2>
       <div className="flex flex-col gap-3">
         {services.map((service) => {
           const selected = selectedIds.includes(service.id);
@@ -26,17 +28,16 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
               aria-pressed={selected}
               onClick={() => onToggle(service.id)}
               className={cn(
-                // 1 dịch vụ / 1 hàng, cao bằng nhau; dùng màu thương hiệu (--accent).
+                // 1 dịch vụ / 1 hàng, cao bằng nhau. AURA: chọn = than chì.
                 "relative flex min-h-[92px] w-full flex-col justify-center rounded-2xl border p-4 text-left transition-colors",
                 selected
-                  ? "border-[var(--accent)] bg-[var(--accent)]/10 ring-1 ring-[var(--accent)]"
+                  ? "border-primary bg-primary/[0.04] ring-1 ring-primary"
                   : "glass border-border hover:bg-muted/40",
               )}
             >
               {selected && (
                 <span
-                  className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full"
-                  style={{ backgroundColor: "var(--accent)" }}
+                  className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary"
                   aria-hidden
                 >
                   <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
@@ -52,12 +53,7 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
 
               {/* Giá + thời gian ước tính */}
               <span className="mt-1 flex items-baseline gap-2">
-                <span
-                  className={cn(
-                    "text-base font-bold",
-                    selected ? "text-[var(--accent)]" : "text-foreground",
-                  )}
-                >
+                <span className="text-base font-bold text-foreground">
                   {formatPrice(service.price)}
                 </span>
                 <span className="text-sm text-muted-foreground">· ~ {service.durationMin} phút</span>

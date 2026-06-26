@@ -7,12 +7,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { MoreMenu } from "./more-menu";
 
-// Mỗi mục một màu riêng để dễ phân biệt + nổi bật.
 const NAV_ITEMS = [
-  { href: "/admin", label: "Hôm nay", icon: LayoutGrid, color: "text-blue-500", bg: "bg-blue-500/10" },
-  { href: "/admin/bookings", label: "Bookings", icon: CalendarDays, color: "text-indigo-500", bg: "bg-indigo-500/10" },
-  { href: "/admin/thu-tien", label: "Thanh toán", icon: QrCode, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-  { href: "/admin/checkin", label: "Quét QR", icon: ScanLine, color: "text-orange-500", bg: "bg-orange-500/10" },
+  { href: "/admin", label: "Hôm nay", icon: LayoutGrid },
+  { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
+  { href: "/admin/thu-tien", label: "Thanh toán", icon: QrCode },
+  { href: "/admin/checkin", label: "Quét QR", icon: ScanLine },
 ] as const;
 
 export function AdminNav() {
@@ -21,7 +20,7 @@ export function AdminNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <ul className="mx-auto flex max-w-lg items-stretch justify-between px-1">
-        {NAV_ITEMS.map(({ href, label, icon: Icon, color, bg }) => {
+        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active =
             href === "/admin" ? pathname === href : pathname.startsWith(href);
           return (
@@ -36,10 +35,11 @@ export function AdminNav() {
                 <span
                   className={cn(
                     "flex h-8 w-12 items-center justify-center rounded-full transition-colors",
-                    active && bg,
+                    // AURA: mục đang mở = nền vàng nhạt + icon vàng đồng; còn lại trung tính.
+                    active ? "bg-accent/15 text-accent" : "text-muted-foreground",
                   )}
                 >
-                  <Icon className={cn("size-6", color)} aria-hidden />
+                  <Icon className="size-6" aria-hidden />
                 </span>
                 {label}
               </Link>

@@ -44,7 +44,7 @@ export function DateStrip({ selected, maxAdvanceDays, onSelect }: DateStripProps
 
   return (
     <section className="px-4">
-      <h2 className="mb-3 text-base font-bold tracking-wide text-foreground">
+      <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
         Chọn ngày
       </h2>
       <div className="overflow-x-auto pb-1 -mx-4 px-4">
@@ -67,10 +67,9 @@ export function DateStrip({ selected, maxAdvanceDays, onSelect }: DateStripProps
                 className={cn(
                   "flex min-h-[60px] min-w-[56px] flex-col items-center justify-center rounded-xl border px-2.5 py-2 transition-colors",
                   isSelected
-                    ? "border-[var(--accent)] text-white"
+                    ? "border-primary bg-primary text-primary-foreground"
                     : "border-border glass text-foreground hover:bg-muted/60"
                 )}
-                style={isSelected ? { backgroundColor: "var(--accent)", borderColor: "var(--accent)" } : undefined}
               >
                 <span className="text-xs font-semibold leading-none opacity-90">{weekday}</span>
                 <span className="mt-1 text-base font-bold leading-none">{dayMonth}</span>

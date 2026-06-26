@@ -29,7 +29,7 @@ export function SummaryBar({
               <p className="truncate text-sm font-medium text-muted-foreground">
                 {serviceCount} dịch vụ · {totalDurationMin} phút
               </p>
-              <p className="text-lg font-bold" style={{ color: "var(--accent)" }}>
+              <p className="font-heading text-2xl font-semibold text-foreground">
                 {vnd.format(totalPrice)}đ
               </p>
             </>
@@ -44,8 +44,7 @@ export function SummaryBar({
           disabled={!canBook || submitting}
           onClick={onBook}
           aria-label="Đặt lịch ngay"
-          className="flex h-12 min-w-[120px] shrink-0 items-center justify-center rounded-full px-6 text-base font-bold text-white shadow-lg transition-opacity disabled:opacity-40"
-          style={{ backgroundColor: "var(--accent)" }}
+          className="flex h-12 min-w-[120px] shrink-0 items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-foreground shadow-lg transition-opacity disabled:opacity-40"
         >
           {submitting ? (
             <span className="flex items-center gap-2">

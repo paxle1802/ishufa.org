@@ -49,7 +49,7 @@ export function MoreMenu() {
     <Sheet>
       <SheetTrigger className="flex w-full flex-col items-center gap-0.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground">
         <span className="flex h-8 w-12 items-center justify-center">
-          <Settings className="size-6 text-slate-500" aria-hidden />
+          <Settings className="size-6 text-muted-foreground" aria-hidden />
         </span>
         Cài đặt
       </SheetTrigger>

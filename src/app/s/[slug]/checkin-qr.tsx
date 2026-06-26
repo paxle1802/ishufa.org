@@ -69,8 +69,7 @@ export function CheckinQr({ token, shortCode }: { token: string; shortCode: stri
         type="button"
         onClick={handleSave}
         disabled={saving}
-        className="flex h-10 w-full items-center justify-center rounded-xl border border-[var(--accent)] text-sm font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
-        style={{ color: "var(--accent)" }}
+        className="flex h-11 w-full items-center justify-center rounded-full border border-input text-sm font-semibold text-foreground transition-colors hover:bg-muted/60 disabled:opacity-50"
       >
         {saving ? "Đang lưu..." : "Lưu mã QR vào ảnh"}
       </button>

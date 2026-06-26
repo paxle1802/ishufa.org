@@ -49,9 +49,6 @@ export default async function PublicBookingPage({
     );
   }
 
-  return (
-    <div style={{ ["--accent" as string]: publicShop.accentColor }}>
-      <BookingFlow shop={publicShop} services={services} />
-    </div>
-  );
+  // AURA: dùng bảng màu chung (than chì + vàng đồng), không áp màu riêng từng shop.
+  return <BookingFlow shop={publicShop} services={services} />;
 }

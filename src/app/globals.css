@@ -9,7 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,52 +48,47 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Phong cách soft premium (tham chiếu ảnh): nền trắng ngà ấm, card trắng bo góc
-   lớn + bóng mềm, chữ near-black, nút primary charcoal đậm, accent cam-đào,
-   ring cam. Light-mode. */
+/* Phong cách AURA (editorial luxury salon): nền kem ấm #fbfaf8, card trắng,
+   chữ/nút chính than chì #1c1b19, điểm nhấn vàng đồng/taupe #9a7b5f, ring #c2a886.
+   Light-mode. */
 :root {
-  --background: oklch(0.95 0.006 70); /* warm off-white */
-  --foreground: oklch(0.24 0.006 60); /* near-black ấm */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.24 0.006 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.24 0.006 60);
-  --primary: oklch(0.27 0.006 60); /* charcoal đậm (nút pill) */
-  --primary-foreground: oklch(0.98 0.004 80);
-  --secondary: oklch(0.95 0.008 65);
-  --secondary-foreground: oklch(0.27 0.006 60);
-  --muted: oklch(0.955 0.007 65);
-  --muted-foreground: oklch(0.58 0.012 60);
-  --accent: oklch(0.93 0.04 55); /* cam-đào nhạt (hover/nhấn nhẹ) */
-  --accent-foreground: oklch(0.34 0.08 45);
-  --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.91 0.006 65);
-  --input: oklch(0.91 0.006 65);
-  --ring: oklch(0.68 0.17 42); /* cam */
-  --chart-1: oklch(0.68 0.17 42);
-  --chart-2: oklch(0.78 0.13 55);
-  --chart-3: oklch(0.55 0.1 38);
-  --chart-4: oklch(0.85 0.1 65);
-  --chart-5: oklch(0.45 0.02 60);
+  --background: #fbfaf8; /* kem ấm */
+  --foreground: #1c1b19; /* than chì */
+  --card: #ffffff;
+  --card-foreground: #1c1b19;
+  --popover: #ffffff;
+  --popover-foreground: #1c1b19;
+  --primary: #1c1b19; /* than chì (nút pill) */
+  --primary-foreground: #fbfaf8;
+  --secondary: #f1ede8;
+  --secondary-foreground: #1c1b19;
+  --muted: #f1ede8;
+  --muted-foreground: #6b655d;
+  --accent: #9a7b5f; /* vàng đồng / taupe */
+  --accent-foreground: #fbfaf8;
+  --destructive: oklch(0.58 0.22 27); /* đỏ (semantic) */
+  --border: #ece7e1;
+  --input: #ece7e1;
+  --ring: #c2a886; /* vàng nhạt */
+  --chart-1: #9a7b5f;
+  --chart-2: #c2a886;
+  --chart-3: #6b655d;
+  --chart-4: #a6a29b;
+  --chart-5: #1c1b19;
   --radius: 1rem; /* bo góc lớn cho card mềm */
-  --sidebar: oklch(0.97 0.006 70);
-  --sidebar-foreground: oklch(0.24 0.006 60);
-  --sidebar-primary: oklch(0.27 0.006 60);
-  --sidebar-primary-foreground: oklch(0.98 0.004 80);
-  --sidebar-accent: oklch(0.93 0.04 55);
-  --sidebar-accent-foreground: oklch(0.34 0.08 45);
-  --sidebar-border: oklch(0.91 0.006 65);
-  --sidebar-ring: oklch(0.68 0.17 42);
+  --sidebar: #fbfaf8;
+  --sidebar-foreground: #1c1b19;
+  --sidebar-primary: #1c1b19;
+  --sidebar-primary-foreground: #fbfaf8;
+  --sidebar-accent: #9a7b5f;
+  --sidebar-accent-foreground: #fbfaf8;
+  --sidebar-border: #ece7e1;
+  --sidebar-ring: #c2a886;
 }
 
-/* Gradient cam-đào cho hero/feature card (như thẻ "Welcome Back") */
+/* Feature card AURA = nền than chì đặc (không còn gradient cam) */
 .brand-gradient {
-  background-image: linear-gradient(
-    135deg,
-    oklch(0.66 0.18 38) 0%,
-    oklch(0.74 0.16 50) 45%,
-    oklch(0.82 0.1 62) 100%
-  );
+  background-color: #1c1b19;
 }
 
 /* Dark theme kiểu iProyal: nền teal-charcoal, surface teal đậm, viền teal mảnh,
@@ -141,12 +136,13 @@
     @apply font-sans;
     font-size: 17px; /* chữ to & dễ đọc hơn (mặc định 16px) */
   }
+  /* AURA: tiêu đề trang dùng serif Cormorant Garamond (editorial). */
+  h1 {
+    @apply font-heading;
+  }
   body {
     @apply text-foreground;
-    /* Nền trắng ngà ấm, có vầng cam rất nhẹ ở góc cho chiều sâu */
-    background:
-      radial-gradient(70% 40% at 100% -5%, oklch(0.8 0.09 55 / 0.18), transparent 70%),
-      var(--background);
+    background: var(--background);
     background-attachment: fixed;
   }
   /* Card trắng, bo góc lớn, đổ bóng mềm (soft premium) */

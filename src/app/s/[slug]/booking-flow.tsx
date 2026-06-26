@@ -131,23 +131,27 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
 
   return (
     <div className="mx-auto max-w-md pb-28">
-      {/* Shop header — thẻ gradient cam-đào, chữ trắng */}
+      {/* Shop header — thẻ feature AURA nền than chì, chữ trắng + nhấn vàng */}
       <header className="px-4 pt-5">
-        <div className="brand-gradient relative overflow-hidden rounded-3xl p-5 text-white shadow-lg">
+        <div className="relative overflow-hidden rounded-3xl bg-[#1c1b19] p-6 text-white shadow-lg">
           {shop.logoUrl && (
             <img
               src={shop.logoUrl}
               alt={`Logo ${shop.name}`}
-              className="mb-3 h-12 w-12 rounded-2xl object-cover ring-2 ring-white/40"
+              className="mb-4 h-12 w-12 rounded-2xl object-cover ring-2 ring-white/20"
             />
           )}
-          <p className="text-sm font-medium text-white/80">Đặt lịch tại</p>
-          <h1 className="mt-1 text-2xl font-bold leading-snug">{shop.name}</h1>
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#c2a886]">
+            Đặt lịch tại
+          </p>
+          <h1 className="font-heading mt-2 text-3xl font-semibold leading-tight">
+            {shop.name}
+          </h1>
           {shop.address && (
-            <p className="mt-1.5 text-sm text-white/90">{shop.address}</p>
+            <p className="mt-2 text-sm text-white/70">{shop.address}</p>
           )}
           {shop.description && (
-            <p className="mt-2 text-sm leading-relaxed text-white/85">
+            <p className="mt-2 text-sm leading-relaxed text-white/65">
               {shop.description}
             </p>
           )}
@@ -156,9 +160,11 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
 
       {/* Thông báo lưu ý cho khách ngay khi vào trang */}
       <div className="px-4 pt-3">
-        <div className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3.5 text-sm leading-relaxed text-amber-900">
-          <p className="font-semibold">⏰ Vui lòng có mặt trước giờ hẹn ít nhất 5 phút.</p>
-          <p className="mt-0.5 text-amber-800">
+        <div className="rounded-2xl border border-border bg-secondary p-4 text-sm leading-relaxed">
+          <p className="font-semibold text-accent">
+            Vui lòng có mặt trước giờ hẹn ít nhất 5 phút.
+          </p>
+          <p className="mt-0.5 text-muted-foreground">
             Lịch hẹn sẽ tự huỷ nếu bạn đến muộn quá 10 phút so với giờ đặt.
           </p>
         </div>

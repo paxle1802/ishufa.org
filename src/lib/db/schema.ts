@@ -44,7 +44,7 @@ export const shops = pgTable(
     description: text("description"),
     contactPhone: text("contact_phone"),
     email: text("email"),
-    accentColor: text("accent_color").notNull().default("#F26430"),
+    accentColor: text("accent_color").notNull().default("#9a7b5f"),
     logoUrl: text("logo_url"),
     // Tài khoản nhận tiền (VietQR): BIN ngân hàng + số TK + tên chủ TK.
     bankBin: text("bank_bin"),

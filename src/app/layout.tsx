@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Geist_Mono, Montserrat } from "next/font/google";
 import { PwaRegister } from "@/components/pwa-register";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin", "latin-ext"],
+// Body: Montserrat. Hỗ trợ tiếng Việt (subset vietnamese).
+const montserrat = Montserrat({
+  variable: "--font-sans",
+  subsets: ["latin", "vietnamese"],
+});
+
+// Tiêu đề lớn (editorial): Cormorant Garamond serif.
+const cormorant = Cormorant_Garamond({
+  variable: "--font-heading",
+  weight: ["500", "600", "700"],
+  subsets: ["latin", "vietnamese"],
 });
 
 const geistMono = Geist_Mono({
@@ -37,7 +45,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#ECE8E4",
+  themeColor: "#fbfaf8",
 };
 
 export default function RootLayout({
@@ -48,7 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${cormorant.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}
