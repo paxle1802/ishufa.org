@@ -24,7 +24,7 @@ export function CustomerForm({
 }: CustomerFormProps) {
   return (
     <section className="px-4">
-      <h2 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+      <h2 className="mb-3 text-base font-bold tracking-wide text-foreground">
         Thông tin khách hàng
       </h2>
       <div className="flex flex-col gap-4">

@@ -14,7 +14,7 @@ export function SlotGrid({ slots, selected, loading, onSelect }: SlotGridProps) 
   if (loading) {
     return (
       <section className="px-4">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+        <h2 className="mb-3 text-base font-bold tracking-wide text-foreground">
           Chọn giờ
         </h2>
         <div className="grid grid-cols-4 gap-2">
@@ -33,10 +33,10 @@ export function SlotGrid({ slots, selected, loading, onSelect }: SlotGridProps) 
   if (slots.length === 0) {
     return (
       <section className="px-4">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+        <h2 className="mb-3 text-base font-bold tracking-wide text-foreground">
           Chọn giờ
         </h2>
-        <p className="rounded-xl border border-dashed border-border py-6 text-center text-sm text-muted-foreground">
+        <p className="rounded-xl border border-dashed border-border py-6 text-center text-base text-muted-foreground">
           Hết chỗ hoặc ngày nghỉ — chọn ngày khác
         </p>
       </section>
@@ -60,10 +60,10 @@ export function SlotGrid({ slots, selected, loading, onSelect }: SlotGridProps) 
               aria-label={`Chọn giờ ${label}`}
               onClick={() => onSelect(iso)}
               className={cn(
-                "flex h-10 items-center justify-center rounded-lg border text-sm font-medium transition-colors",
+                "flex h-11 items-center justify-center rounded-lg border text-base font-semibold transition-colors",
                 isSelected
                   ? "border-[var(--accent)] text-white"
-                  : "border-border bg-card hover:bg-muted/60 text-foreground"
+                  : "border-border glass hover:bg-muted/60 text-foreground"
               )}
               style={
                 isSelected

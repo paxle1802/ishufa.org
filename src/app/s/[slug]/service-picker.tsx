@@ -27,13 +27,13 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
 
   return (
     <section className="px-4">
-      <h2 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+      <h2 className="mb-3 text-base font-bold tracking-wide text-foreground">
         Chọn dịch vụ
       </h2>
       <div className="flex flex-col gap-4">
         {Array.from(groups.entries()).map(([category, items]) => (
           <div key={category}>
-            <p className="mb-2 text-xs font-medium text-muted-foreground">{category}</p>
+            <p className="mb-2 text-sm font-semibold text-muted-foreground">{category}</p>
             <div className="flex flex-col gap-2">
               {items.map((service) => {
                 const selected = selectedIds.includes(service.id);
@@ -44,10 +44,10 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
                     aria-pressed={selected}
                     onClick={() => onToggle(service.id)}
                     className={cn(
-                      "flex min-h-[56px] w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors",
+                      "flex min-h-[60px] w-full items-start gap-3 rounded-xl border p-3.5 text-left transition-colors",
                       selected
-                        ? "border-[var(--accent)] bg-[var(--accent)]/10"
-                        : "border-border bg-card hover:bg-muted/50"
+                        ? "border-[var(--accent)] bg-[var(--accent)]/15"
+                        : "border-border glass hover:bg-muted/50"
                     )}
                   >
                     {/* Selection indicator */}
@@ -79,15 +79,15 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
                     </span>
 
                     <span className="flex-1 min-w-0">
-                      <span className="block font-medium text-sm leading-snug">{service.name}</span>
+                      <span className="block font-semibold text-base leading-snug">{service.name}</span>
                       {service.description && (
-                        <span className="block text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                        <span className="block text-sm text-muted-foreground mt-0.5 line-clamp-2">
                           {service.description}
                         </span>
                       )}
-                      <span className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="mt-1.5 flex items-center gap-2 text-sm text-muted-foreground">
                         <span
-                          className={cn("font-semibold", selected && "text-[var(--accent)]")}
+                          className={cn("font-bold text-foreground", selected && "text-[var(--accent)]")}
                         >
                           {formatPrice(service.price)}
                         </span>

@@ -20,16 +20,16 @@ export function SummaryBar({
   onBook,
 }: SummaryBarProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-sm">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/70 px-4 py-3 backdrop-blur-xl">
       <div className="mx-auto flex max-w-md items-center gap-3">
         {/* Summary text */}
         <div className="flex-1 min-w-0">
           {serviceCount > 0 ? (
             <>
-              <p className="truncate text-sm font-medium">
+              <p className="truncate text-sm font-medium text-muted-foreground">
                 {serviceCount} dịch vụ · {totalDurationMin} phút
               </p>
-              <p className="text-sm font-semibold" style={{ color: "var(--accent)" }}>
+              <p className="text-lg font-bold" style={{ color: "var(--accent)" }}>
                 {vnd.format(totalPrice)}đ
               </p>
             </>
@@ -44,7 +44,7 @@ export function SummaryBar({
           disabled={!canBook || submitting}
           onClick={onBook}
           aria-label="Đặt lịch ngay"
-          className="flex h-11 min-w-[110px] shrink-0 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white transition-opacity disabled:opacity-40"
+          className="flex h-12 min-w-[120px] shrink-0 items-center justify-center rounded-xl px-5 text-base font-bold text-white shadow-lg transition-opacity disabled:opacity-40"
           style={{ backgroundColor: "var(--accent)" }}
         >
           {submitting ? (

@@ -65,7 +65,7 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
       </div>
 
       {/* Booking detail card */}
-      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <div className="glass rounded-2xl border border-border p-5 shadow-sm">
         {/* Booking code */}
         <div className="mb-4 flex items-center justify-between border-b border-dashed border-border pb-4">
           <span className="text-sm text-muted-foreground">Mã đặt lịch</span>

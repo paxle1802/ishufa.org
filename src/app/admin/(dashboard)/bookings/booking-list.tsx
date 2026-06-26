@@ -42,7 +42,7 @@ export function BookingList({
   return (
     <ul className="flex flex-col gap-3">
       {bookings.map((b) => (
-        <li key={b.id} className="rounded-xl border bg-card p-3">
+        <li key={b.id} className="glass rounded-xl border p-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="font-semibold">

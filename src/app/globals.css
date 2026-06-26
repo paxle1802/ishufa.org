@@ -91,16 +91,16 @@
   color-scheme: dark;
   --background: oklch(0.17 0.015 200); /* charcoal-teal */
   --foreground: oklch(0.97 0.008 196);
-  --card: oklch(0.225 0.025 199); /* surface teal đậm như thẻ ảnh */
-  --card-foreground: oklch(0.97 0.008 196);
-  --popover: oklch(0.225 0.025 199);
-  --popover-foreground: oklch(0.97 0.008 196);
-  --primary: oklch(0.78 0.12 192); /* teal sáng (như nút Copy list) */
-  --primary-foreground: oklch(0.18 0.025 200);
-  --secondary: oklch(0.27 0.028 199);
-  --secondary-foreground: oklch(0.97 0.008 196);
-  --muted: oklch(0.25 0.022 199);
-  --muted-foreground: oklch(0.74 0.025 197);
+  --card: oklch(0.27 0.03 199 / 0.55); /* trong mờ → liquid glass */
+  --card-foreground: oklch(0.98 0.008 196);
+  --popover: oklch(0.2 0.025 200 / 0.96); /* đục để dropdown/sheet dễ đọc */
+  --popover-foreground: oklch(0.98 0.008 196);
+  --primary: oklch(0.8 0.13 192); /* teal sáng (như nút Copy list) */
+  --primary-foreground: oklch(0.16 0.025 200);
+  --secondary: oklch(0.3 0.03 199 / 0.6);
+  --secondary-foreground: oklch(0.98 0.008 196);
+  --muted: oklch(0.27 0.022 199);
+  --muted-foreground: oklch(0.84 0.03 197); /* sáng hơn cho dễ đọc */
   --accent: oklch(0.3 0.035 198);
   --accent-foreground: oklch(0.97 0.008 196);
   --destructive: oklch(0.66 0.2 25);
@@ -126,10 +126,32 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    font-size: 17px; /* chữ to & dễ đọc hơn (mặc định 16px) */
+  }
+  body {
+    @apply text-foreground;
+    /* Nền tối có các vầng sáng teal → tạo chiều sâu cho hiệu ứng glass */
+    background:
+      radial-gradient(60% 45% at 18% -5%, oklch(0.4 0.08 194 / 0.35), transparent 70%),
+      radial-gradient(55% 45% at 105% 8%, oklch(0.42 0.09 184 / 0.28), transparent 70%),
+      var(--background);
+    background-attachment: fixed;
+  }
+  /* Liquid glass: mọi Card trong mờ + làm mờ hậu cảnh + viền sáng nhẹ */
+  [data-slot="card"] {
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    box-shadow: inset 0 1px 0 0 oklch(1 0 0 / 0.06);
+  }
+}
+
+@layer components {
+  /* Tiện ích glass cho bề mặt tuỳ biến (chip, item, thanh nav...) */
+  .glass {
+    background-color: var(--card);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
   }
 }

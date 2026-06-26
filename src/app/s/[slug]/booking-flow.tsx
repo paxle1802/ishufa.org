@@ -140,12 +140,12 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
             className="mb-3 h-14 w-14 rounded-xl object-cover"
           />
         )}
-        <h1 className="text-xl font-bold leading-snug">{shop.name}</h1>
+        <h1 className="text-2xl font-bold leading-snug">{shop.name}</h1>
         {shop.address && (
-          <p className="mt-0.5 text-sm text-muted-foreground">{shop.address}</p>
+          <p className="mt-1 text-base text-muted-foreground">{shop.address}</p>
         )}
         {shop.description && (
-          <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+          <p className="mt-2 text-base text-muted-foreground leading-relaxed">
             {shop.description}
           </p>
         )}
