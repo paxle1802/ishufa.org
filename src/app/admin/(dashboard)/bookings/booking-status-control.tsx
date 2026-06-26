@@ -68,13 +68,14 @@ export function BookingStatusControl({
 
   const isActive = status === "confirmed" || status === "arrived";
 
-  // Trạng thái cuối (hoàn tất / huỷ / vắng) → cho mở lại để sửa nhầm.
+  // Trạng thái cuối (hoàn tất / huỷ / tự huỷ no-show) → mở lại.
+  // Phục hồi về "arrived" (khách có mặt) để không bị quét tự-huỷ lại.
   if (!isActive) {
     return (
       <Button
         variant="outline"
         disabled={pending}
-        onClick={() => apply("confirmed")}
+        onClick={() => apply("arrived")}
         className="h-9 w-full text-sm"
       >
         Mở lại lịch

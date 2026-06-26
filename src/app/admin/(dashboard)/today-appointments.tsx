@@ -14,7 +14,7 @@ const BADGE: Record<BookingStatus, { label: string; cls: string }> = {
   arrived: { label: "Đang làm", cls: "bg-blue-100 text-blue-700" },
   completed: { label: "Đã thu tiền", cls: "bg-green-100 text-green-700" },
   cancelled: { label: "Huỷ", cls: "bg-muted text-muted-foreground line-through" },
-  no_show: { label: "Vắng", cls: "bg-amber-100 text-amber-700" },
+  no_show: { label: "Huỷ", cls: "bg-muted text-muted-foreground line-through" },
 };
 
 /** Danh sách lịch hẹn hôm nay — CHỈ ĐỌC (thao tác nằm ở tab Bookings). */
