@@ -17,3 +17,19 @@ export function utcToZoned(utcDate: Date): Date {
 export function formatLocal(date: Date, fmt: string): string {
   return formatInTimeZone(date, APP_TIME_ZONE, fmt);
 }
+
+/** Khoảng [from, to) UTC của 1 ngày "yyyy-MM-dd" theo giờ địa phương. */
+export function dayRange(date: string): { from: Date; to: Date } {
+  const from = fromZonedTime(`${date}T00:00:00`, APP_TIME_ZONE);
+  return { from, to: new Date(from.getTime() + 86_400_000) };
+}
+
+/** Khoảng [from, to) UTC của 1 tháng "yyyy-MM" theo giờ địa phương. */
+export function monthRange(month: string): { from: Date; to: Date } {
+  const [y, m] = month.split("-").map(Number);
+  const from = fromZonedTime(`${month}-01T00:00:00`, APP_TIME_ZONE);
+  const nextMonth =
+    m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, "0")}`;
+  const to = fromZonedTime(`${nextMonth}-01T00:00:00`, APP_TIME_ZONE);
+  return { from, to };
+}

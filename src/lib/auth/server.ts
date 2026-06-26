@@ -31,6 +31,8 @@ export const auth = betterAuth({
     additionalFields: {
       // Gắn admin với 1 shop; input:false để client không tự set được.
       shopId: { type: "string", required: false, input: false },
+      // 'owner' | 'super_admin' — phân quyền; client không set được.
+      role: { type: "string", required: false, input: false },
     },
   },
   plugins: [nextCookies()],

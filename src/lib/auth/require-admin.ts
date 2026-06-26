@@ -3,19 +3,27 @@ import { redirect } from "next/navigation";
 
 import { auth } from "./server";
 
+type SessionUser = { shopId?: string | null; role?: string | null };
+
 /**
- * Bảo vệ route admin: lấy session từ cookie; chưa login hoặc chưa gán shop
- * → redirect login. Trả { user, shopId } để loader/action scope theo tenant.
+ * Bảo vệ route admin chủ shop: chưa login → login; super_admin → khu /super;
+ * chưa gán shop → login. Trả { user, shopId }.
  */
 export async function requireAdmin() {
   const session = await auth.api.getSession({ headers: await headers() });
-  const shopId = session?.user
-    ? (session.user as { shopId?: string | null }).shopId
-    : null;
+  if (!session?.user) redirect("/admin/login");
 
-  if (!session?.user || !shopId) {
-    redirect("/admin/login");
-  }
+  const u = session.user as SessionUser;
+  if (u.role === "super_admin") redirect("/super");
+  if (!u.shopId) redirect("/admin/login");
 
-  return { user: session.user, shopId };
+  return { user: session.user, shopId: u.shopId };
+}
+
+/** Bảo vệ khu super admin (toàn nền tảng). */
+export async function requireSuperAdmin() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) redirect("/admin/login");
+  if ((session.user as SessionUser).role !== "super_admin") redirect("/admin");
+  return { user: session.user };
 }

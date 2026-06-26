@@ -24,7 +24,12 @@ export interface CreateBookingParams {
   customerName: string;
   customerPhone: string;
   note: string | null;
-  items: { serviceId: string; priceSnapshot: number; durationSnapshot: number }[];
+  items: {
+    serviceId: string;
+    staffId: string | null;
+    priceSnapshot: number;
+    durationSnapshot: number;
+  }[];
   /** Mã khuyến mãi (tuỳ chọn) — validate + tiêu thụ trong cùng transaction. */
   promoCode?: string;
 }

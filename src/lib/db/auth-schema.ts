@@ -15,8 +15,10 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
-  // Mỗi admin gắn đúng 1 shop (tenant). Null = chưa gán → bị chặn ở requireAdmin.
+  // Mỗi admin gắn đúng 1 shop (tenant). Null = chưa gán (hoặc super_admin toàn nền tảng).
   shopId: uuid("shop_id").references(() => shops.id, { onDelete: "cascade" }),
+  // 'owner' = chủ shop; 'super_admin' = quản trị nền tảng (mọi shop).
+  role: text("role").notNull().default("owner"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

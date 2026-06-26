@@ -131,6 +131,7 @@ export async function createBookingAction(
       note: data.note ? data.note : null,
       items: chosen.map((s) => ({
         serviceId: s.id,
+        staffId: s.staffId ?? null,
         priceSnapshot: s.price,
         durationSnapshot: s.durationMin,
       })),

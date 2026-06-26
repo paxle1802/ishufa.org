@@ -2,6 +2,7 @@
 
 import {
   CalendarClock,
+  LineChart,
   LogOut,
   MoreHorizontal,
   Package,
@@ -23,6 +24,7 @@ import { authClient } from "@/lib/auth/client";
 
 const MORE_ITEMS = [
   { href: "/admin/schedule", label: "Lịch & cấu hình", icon: CalendarClock },
+  { href: "/admin/revenue", label: "Doanh thu thợ", icon: LineChart },
   { href: "/admin/promotions", label: "Khuyến mãi", icon: Ticket },
   { href: "/admin/packages", label: "Gói trả trước", icon: Package },
   { href: "/admin/shop", label: "Shop & QR", icon: Store },

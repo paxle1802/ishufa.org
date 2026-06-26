@@ -61,6 +61,24 @@ export const shops = pgTable(
   (t) => [uniqueIndex("shops_slug_uniq").on(t.slug)],
 );
 
+// --- Thợ (nhân viên thực hiện dịch vụ) ---
+export const staff = pgTable(
+  "staff",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    shopId: uuid("shop_id")
+      .notNull()
+      .references(() => shops.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    active: boolean("active").notNull().default(true),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [index("staff_shop_idx").on(t.shopId)],
+);
+
 // --- Dịch vụ ---
 export const services = pgTable(
   "services",
@@ -75,6 +93,8 @@ export const services = pgTable(
     description: text("description"),
     imageUrl: text("image_url"),
     category: text("category"),
+    // Thợ phụ trách dịch vụ này (dùng để chia doanh thu). Do super admin gán.
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "set null" }),
     active: boolean("active").notNull().default(true),
     sortOrder: integer("sort_order").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -257,10 +277,15 @@ export const bookingItems = pgTable(
     serviceId: uuid("service_id")
       .notNull()
       .references(() => services.id, { onDelete: "restrict" }),
+    // Snapshot thợ phụ trách lúc đặt → chia doanh thu chính xác kể cả khi đổi gán sau này.
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "set null" }),
     priceSnapshot: integer("price_snapshot").notNull(),
     durationSnapshot: integer("duration_snapshot").notNull(),
   },
-  (t) => [index("booking_items_booking_idx").on(t.bookingId)],
+  (t) => [
+    index("booking_items_booking_idx").on(t.bookingId),
+    index("booking_items_staff_idx").on(t.staffId),
+  ],
 );
 
 // --- Sổ cái tích điểm (audit + nguồn để hoàn điểm) ---
@@ -358,6 +383,7 @@ export type Closure = typeof closures.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
 export type BookingItem = typeof bookingItems.$inferSelect;
 export type BookingStatus = (typeof bookingStatus.enumValues)[number];
+export type Staff = typeof staff.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
 export type Promotion = typeof promotions.$inferSelect;
 export type Package = typeof packages.$inferSelect;
