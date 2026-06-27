@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { autoCancelStaleBookings } from "@/lib/booking/auto-cancel";
+import { autoCancelStaleBookingsAllShops } from "@/lib/booking/auto-cancel";
 import { env } from "@/lib/env";
 
 // Cron không cache; luôn chạy mới.
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const cancelled = await autoCancelStaleBookings();
+    const cancelled = await autoCancelStaleBookingsAllShops();
     return NextResponse.json({ ok: true, cancelled });
   } catch (err) {
     console.error("[cron/auto-cancel]", err);
