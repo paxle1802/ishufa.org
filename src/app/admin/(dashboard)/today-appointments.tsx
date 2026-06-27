@@ -33,8 +33,9 @@ export function TodayAppointments({ bookings }: { bookings: BookingForDay[] }) {
     <ul className="flex flex-col gap-2.5">
       {bookings.map((b) => {
         const badge = BADGE[b.status];
+        const isCancelled = b.status === "cancelled" || b.status === "no_show";
         const isNow =
-          b.status !== "cancelled" &&
+          !isCancelled &&
           now >= b.startAt.getTime() &&
           now < b.endAt.getTime();
         return (
@@ -43,6 +44,7 @@ export function TodayAppointments({ bookings }: { bookings: BookingForDay[] }) {
             className={cn(
               "rounded-xl border bg-card p-3.5",
               isNow && "border-primary bg-primary/5 ring-2 ring-primary",
+              isCancelled && "opacity-55",
             )}
           >
             <div className="flex items-start justify-between gap-2">

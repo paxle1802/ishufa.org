@@ -55,8 +55,9 @@ export function BookingList({
   return (
     <ul className="flex flex-col gap-3">
       {bookings.map((b) => {
+        const isCancelled = b.status === "cancelled" || b.status === "no_show";
         const isNow =
-          b.status !== "cancelled" &&
+          !isCancelled &&
           now >= b.startAt.getTime() &&
           now < b.endAt.getTime();
         return (
@@ -65,6 +66,7 @@ export function BookingList({
           className={cn(
             "rounded-xl border p-3",
             isNow ? "border-primary bg-primary/5 ring-2 ring-primary" : "glass",
+            isCancelled && "opacity-55",
           )}
         >
           <div className="flex items-start justify-between gap-2">
