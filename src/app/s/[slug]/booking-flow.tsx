@@ -35,6 +35,20 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
   // Latest-wins guard: track a counter so stale responses are ignored
   const reqIdRef = useRef(0);
 
+  // Tự điền tên + SĐT từ lần đặt trước trên thiết bị này (khách quen khỏi gõ lại).
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("shufa-customer");
+      if (saved) {
+        const c = JSON.parse(saved) as { name?: string; phone?: string };
+        if (c.name) setName(c.name);
+        if (c.phone) setPhone(c.phone);
+      }
+    } catch {
+      /* localStorage không khả dụng (private mode) */
+    }
+  }, []);
+
   useEffect(() => {
     if (selectedServiceIds.length === 0) {
       setSlots([]);
@@ -115,6 +129,15 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
       if (!result.ok) {
         toast.error(result.error);
         return;
+      }
+      // Nhớ tên + SĐT cho lần đặt sau trên thiết bị này.
+      try {
+        localStorage.setItem(
+          "shufa-customer",
+          JSON.stringify({ name: name.trim(), phone: phone.trim() }),
+        );
+      } catch {
+        /* bỏ qua */
       }
       setSuccess(result.booking);
     } catch {

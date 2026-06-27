@@ -24,9 +24,23 @@ export function CustomerForm({
 }: CustomerFormProps) {
   return (
     <section className="px-4">
-      <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
-        Thông tin khách hàng
-      </h2>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+          Thông tin khách hàng
+        </h2>
+        {(name || phone) && (
+          <button
+            type="button"
+            onClick={() => {
+              onChange("name", "");
+              onChange("phone", "");
+            }}
+            className="text-xs font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
+          >
+            Đổi người khác
+          </button>
+        )}
+      </div>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="customer-name">
