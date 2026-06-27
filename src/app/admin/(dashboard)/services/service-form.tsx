@@ -1,6 +1,7 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useRef, useTransition, useState } from "react";
+import { ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Service } from "@/lib/db/schema";
-import { createService, updateService } from "./actions";
+import { createService, updateService, uploadServiceImageAction } from "./actions";
 
 interface ServiceFormProps {
   open: boolean;
@@ -54,6 +55,24 @@ function buildInitialState(service?: Service | null): FormState {
 export function ServiceForm({ open, onOpenChange, service, staff }: ServiceFormProps) {
   const [form, setForm] = useState<FormState>(() => buildInitialState(service));
   const [isPending, startTransition] = useTransition();
+  const [isUploading, startUploading] = useTransition();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append("file", file);
+    startUploading(async () => {
+      const result = await uploadServiceImageAction(fd);
+      if (result.ok) {
+        setForm((prev) => ({ ...prev, imageUrl: result.url }));
+        toast.success("Đã tải ảnh lên");
+      } else {
+        toast.error(result.error);
+      }
+    });
+  };
 
   // Reset form whenever the dialog opens with (possibly new) service data
   const handleOpenChange = (next: boolean) => {
@@ -182,14 +201,51 @@ export function ServiceForm({ open, onOpenChange, service, staff }: ServiceFormP
             />
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="svc-image">URL ảnh</Label>
-            <Input
-              id="svc-image"
-              type="url"
-              value={form.imageUrl}
-              onChange={set("imageUrl")}
-              placeholder="https://..."
+          <div className="space-y-1.5">
+            <Label>Ảnh minh hoạ</Label>
+            <div className="flex items-center gap-3">
+              {form.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={form.imageUrl}
+                  alt="Ảnh dịch vụ"
+                  className="h-16 w-16 rounded-xl object-cover ring-1 ring-foreground/10"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted ring-1 ring-foreground/10">
+                  <ImageIcon className="size-6 text-muted-foreground" />
+                </div>
+              )}
+              <div className="flex flex-col gap-1.5">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={isUploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="gap-2"
+                >
+                  {isUploading && <Loader2 className="animate-spin" />}
+                  {isUploading ? "Đang tải lên…" : form.imageUrl ? "Đổi ảnh" : "Chọn ảnh"}
+                </Button>
+                {form.imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, imageUrl: "" }))}
+                    className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+                  >
+                    Xoá ảnh
+                  </button>
+                )}
+                <span className="text-xs text-muted-foreground">PNG, JPG — tối đa 4 MB</span>
+              </div>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageFile}
             />
           </div>
 
@@ -228,7 +284,7 @@ export function ServiceForm({ open, onOpenChange, service, staff }: ServiceFormP
             >
               Hủy
             </DialogClose>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending || isUploading}>
               {isPending ? "Đang lưu..." : service ? "Lưu thay đổi" : "Thêm"}
             </Button>
           </DialogFooter>

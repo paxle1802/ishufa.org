@@ -18,6 +18,7 @@ export interface PublicService {
   durationMin: number;
   category: string | null;
   description: string | null;
+  imageUrl: string | null;
 }
 
 export interface BookingFlowProps {

@@ -4,12 +4,40 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { uploadImage } from "@/lib/blob";
 import { db } from "@/lib/db";
 import { getShopById } from "@/lib/db/queries";
 import { services } from "@/lib/db/schema";
 import { serviceSchema, type ServiceInput } from "@/lib/validation/admin";
 
 type ActionResult = { ok: true } | { ok: false; error: string };
+type UploadResult = { ok: true; url: string } | { ok: false; error: string };
+
+/** Upload ảnh minh hoạ cho dịch vụ → trả URL để gắn vào form. */
+export async function uploadServiceImageAction(
+  formData: FormData,
+): Promise<UploadResult> {
+  try {
+    const { shopId } = await requireAdmin();
+    const file = formData.get("file");
+    if (!(file instanceof File) || file.size === 0) {
+      return { ok: false, error: "Vui lòng chọn file ảnh" };
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      return { ok: false, error: "Ảnh tối đa 4 MB" };
+    }
+
+    const shop = await getShopById(shopId);
+    if (!shop) return { ok: false, error: "Không tìm thấy salon" };
+
+    const url = await uploadImage(file, `services/${shop.slug}`);
+    return { ok: true, url };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Lỗi upload ảnh";
+    console.error("[uploadServiceImageAction]", err);
+    return { ok: false, error: message };
+  }
+}
 
 function toNullableString(val: string | undefined): string | null {
   if (val === undefined || val === "") return null;

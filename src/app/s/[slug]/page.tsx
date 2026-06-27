@@ -36,6 +36,7 @@ export default async function PublicBookingPage({
     durationMin: s.durationMin,
     category: s.category,
     description: s.description,
+    imageUrl: s.imageUrl,
   }));
 
   if (services.length === 0) {

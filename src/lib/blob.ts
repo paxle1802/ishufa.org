@@ -13,8 +13,22 @@ export async function uploadLogo(file: File, shopSlug: string): Promise<string> 
     );
   }
 
+  return uploadImage(file, `logos/${shopSlug}`);
+}
+
+/**
+ * Upload ảnh minh hoạ (logo, ảnh dịch vụ...) lên Vercel Blob (public).
+ * `pathPrefix` là đường dẫn không kèm đuôi file, vd "services/<slug>".
+ */
+export async function uploadImage(file: File, pathPrefix: string): Promise<string> {
+  if (!env.BLOB_READ_WRITE_TOKEN) {
+    throw new Error(
+      "Chưa cấu hình BLOB_READ_WRITE_TOKEN — không thể upload ảnh. Lấy token ở Vercel → Storage → Blob.",
+    );
+  }
+
   const ext = file.name.includes(".") ? file.name.split(".").pop() : "png";
-  const blob = await put(`logos/${shopSlug}.${ext}`, file, {
+  const blob = await put(`${pathPrefix}.${ext}`, file, {
     access: "public",
     token: env.BLOB_READ_WRITE_TOKEN,
     addRandomSuffix: true,
