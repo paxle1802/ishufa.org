@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 /** Web App Manifest — biến ShufaBook thành PWA cài được lên màn hình chính. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ShufaBook — Đặt lịch salon",
+    name: "ShufaBook",
     short_name: "ShufaBook",
     description: "Quản lý đặt lịch salon: lịch hẹn, khách hàng, thu tiền VietQR.",
     start_url: "/admin",
