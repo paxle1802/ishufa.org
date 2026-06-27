@@ -25,6 +25,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { authClient } from "@/lib/auth/client";
+import { haptic } from "@/lib/haptic";
 
 const MORE_ITEMS = [
   { href: "/admin/customers", label: "Khách", icon: Users },
@@ -49,7 +50,10 @@ export function MoreMenu() {
 
   return (
     <Sheet>
-      <SheetTrigger className="flex w-full flex-col items-center gap-0.5 py-1.5 text-[13px] font-bold text-foreground/70 transition-colors hover:text-foreground">
+      <SheetTrigger
+        onClick={() => haptic()}
+        className="flex w-full flex-col items-center gap-0.5 py-1.5 text-[13px] font-bold text-foreground/70 transition-colors hover:text-foreground"
+      >
         <span className="flex h-8 w-12 items-center justify-center">
           <Settings className="size-7 text-foreground/70" aria-hidden />
         </span>

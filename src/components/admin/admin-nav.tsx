@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 
+import { haptic } from "@/lib/haptic";
 import { cn } from "@/lib/utils";
 import { MoreMenu } from "./more-menu";
 
@@ -61,7 +62,7 @@ export function AdminNav() {
             href === "/admin" ? pathname === href : pathname.startsWith(href);
           return (
             <li key={href} className="flex-1">
-              <Link href={href} className="block">
+              <Link href={href} className="block" onClick={() => haptic()}>
                 <NavItemContent label={label} Icon={Icon} active={active} />
               </Link>
             </li>

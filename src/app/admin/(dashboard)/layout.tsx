@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { AdminNav } from "@/components/admin/admin-nav";
 import { NotificationToggle } from "@/components/admin/notification-toggle";
+import { PageTransition } from "@/components/admin/page-transition";
 import { db } from "@/lib/db";
 import { shops } from "@/lib/db/schema";
 import { requireAdmin } from "@/lib/auth/require-admin";
@@ -30,7 +31,9 @@ export default async function DashboardLayout({
           <NotificationToggle />
         </div>
       </header>
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-4">{children}</main>
+      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-4">
+        <PageTransition>{children}</PageTransition>
+      </main>
       <AdminNav />
     </div>
   );
