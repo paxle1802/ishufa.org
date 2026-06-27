@@ -23,14 +23,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ShufaBook — Đặt lịch salon",
+  title: "Đặt Chỗ Salon",
   description: "Đặt lịch cắt tóc, gội đầu nhanh chóng ngay trên điện thoại.",
-  applicationName: "ShufaBook",
+  applicationName: "Đặt Chỗ Salon",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ShufaBook",
+    title: "Đặt Chỗ Salon",
   },
   icons: {
     icon: [
