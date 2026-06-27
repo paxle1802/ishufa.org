@@ -3,6 +3,7 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizePhone } from "@/lib/validation/booking";
 
 interface CustomerFormProps {
   name: string;
@@ -70,6 +71,8 @@ export function CustomerForm({
             inputMode="tel"
             value={phone}
             onChange={(e) => onChange("phone", e.target.value)}
+            // Khi rời ô / sau khi tự điền: chuẩn hoá về dạng 0912345678.
+            onBlur={(e) => onChange("phone", normalizePhone(e.target.value))}
             required
             className="h-11"
           />

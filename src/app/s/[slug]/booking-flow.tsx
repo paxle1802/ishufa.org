@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
+import { normalizePhone } from "@/lib/validation/booking";
 import { getSlotsAction, createBookingAction } from "./actions";
 import type { BookingSummary } from "./actions";
 import type { BookingFlowProps } from "./types";
@@ -42,7 +43,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
       if (saved) {
         const c = JSON.parse(saved) as { name?: string; phone?: string };
         if (c.name) setName(c.name);
-        if (c.phone) setPhone(c.phone);
+        if (c.phone) setPhone(normalizePhone(c.phone));
       }
     } catch {
       /* localStorage không khả dụng (private mode) */
@@ -134,7 +135,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
       try {
         localStorage.setItem(
           "shufa-customer",
-          JSON.stringify({ name: name.trim(), phone: phone.trim() }),
+          JSON.stringify({ name: name.trim(), phone: normalizePhone(phone.trim()) }),
         );
       } catch {
         /* bỏ qua */
