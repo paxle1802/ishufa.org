@@ -17,6 +17,15 @@ const BADGE: Record<BookingStatus, { label: string; cls: string }> = {
   no_show: { label: "Vắng", cls: "bg-muted-foreground/20 text-muted-foreground" },
 };
 
+// Thẻ kính pha màu theo trạng thái (crystal trong suốt).
+const STATUS_CARD: Record<BookingStatus, string> = {
+  confirmed: "glass-tint glass-blue",
+  arrived: "glass-tint glass-violet",
+  completed: "glass-tint glass-green",
+  no_show: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
+  cancelled: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
+};
+
 /** Danh sách lịch hẹn hôm nay — CHỈ ĐỌC (thao tác nằm ở tab Bookings). */
 export function TodayAppointments({ bookings }: { bookings: BookingForDay[] }) {
   if (bookings.length === 0) {
@@ -43,11 +52,8 @@ export function TodayAppointments({ bookings }: { bookings: BookingForDay[] }) {
             key={b.id}
             className={cn(
               "rounded-xl border p-3.5",
-              isCancelled
-                ? "border-muted-foreground/20 bg-muted/70 text-muted-foreground"
-                : isNow
-                  ? "border-primary bg-primary/5 ring-2 ring-primary"
-                  : "bg-card",
+              STATUS_CARD[b.status],
+              isNow && "ring-2 ring-primary",
             )}
           >
             <div className="flex items-start justify-between gap-2">

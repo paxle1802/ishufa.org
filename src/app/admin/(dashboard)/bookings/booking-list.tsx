@@ -32,6 +32,14 @@ const STATUS_CLASS: Record<BookingStatus, string> = {
   no_show: "bg-muted-foreground/20 text-muted-foreground",
   cancelled: "bg-muted-foreground/20 text-muted-foreground",
 };
+// Thẻ kính pha màu theo trạng thái (crystal trong suốt).
+const STATUS_CARD: Record<BookingStatus, string> = {
+  confirmed: "glass-tint glass-blue",
+  arrived: "glass-tint glass-violet",
+  completed: "glass-tint glass-green",
+  no_show: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
+  cancelled: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
+};
 
 export function BookingList({
   bookings,
@@ -65,11 +73,8 @@ export function BookingList({
           key={b.id}
           className={cn(
             "rounded-xl border p-3",
-            isCancelled
-              ? "border-muted-foreground/20 bg-muted/70 text-muted-foreground"
-              : isNow
-                ? "border-primary bg-primary/5 ring-2 ring-primary"
-                : "glass",
+            STATUS_CARD[b.status],
+            isNow && "ring-2 ring-primary",
           )}
         >
           <div className="flex items-start justify-between gap-2">
