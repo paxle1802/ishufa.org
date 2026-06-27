@@ -28,6 +28,25 @@ export function NotificationToggle() {
   const [enabled, setEnabled] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  // Cờ người dùng CHỦ ĐỘNG tắt → không tự bật lại.
+  const OFF_KEY = "shufa-push-off";
+
+  // Đăng ký push + lưu DB (không xin quyền — quyền phải đã được cấp trước).
+  async function subscribeAndSave(): Promise<boolean> {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlB64ToUint8Array(VAPID!) as BufferSource,
+    });
+    const json = sub.toJSON();
+    const res = await savePushSubscription({
+      endpoint: sub.endpoint,
+      p256dh: json.keys?.p256dh ?? "",
+      auth: json.keys?.auth ?? "",
+    });
+    return res.ok;
+  }
+
   useEffect(() => {
     const ok =
       !!VAPID &&
@@ -37,10 +56,33 @@ export function NotificationToggle() {
       "Notification" in window;
     setSupported(ok);
     if (!ok) return;
-    navigator.serviceWorker.ready
-      .then((reg) => reg.pushManager.getSubscription())
-      .then((sub) => setEnabled(!!sub))
-      .catch(() => {});
+
+    (async () => {
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const existing = await reg.pushManager.getSubscription();
+        if (existing) {
+          // Đã đăng ký → đảm bảo DB luôn có (phòng mất sub) + hiện bật.
+          const json = existing.toJSON();
+          await savePushSubscription({
+            endpoint: existing.endpoint,
+            p256dh: json.keys?.p256dh ?? "",
+            auth: json.keys?.auth ?? "",
+          });
+          setEnabled(true);
+          return;
+        }
+        // Chưa đăng ký nhưng ĐÃ cấp quyền & chưa chủ động tắt → tự bật lại.
+        const offByUser = localStorage.getItem(OFF_KEY) === "1";
+        if (Notification.permission === "granted" && !offByUser) {
+          const okSub = await subscribeAndSave();
+          setEnabled(okSub);
+        }
+      } catch {
+        /* bỏ qua */
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function enable() {
@@ -51,18 +93,9 @@ export function NotificationToggle() {
         toast.error("Bạn chưa cho phép thông báo trong trình duyệt.");
         return;
       }
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlB64ToUint8Array(VAPID!) as BufferSource,
-      });
-      const json = sub.toJSON();
-      const res = await savePushSubscription({
-        endpoint: sub.endpoint,
-        p256dh: json.keys?.p256dh ?? "",
-        auth: json.keys?.auth ?? "",
-      });
-      if (!res.ok) throw new Error("save failed");
+      const okSub = await subscribeAndSave();
+      if (!okSub) throw new Error("save failed");
+      localStorage.removeItem(OFF_KEY);
       setEnabled(true);
       toast.success("Đã bật thông báo đặt/huỷ lịch");
     } catch (err) {
@@ -82,6 +115,7 @@ export function NotificationToggle() {
         await deletePushSubscription(sub.endpoint);
         await sub.unsubscribe();
       }
+      localStorage.setItem(OFF_KEY, "1"); // nhớ ý định tắt → không tự bật lại
       setEnabled(false);
       toast.success("Đã tắt thông báo");
     } catch {
