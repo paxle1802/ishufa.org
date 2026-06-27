@@ -21,12 +21,13 @@ import {
  * Thứ tự định nghĩa bảng tôn trọng FK: bảng được tham chiếu đứng trước.
  */
 
+// Lưu ý: giá trị "no_show" cũ vẫn còn trong enum DB (không xoá để khỏi migration
+// rủi ro) nhưng KHÔNG dùng nữa — app chỉ còn 4 trạng thái dưới đây.
 export const bookingStatus = pgEnum("booking_status", [
   "confirmed",
   "arrived",
   "cancelled",
   "completed",
-  "no_show",
 ]);
 
 export const discountType = pgEnum("discount_type", ["percent", "fixed"]);

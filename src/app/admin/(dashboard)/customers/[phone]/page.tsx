@@ -16,10 +16,10 @@ import { SellPackageForm } from "./sell-package-form";
 const vnd = new Intl.NumberFormat("vi-VN");
 
 const STATUS_LABEL: Record<string, string> = {
-  confirmed: "Đã xác nhận",
-  completed: "Hoàn tất",
-  no_show: "Vắng mặt",
-  cancelled: "Đã huỷ",
+  confirmed: "Đã đặt chỗ",
+  arrived: "Đang làm",
+  completed: "Đã thanh toán",
+  cancelled: "Huỷ",
 };
 
 export default async function CustomerDetailPage({

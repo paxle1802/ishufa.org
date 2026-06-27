@@ -16,17 +16,15 @@ import { lookupBookingByCode, type ScannedBooking } from "./actions";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 const STATUS_LABEL: Record<BookingStatus, string> = {
-  confirmed: "Đã xác nhận",
-  arrived: "Đã đến",
-  completed: "Hoàn tất",
-  no_show: "Vắng mặt",
-  cancelled: "Đã huỷ",
+  confirmed: "Đã đặt chỗ",
+  arrived: "Đang làm",
+  completed: "Đã thanh toán",
+  cancelled: "Huỷ",
 };
 const STATUS_CLASS: Record<BookingStatus, string> = {
   confirmed: "bg-blue-100 text-blue-700",
   arrived: "bg-violet-100 text-violet-700",
   completed: "bg-green-100 text-green-700",
-  no_show: "bg-amber-100 text-amber-700",
   cancelled: "bg-muted text-muted-foreground",
 };
 const READER_ID = "checkin-reader";
@@ -60,7 +58,24 @@ export function CheckinScanner() {
         toast.error(res.error);
         return;
       }
-      setResult(res.booking);
+      let booking = res.booking;
+      // Quét QR xong → tự chuyển "Đã đặt chỗ" sang "Đang làm" (check-in).
+      if (booking.status === "confirmed") {
+        const upd = await setBookingStatus(booking.id, "arrived");
+        if (upd.ok) {
+          booking = { ...booking, status: "arrived" };
+          toast.success("Đã check-in — khách đang làm");
+        } else {
+          toast.error(upd.error);
+        }
+      } else if (booking.status === "arrived") {
+        toast.info("Khách đã check-in trước đó");
+      } else if (booking.status === "cancelled") {
+        toast.error("Lịch này đã huỷ");
+      } else if (booking.status === "completed") {
+        toast.info("Lịch đã thanh toán");
+      }
+      setResult(booking);
       setManual("");
     });
   }
@@ -98,19 +113,6 @@ export function CheckinScanner() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  function markArrived() {
-    if (!result) return;
-    startTransition(async () => {
-      const res = await setBookingStatus(result.id, "arrived");
-      if (!res.ok) {
-        toast.error(res.error);
-        return;
-      }
-      toast.success("Đã xác nhận khách đến");
-      setResult({ ...result, status: "arrived" });
-    });
-  }
 
   return (
     <div className="space-y-4">
@@ -182,11 +184,6 @@ export function CheckinScanner() {
               <p className="mt-1 font-semibold">{vnd.format(result.totalPrice)}đ</p>
             </div>
 
-            {result.status === "confirmed" && (
-              <Button className="w-full" disabled={pending} onClick={markArrived}>
-                Xác nhận khách đã tới
-              </Button>
-            )}
             <Button
               variant="outline"
               className="w-full gap-2"

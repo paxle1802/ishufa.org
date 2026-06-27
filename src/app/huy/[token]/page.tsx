@@ -10,8 +10,7 @@ import { CancelConfirm } from "./cancel-confirm";
 const vnd = new Intl.NumberFormat("vi-VN");
 const STATUS_DONE: Record<string, string> = {
   cancelled: "đã được huỷ",
-  completed: "đã hoàn tất",
-  no_show: "được đánh dấu vắng mặt",
+  completed: "đã thanh toán",
 };
 
 export default async function CancelPage({

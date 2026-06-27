@@ -17,7 +17,6 @@ const ALLOWED: BookingStatus[] = [
   "confirmed",
   "arrived",
   "completed",
-  "no_show",
   "cancelled",
 ];
 

@@ -10,11 +10,10 @@ const vnd = new Intl.NumberFormat("vi-VN");
 
 // confirmed = đã đặt (chưa tới) · arrived = đang làm · completed = đã thu tiền · cancelled = huỷ.
 const BADGE: Record<BookingStatus, { label: string; cls: string }> = {
-  confirmed: { label: "Đã đặt", cls: "bg-blue-100 text-blue-700" },
+  confirmed: { label: "Đã đặt chỗ", cls: "bg-blue-100 text-blue-700" },
   arrived: { label: "Đang làm", cls: "bg-violet-100 text-violet-700" },
-  completed: { label: "Đã thu tiền", cls: "bg-green-100 text-green-700" },
-  cancelled: { label: "Đã huỷ", cls: "bg-muted-foreground/20 text-muted-foreground" },
-  no_show: { label: "Vắng", cls: "bg-muted-foreground/20 text-muted-foreground" },
+  completed: { label: "Đã thanh toán", cls: "bg-green-100 text-green-700" },
+  cancelled: { label: "Huỷ", cls: "bg-muted-foreground/20 text-muted-foreground" },
 };
 
 // Thẻ kính pha màu theo trạng thái (crystal trong suốt).
@@ -22,7 +21,6 @@ const STATUS_CARD: Record<BookingStatus, string> = {
   confirmed: "glass-tint glass-blue",
   arrived: "glass-tint glass-violet",
   completed: "glass-tint glass-green",
-  no_show: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
   cancelled: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
 };
 
@@ -42,7 +40,7 @@ export function TodayAppointments({ bookings }: { bookings: BookingForDay[] }) {
     <ul className="flex flex-col gap-2.5">
       {bookings.map((b) => {
         const badge = BADGE[b.status];
-        const isCancelled = b.status === "cancelled" || b.status === "no_show";
+        const isCancelled = b.status === "cancelled";
         const isNow =
           !isCancelled &&
           now >= b.startAt.getTime() &&

@@ -19,17 +19,15 @@ export interface ShopBank {
 }
 
 const STATUS_LABEL: Record<BookingStatus, string> = {
-  confirmed: "Đã xác nhận",
-  arrived: "Đã đến",
-  completed: "Hoàn tất",
-  no_show: "Vắng mặt",
-  cancelled: "Đã huỷ",
+  confirmed: "Đã đặt chỗ",
+  arrived: "Đang làm",
+  completed: "Đã thanh toán",
+  cancelled: "Huỷ",
 };
 const STATUS_CLASS: Record<BookingStatus, string> = {
   confirmed: "bg-blue-100 text-blue-700",
   arrived: "bg-violet-100 text-violet-700",
   completed: "bg-green-100 text-green-700",
-  no_show: "bg-muted-foreground/20 text-muted-foreground",
   cancelled: "bg-muted-foreground/20 text-muted-foreground",
 };
 // Thẻ kính pha màu theo trạng thái (crystal trong suốt).
@@ -37,7 +35,6 @@ const STATUS_CARD: Record<BookingStatus, string> = {
   confirmed: "glass-tint glass-blue",
   arrived: "glass-tint glass-violet",
   completed: "glass-tint glass-green",
-  no_show: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
   cancelled: "border-muted-foreground/20 bg-muted/70 text-muted-foreground",
 };
 
@@ -63,7 +60,7 @@ export function BookingList({
   return (
     <ul className="flex flex-col gap-3">
       {bookings.map((b) => {
-        const isCancelled = b.status === "cancelled" || b.status === "no_show";
+        const isCancelled = b.status === "cancelled";
         const isNow =
           !isCancelled &&
           now >= b.startAt.getTime() &&
