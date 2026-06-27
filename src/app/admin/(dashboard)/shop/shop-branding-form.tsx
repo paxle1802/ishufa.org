@@ -29,22 +29,11 @@ export function ShopBrandingForm({ shop }: ShopBrandingFormProps) {
   const [description, setDescription] = useState(shop.description ?? "");
   const [contactPhone, setContactPhone] = useState(shop.contactPhone ?? "");
   const [email, setEmail] = useState(shop.email ?? "");
-  const [accentColor, setAccentColor] = useState(shop.accentColor);
   const [logoPreview, setLogoPreview] = useState<string | null>(shop.logoUrl ?? null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSaving, startSaving] = useTransition();
   const [isUploading, startUploading] = useTransition();
-
-  function handleHexInput(val: string) {
-    // Accept free-text; normalise to #xxxxxx when valid
-    const raw = val.startsWith("#") ? val : `#${val}`;
-    setAccentColor(raw);
-  }
-
-  function handleColorPicker(val: string) {
-    setAccentColor(val);
-  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -77,7 +66,7 @@ export function ShopBrandingForm({ shop }: ShopBrandingFormProps) {
         description,
         contactPhone,
         email,
-        accentColor,
+        accentColor: shop.accentColor,
       });
       if (result.ok) {
         toast.success("Thông tin đã được lưu");
@@ -197,34 +186,6 @@ export function ShopBrandingForm({ shop }: ShopBrandingFormProps) {
           />
         </div>
 
-        {/* Accent colour */}
-        <div className="space-y-1.5">
-          <Label htmlFor="shop-color-hex">Màu thương hiệu</Label>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={accentColor.match(/^#[0-9a-fA-F]{6}$/) ? accentColor : "#0f172a"}
-              onChange={(e) => handleColorPicker(e.target.value)}
-              disabled={isPending}
-              className="h-8 w-10 cursor-pointer rounded-md border border-input bg-transparent p-0.5 disabled:opacity-50"
-              aria-label="Chọn màu từ bảng màu"
-            />
-            <Input
-              id="shop-color-hex"
-              value={accentColor}
-              onChange={(e) => handleHexInput(e.target.value)}
-              placeholder="#0f172a"
-              className="w-32 font-mono"
-              maxLength={7}
-              disabled={isPending}
-            />
-            <span
-              className="h-8 w-8 rounded-md ring-1 ring-foreground/10"
-              style={{ backgroundColor: accentColor.match(/^#[0-9a-fA-F]{6}$/) ? accentColor : "transparent" }}
-              aria-hidden
-            />
-          </div>
-        </div>
       </CardContent>
 
       <CardFooter>

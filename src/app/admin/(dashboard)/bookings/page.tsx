@@ -70,7 +70,7 @@ export default async function BookingsPage({
         </div>
         <Button render={<Link href="/admin/checkin" />} variant="outline" size="sm" className="gap-1.5">
           <ScanLine className="size-4" />
-          Quét QR
+          Quét QR Nhận Khách
         </Button>
       </div>
       <DayPicker date={day} />

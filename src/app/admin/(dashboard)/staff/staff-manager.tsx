@@ -25,7 +25,13 @@ const RATIOS = [
   { owner: 50, staff: 50 },
 ];
 
-export function StaffManager({ staff }: { staff: Staff[] }) {
+export function StaffManager({
+  staff,
+  showCommission = true,
+}: {
+  staff: Staff[];
+  showCommission?: boolean;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [newName, setNewName] = useState("");
@@ -162,18 +168,20 @@ export function StaffManager({ staff }: { staff: Staff[] }) {
                   ) : (
                     <>
                       <span className="min-w-0 flex-1 truncate font-medium">{s.name}</span>
-                      <Button
-                        size="sm"
-                        variant={ratioId === s.id ? "default" : "outline"}
-                        onClick={() => {
-                          const open = ratioId === s.id ? null : s.id;
-                          setRatioId(open);
-                          setCustomStaff(String(s.commissionPct));
-                        }}
-                        disabled={isPending}
-                      >
-                        Tỷ lệ {100 - s.commissionPct}–{s.commissionPct}
-                      </Button>
+                      {showCommission && (
+                        <Button
+                          size="sm"
+                          variant={ratioId === s.id ? "default" : "outline"}
+                          onClick={() => {
+                            const open = ratioId === s.id ? null : s.id;
+                            setRatioId(open);
+                            setCustomStaff(String(s.commissionPct));
+                          }}
+                          disabled={isPending}
+                        >
+                          Tỷ lệ {100 - s.commissionPct}–{s.commissionPct}
+                        </Button>
+                      )}
                       <Button size="icon-sm" variant="ghost" onClick={() => startEdit(s)} disabled={isPending} title="Sửa tên">
                         <PencilIcon />
                       </Button>
@@ -185,7 +193,7 @@ export function StaffManager({ staff }: { staff: Staff[] }) {
                 </div>
 
                 {/* Bảng chọn tỷ lệ ăn chia (Chủ – Thợ) */}
-                {ratioId === s.id && editingId !== s.id && (
+                {showCommission && ratioId === s.id && editingId !== s.id && (
                   <div className="mt-3 border-t pt-3">
                     <p className="mb-2 text-xs text-muted-foreground">
                       Tỷ lệ ăn chia (Chủ – Thợ):

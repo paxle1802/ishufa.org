@@ -24,7 +24,10 @@ export default async function StaffPage() {
       </div>
 
       <RevenueModeToggle mode={shop.revenueMode as "per_staff" | "combined"} />
-      <StaffManager staff={staff} />
+      <StaffManager
+        staff={staff}
+        showCommission={shop.revenueMode !== "combined"}
+      />
     </div>
   );
 }
