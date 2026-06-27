@@ -143,6 +143,9 @@ export function ServicesManager({ services: initial, staff }: ServicesManagerPro
       )}
 
       <ServiceForm
+        // Remount per target so the form always seeds from the right service
+        // (programmatic open doesn't trigger the dialog's onOpenChange reset).
+        key={editing?.id ?? "new"}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         service={editing}
