@@ -27,18 +27,18 @@ export function AdminNav() {
               <Link
                 href={href}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 py-1.5 text-[11px] font-medium transition-colors",
-                  active ? "text-foreground" : "text-muted-foreground",
+                  "flex flex-col items-center gap-0.5 py-1.5 text-[13px] font-bold transition-colors",
+                  active ? "text-foreground" : "text-foreground/70",
                 )}
               >
                 <span
                   className={cn(
                     "flex h-8 w-12 items-center justify-center rounded-full transition-colors",
-                    // AURA: mục đang mở = nền vàng nhạt + icon vàng đồng; còn lại trung tính.
-                    active ? "bg-accent/15 text-accent" : "text-muted-foreground",
+                    // AURA: mục đang mở = nền vàng nhạt + icon vàng đồng; còn lại đậm màu.
+                    active ? "bg-accent/15 text-accent" : "text-foreground/70",
                   )}
                 >
-                  <Icon className="size-6" aria-hidden />
+                  <Icon className="size-7" aria-hidden />
                 </span>
                 {label}
               </Link>
