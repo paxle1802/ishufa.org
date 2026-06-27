@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { QrCode, ScanLine } from "lucide-react";
 import { toast } from "sonner";
@@ -89,6 +89,15 @@ export function CheckinScanner() {
       setScanning(false);
     }
   }
+
+  // Mở camera NGAY khi vào trang (khỏi phải bấm thêm nút). Dừng khi rời trang.
+  useEffect(() => {
+    void startCamera();
+    return () => {
+      void stopCamera();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function markArrived() {
     if (!result) return;
@@ -181,7 +190,7 @@ export function CheckinScanner() {
             <Button
               variant="outline"
               className="w-full gap-2"
-              onClick={() => setResult(null)}
+              onClick={() => void startCamera()}
             >
               <QrCode className="size-4" />
               Quét khách tiếp theo
