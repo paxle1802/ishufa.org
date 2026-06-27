@@ -157,15 +157,15 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
     <div className="mx-auto max-w-md pb-28">
       {/* Shop header — thẻ feature AURA nền than chì, chữ trắng + nhấn vàng */}
       <header className="px-4 pt-5">
-        <div className="relative overflow-hidden rounded-3xl bg-[#1c1b19] p-6 text-white shadow-lg">
+        <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-white shadow-lg">
           {shop.logoUrl && (
             <img
               src={shop.logoUrl}
               alt={`Logo ${shop.name}`}
-              className="mb-4 h-12 w-12 rounded-2xl object-cover ring-2 ring-white/20"
+              className="mb-4 h-12 w-12 rounded-2xl object-cover ring-2 ring-white/30"
             />
           )}
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#c2a886]">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
             Đặt lịch tại
           </p>
           <h1 className="font-heading mt-2 text-3xl font-semibold leading-tight">

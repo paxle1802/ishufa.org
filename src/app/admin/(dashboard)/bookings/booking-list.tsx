@@ -50,14 +50,32 @@ export function BookingList({
     );
   }
 
+  const now = Date.now();
+
   return (
     <ul className="flex flex-col gap-3">
-      {bookings.map((b) => (
-        <li key={b.id} className="glass rounded-xl border p-3">
+      {bookings.map((b) => {
+        const isNow =
+          b.status !== "cancelled" &&
+          now >= b.startAt.getTime() &&
+          now < b.endAt.getTime();
+        return (
+        <li
+          key={b.id}
+          className={cn(
+            "rounded-xl border p-3",
+            isNow ? "border-primary bg-primary/5 ring-2 ring-primary" : "glass",
+          )}
+        >
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="font-semibold">
                 {formatLocal(b.startAt, "HH:mm")}–{formatLocal(b.endAt, "HH:mm")}
+                {isNow && (
+                  <span className="ml-2 align-middle text-xs font-bold text-primary">
+                    ● Đang diễn ra
+                  </span>
+                )}
               </p>
               <p className="truncate text-sm">{b.customerName}</p>
               <a
@@ -95,7 +113,8 @@ export function BookingList({
             />
           </div>
         </li>
-      ))}
+        );
+      })}
     </ul>
   );
 }
