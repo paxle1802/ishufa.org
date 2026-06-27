@@ -41,7 +41,7 @@ export default async function PublicBookingPage({
 
   if (services.length === 0) {
     return (
-      <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-2 px-4 text-center">
+      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center gap-2 px-4 text-center">
         <h1 className="text-xl font-bold">{publicShop.name}</h1>
         <p className="text-sm text-muted-foreground">
           Salon chưa mở dịch vụ đặt lịch. Vui lòng quay lại sau.

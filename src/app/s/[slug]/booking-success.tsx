@@ -31,7 +31,7 @@ function downloadIcs(booking: BookingSummary) {
   URL.revokeObjectURL(url);
 }
 
-export function BookingSuccess({ booking }: BookingSuccessProps) {
+export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
   const dateTimeLabel = formatLocal(
     new Date(booking.startAt),
     "HH:mm 'ngày' dd/MM/yyyy"
@@ -41,7 +41,7 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
   const shortCode = booking.cancelToken.slice(0, 8).toUpperCase();
 
   return (
-    <div className="mx-auto max-w-md px-4 py-10">
+    <div className="mx-auto w-full max-w-md px-4 py-10">
       {/* Success icon */}
       <div className="mb-6 flex flex-col items-center gap-3 text-center">
         <span
@@ -134,6 +134,13 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
 
       {/* Actions */}
       <div className="mt-5 flex flex-col gap-3">
+        <a
+          href={`/s/${shop.slug}`}
+          className="flex h-12 w-full items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
+        >
+          Về trang đặt lịch
+        </a>
+
         <button
           type="button"
           onClick={() => downloadIcs(booking)}

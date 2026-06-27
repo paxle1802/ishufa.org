@@ -29,7 +29,7 @@ export default async function CancelPage({
   const isConfirmed = booking.status === "confirmed";
 
   return (
-    <main className="mx-auto max-w-md px-4 py-8">
+    <main className="mx-auto w-full max-w-md px-4 py-8">
       <Link
         href={`/s/${booking.shop.slug}`}
         className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground"

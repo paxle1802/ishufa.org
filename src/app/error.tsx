@@ -10,7 +10,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
       <h1 className="text-xl font-semibold">Đã có lỗi xảy ra</h1>
       <p className="text-sm text-muted-foreground">
         Vui lòng thử lại. Nếu vẫn lỗi, hãy liên hệ salon.

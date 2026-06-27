@@ -154,7 +154,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
   }
 
   return (
-    <div className="mx-auto max-w-md pb-28">
+    <div className="mx-auto w-full max-w-md pb-28">
       {/* Shop header — thẻ feature AURA nền than chì, chữ trắng + nhấn vàng */}
       <header className="px-4 pt-5">
         <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-white shadow-lg">
