@@ -1,7 +1,8 @@
 "use client";
 
 import { CalendarDays, LayoutGrid, QrCode } from "lucide-react";
-import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
@@ -12,6 +13,42 @@ const NAV_ITEMS = [
   { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
   { href: "/admin/thu-tien", label: "Thanh toán", icon: QrCode },
 ] as const;
+
+/**
+ * Nội dung 1 mục nav. useLinkStatus cho biết link vừa bấm đang điều hướng
+ * → sáng lên NGAY khi chạm (không đợi server trả về), giống app native.
+ */
+function NavItemContent({
+  label,
+  Icon,
+  active,
+}: {
+  label: string;
+  Icon: LucideIcon;
+  active: boolean;
+}) {
+  const { pending } = useLinkStatus();
+  const hot = active || pending;
+  return (
+    <span
+      className={cn(
+        "flex flex-col items-center gap-0.5 py-1.5 text-[13px] font-bold transition-colors",
+        hot ? "text-foreground" : "text-foreground/70",
+      )}
+    >
+      <span
+        className={cn(
+          "flex h-8 w-12 items-center justify-center rounded-full transition-colors",
+          // AURA: mục đang mở / vừa bấm = nền vàng nhạt + icon vàng đồng.
+          hot ? "bg-accent/15 text-accent" : "text-foreground/70",
+        )}
+      >
+        <Icon className="size-7" aria-hidden />
+      </span>
+      {label}
+    </span>
+  );
+}
 
 export function AdminNav() {
   const pathname = usePathname();
@@ -24,23 +61,8 @@ export function AdminNav() {
             href === "/admin" ? pathname === href : pathname.startsWith(href);
           return (
             <li key={href} className="flex-1">
-              <Link
-                href={href}
-                className={cn(
-                  "flex flex-col items-center gap-0.5 py-1.5 text-[13px] font-bold transition-colors",
-                  active ? "text-foreground" : "text-foreground/70",
-                )}
-              >
-                <span
-                  className={cn(
-                    "flex h-8 w-12 items-center justify-center rounded-full transition-colors",
-                    // AURA: mục đang mở = nền vàng nhạt + icon vàng đồng; còn lại đậm màu.
-                    active ? "bg-accent/15 text-accent" : "text-foreground/70",
-                  )}
-                >
-                  <Icon className="size-7" aria-hidden />
-                </span>
-                {label}
+              <Link href={href} className="block">
+                <NavItemContent label={label} Icon={Icon} active={active} />
               </Link>
             </li>
           );
