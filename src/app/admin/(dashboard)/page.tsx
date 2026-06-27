@@ -1,4 +1,3 @@
-import { autoCancelStaleBookings } from "@/lib/booking/auto-cancel";
 import { listBookingsForDay } from "@/lib/booking/queries";
 import { getTodayStats } from "@/lib/db/queries-dashboard";
 import { requireAdmin } from "@/lib/auth/require-admin";
@@ -16,7 +15,6 @@ export default async function AdminTodayPage() {
   const { shopId } = await requireAdmin();
   const day = todayVn();
 
-  await autoCancelStaleBookings(shopId); // tự huỷ no-show quá giờ ân hạn
   const [bookings, stats] = await Promise.all([
     listBookingsForDay(shopId, day),
     getTodayStats(shopId, day),

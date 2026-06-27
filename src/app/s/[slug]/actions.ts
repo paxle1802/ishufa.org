@@ -2,7 +2,6 @@
 
 import { headers } from "next/headers";
 
-import { autoCancelStaleBookings } from "@/lib/booking/auto-cancel";
 import { createBooking, SlotUnavailableError } from "@/lib/booking/create-booking";
 import { sendShopNotification } from "@/lib/push/send";
 import { formatLocal } from "@/lib/tz";
@@ -47,9 +46,6 @@ export async function getSlotsAction(input: SlotsQueryInput): Promise<SlotsResul
   }
   const shop = await getShopBySlug(parsed.data.slug);
   if (!shop || !shop.active) return { ok: false, error: "Salon không tồn tại" };
-
-  // Tự huỷ no-show quá giờ ân hạn để mở lại slot trước khi tính khung giờ.
-  await autoCancelStaleBookings(shop.id);
 
   const chosen = await resolveServices(shop.id, parsed.data.serviceIds);
   if (!chosen) return { ok: false, error: "Dịch vụ không hợp lệ" };

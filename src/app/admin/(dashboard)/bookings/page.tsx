@@ -1,7 +1,6 @@
 import { ScanLine } from "lucide-react";
 import Link from "next/link";
 
-import { autoCancelStaleBookings } from "@/lib/booking/auto-cancel";
 import {
   getActivePackagesForPhones,
   listBookingsForDay,
@@ -43,7 +42,6 @@ export default async function BookingsPage({
   const { date } = await searchParams;
   const day = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : todayVn();
 
-  await autoCancelStaleBookings(shopId); // tự huỷ no-show quá giờ ân hạn
   const shop = await getShopById(shopId);
   const bank: ShopBank | null =
     shop?.bankBin && shop.bankAccountNumber && shop.bankAccountName
