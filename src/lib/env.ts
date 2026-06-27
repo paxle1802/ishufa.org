@@ -14,8 +14,6 @@ const serverSchema = z.object({
   VAPID_PUBLIC_KEY: z.string().optional(),
   VAPID_PRIVATE_KEY: z.string().optional(),
   VAPID_SUBJECT: z.string().optional(),
-  // Bảo vệ endpoint cron (/api/cron/*). Vercel tự gửi Bearer token này.
-  CRON_SECRET: z.string().optional(),
 });
 
 const clientSchema = z.object({
