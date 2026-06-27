@@ -60,7 +60,7 @@ export function CheckinQr({ token, shortCode }: { token: string; shortCode: stri
         ref={canvasRef}
         width={DISPLAY}
         height={DISPLAY}
-        className="rounded-lg border bg-white p-2"
+        className="h-auto max-w-full rounded-lg border bg-white p-2"
       />
       <p className="text-xs text-muted-foreground">
         Vui lòng lưu lại mã này. Khi tới salon, chỉ cần giơ mã QR ra để nhân viên quét.

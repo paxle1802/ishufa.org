@@ -135,6 +135,12 @@
   html {
     @apply font-sans;
     font-size: 17px; /* chữ to & dễ đọc hơn (mặc định 16px) */
+    /* Chặn tràn ngang làm rộng layout viewport (gây "to hơn màn hình" trên mobile).
+       overflow-x: clip không tạo scroll container nên không phá position: sticky. */
+    overflow-x: clip;
+    /* Không cho Safari tự phóng to chữ sau khi load. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   /* AURA: tiêu đề trang dùng serif Cormorant Garamond (editorial). */
   h1 {

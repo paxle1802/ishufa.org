@@ -44,7 +44,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  // Không đặt maximumScale: iOS Safari hay tính sai initial-scale sau khi load
+  // (trang bị phóng to, phải pinch lại) và còn chặn zoom trợ năng.
   themeColor: "#fbfaf8",
 };
 
