@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Closure } from "@/lib/db/schema";
+import { formatDateStr } from "@/lib/tz";
 import { addClosure, deleteClosure } from "./actions";
 
 interface Props {
@@ -103,7 +104,7 @@ export function ClosuresManager({ closures: initial }: Props) {
             {initial.map((c) => (
               <li key={c.id} className="flex items-center justify-between py-2">
                 <div>
-                  <span className="font-medium tabular-nums">{c.date}</span>
+                  <span className="font-medium tabular-nums">{formatDateStr(c.date)}</span>
                   {c.reason && (
                     <span className="ml-2 text-muted-foreground">{c.reason}</span>
                   )}

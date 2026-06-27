@@ -23,7 +23,7 @@ export default async function CancelPage({
   const booking = await getBookingByToken(token);
   if (!booking) notFound();
 
-  const when = formatLocal(booking.startAt, "HH:mm 'ngày' dd/MM/yyyy");
+  const when = formatLocal(booking.startAt, "HH:mm 'ngày' dd-MM-yyyy");
   const services = booking.items.map((i) => i.service.name).join(", ");
   const cutoff = cancelCutoffPassed(booking.startAt, booking.shop.cancelCutoffMin);
   const isConfirmed = booking.status === "confirmed";

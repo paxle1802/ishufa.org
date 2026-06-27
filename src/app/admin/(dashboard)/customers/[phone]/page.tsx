@@ -102,7 +102,7 @@ export default async function CustomerDetailPage({
                   {p.sessionsRemaining}/{p.sessionsTotal} buổi còn lại
                 </p>
                 <p className="text-muted-foreground">
-                  HSD: {formatLocal(p.expiresAt, "dd/MM/yyyy")}
+                  HSD: {formatLocal(p.expiresAt, "dd-MM-yyyy")}
                 </p>
               </li>
             ))}
@@ -123,7 +123,7 @@ export default async function CustomerDetailPage({
               <li key={b.id} className="rounded-xl border bg-card p-3 text-sm">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-semibold">
-                    {formatLocal(b.startAt, "HH:mm dd/MM/yyyy")}
+                    {formatLocal(b.startAt, "HH:mm dd-MM-yyyy")}
                   </span>
                   <span className="rounded-md bg-muted px-2 py-0.5 text-xs">
                     {STATUS_LABEL[b.status] ?? b.status}
@@ -155,7 +155,7 @@ export default async function CustomerDetailPage({
               >
                 <div>
                   <span className="text-muted-foreground">
-                    {formatLocal(entry.createdAt, "dd/MM/yyyy HH:mm")}
+                    {formatLocal(entry.createdAt, "dd-MM-yyyy HH:mm")}
                   </span>
                   {entry.note && (
                     <p className="text-xs text-muted-foreground">{entry.note}</p>

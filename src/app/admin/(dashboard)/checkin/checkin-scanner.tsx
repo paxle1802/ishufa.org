@@ -174,7 +174,7 @@ export function CheckinScanner() {
 
             <div className="rounded-lg bg-muted/50 p-3 text-sm">
               <p className="font-medium capitalize">
-                {formatLocal(new Date(result.startAt), "HH:mm 'ngày' dd/MM/yyyy")}
+                {formatLocal(new Date(result.startAt), "HH:mm 'ngày' dd-MM-yyyy")}
               </p>
               <p className="mt-1 text-muted-foreground">
                 {result.serviceNames.join(", ")}

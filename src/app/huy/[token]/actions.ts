@@ -18,7 +18,7 @@ export async function cancelAction(token: string): Promise<CancelResult> {
       if (b) {
         await sendShopNotification(b.shopId, {
           title: "Khách huỷ lịch hẹn",
-          body: `${b.customerName} · ${formatLocal(b.startAt, "HH:mm dd/MM")}`,
+          body: `${b.customerName} · ${formatLocal(b.startAt, "HH:mm dd-MM")}`,
           url: "/admin/bookings",
         });
       }

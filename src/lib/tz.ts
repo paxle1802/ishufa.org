@@ -13,9 +13,18 @@ export function utcToZoned(utcDate: Date): Date {
   return toZonedTime(utcDate, APP_TIME_ZONE);
 }
 
-/** Format theo giờ địa phương, ví dụ formatLocal(d, "HH:mm dd/MM/yyyy"). */
+/** Format theo giờ địa phương, ví dụ formatLocal(d, "HH:mm dd-MM-yyyy"). */
 export function formatLocal(date: Date, fmt: string): string {
   return formatInTimeZone(date, APP_TIME_ZONE, fmt);
+}
+
+/**
+ * Định dạng ngày THỐNG NHẤT toàn app: "dd-MM-yyyy".
+ * Nhận chuỗi "yyyy-MM-dd" (cột date) → "dd-MM-yyyy" (giữ nguyên ngày lịch, không lệch TZ).
+ */
+export function formatDateStr(isoDate: string): string {
+  const [y, m, d] = isoDate.split("-");
+  return d && m && y ? `${d}-${m}-${y}` : isoDate;
 }
 
 /** Khoảng [from, to) UTC của 1 ngày "yyyy-MM-dd" theo giờ địa phương. */

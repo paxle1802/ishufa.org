@@ -42,7 +42,7 @@ export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
 
   const dateTimeLabel = formatLocal(
     new Date(booking.startAt),
-    "HH:mm 'ngày' dd/MM/yyyy"
+    "HH:mm 'ngày' dd-MM-yyyy"
   );
 
   // Short code: first 8 chars of cancelToken for display

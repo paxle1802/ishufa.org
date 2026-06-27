@@ -39,7 +39,7 @@ export default async function SuperPage() {
                     </Link>
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5 pt-0.5 text-xs text-muted-foreground">
                       {shop.contactPhone && <span>{shop.contactPhone}</span>}
-                      <span>{formatLocal(shop.createdAt, "dd/MM/yyyy")}</span>
+                      <span>{formatLocal(shop.createdAt, "dd-MM-yyyy")}</span>
                     </div>
                   </div>
                   <Badge variant={shop.active ? "default" : "outline"} className="shrink-0 mt-0.5">

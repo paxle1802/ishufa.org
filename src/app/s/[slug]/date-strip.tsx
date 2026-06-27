@@ -53,7 +53,7 @@ export function DateStrip({ selected, maxAdvanceDays, onSelect }: DateStripProps
             // Use noon UTC so getDay() gives the correct VN weekday regardless of browser TZ
             const d = new Date(dateStr + "T12:00:00Z");
             const weekday = VN_WEEKDAY[d.getUTCDay()];
-            const dayMonth = formatLocal(d, "dd/MM");
+            const dayMonth = formatLocal(d, "dd-MM");
             const isSelected = dateStr === selected;
 
             return (

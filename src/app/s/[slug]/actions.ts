@@ -144,7 +144,7 @@ export async function createBookingAction(
     try {
       await sendShopNotification(shop.id, {
         title: "Có khách đặt lịch mới",
-        body: `${data.customerName} · ${formatLocal(startAt, "HH:mm dd/MM")} · ${chosen
+        body: `${data.customerName} · ${formatLocal(startAt, "HH:mm dd-MM")} · ${chosen
           .map((s) => s.name)
           .join(", ")}`,
         url: "/admin/bookings",
