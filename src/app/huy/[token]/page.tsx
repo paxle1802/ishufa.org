@@ -1,4 +1,4 @@
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Phone } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -66,7 +66,25 @@ export default async function CancelPage({
             )}
           </div>
         ) : (
-          <CancelConfirm token={token} />
+          <div className="space-y-3">
+            <p className="rounded-xl border border-border bg-secondary p-3 text-sm text-muted-foreground">
+              Bạn có thể huỷ trực tuyến chậm nhất{" "}
+              <span className="font-semibold text-foreground">
+                {booking.shop.cancelCutoffMin} phút
+              </span>{" "}
+              trước giờ hẹn. Quá hạn, vui lòng gọi salon để báo huỷ.
+            </p>
+            <CancelConfirm token={token} />
+            {booking.shop.contactPhone && (
+              <a
+                href={`tel:${booking.shop.contactPhone}`}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-input text-sm font-semibold text-foreground transition-colors hover:bg-muted/60"
+              >
+                <Phone className="size-4" />
+                Gọi báo huỷ
+              </a>
+            )}
+          </div>
         )}
       </div>
     </main>

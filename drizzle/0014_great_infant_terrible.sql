@@ -1,0 +1,1 @@
+ALTER TABLE "shops" ALTER COLUMN "cancel_cutoff_min" SET DEFAULT 30;

@@ -54,7 +54,7 @@ export const shops = pgTable(
     capacity: integer("capacity").notNull().default(1),
     maxAdvanceDays: integer("max_advance_days").notNull().default(30),
     minLeadMin: integer("min_lead_min").notNull().default(15),
-    cancelCutoffMin: integer("cancel_cutoff_min").notNull().default(60),
+    cancelCutoffMin: integer("cancel_cutoff_min").notNull().default(30),
     gracePeriodMin: integer("grace_period_min").notNull().default(10),
     // Tích điểm: số điểm cộng cho mỗi 1.000đ chi tiêu (0 = tắt).
     loyaltyEarnRate: integer("loyalty_earn_rate").notNull().default(0),

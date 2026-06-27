@@ -1,9 +1,17 @@
 import { z } from "zod";
 
-/** Chuẩn hoá SĐT: +84xxxxxxxxx → 0xxxxxxxxx. */
+/**
+ * Chuẩn hoá SĐT Việt Nam về dạng 0xxxxxxxxx. Chấp nhận:
+ *  +84902193962 · 0084902193962 · 84902193962 · 902193962 · 0902193962
+ * (bỏ mọi khoảng trắng/dấu chấm/gạch ngang).
+ */
 export function normalizePhone(phone: string): string {
-  const p = phone.trim().replace(/\s+/g, "");
-  return p.startsWith("+84") ? "0" + p.slice(3) : p;
+  let p = phone.replace(/[\s.()-]/g, "");
+  if (p.startsWith("+84")) p = "0" + p.slice(3);
+  else if (p.startsWith("0084")) p = "0" + p.slice(4);
+  else if (p.startsWith("84") && p.length === 11) p = "0" + p.slice(2);
+  else if (/^[35789]\d{8}$/.test(p)) p = "0" + p; // mất số 0 đầu (do autofill)
+  return p;
 }
 
 const phoneSchema = z
