@@ -29,8 +29,8 @@ const STATUS_CLASS: Record<BookingStatus, string> = {
   confirmed: "bg-blue-100 text-blue-700",
   arrived: "bg-violet-100 text-violet-700",
   completed: "bg-green-100 text-green-700",
-  no_show: "bg-amber-100 text-amber-700",
-  cancelled: "bg-muted text-muted-foreground line-through",
+  no_show: "bg-muted-foreground/20 text-muted-foreground",
+  cancelled: "bg-muted-foreground/20 text-muted-foreground",
 };
 
 export function BookingList({
@@ -65,8 +65,11 @@ export function BookingList({
           key={b.id}
           className={cn(
             "rounded-xl border p-3",
-            isNow ? "border-primary bg-primary/5 ring-2 ring-primary" : "glass",
-            isCancelled && "opacity-55",
+            isCancelled
+              ? "border-muted-foreground/20 bg-muted/70 text-muted-foreground"
+              : isNow
+                ? "border-primary bg-primary/5 ring-2 ring-primary"
+                : "glass",
           )}
         >
           <div className="flex items-start justify-between gap-2">

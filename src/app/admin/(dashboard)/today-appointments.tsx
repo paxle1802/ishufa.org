@@ -13,8 +13,8 @@ const BADGE: Record<BookingStatus, { label: string; cls: string }> = {
   confirmed: { label: "Đã đặt", cls: "bg-blue-100 text-blue-700" },
   arrived: { label: "Đang làm", cls: "bg-violet-100 text-violet-700" },
   completed: { label: "Đã thu tiền", cls: "bg-green-100 text-green-700" },
-  cancelled: { label: "Huỷ", cls: "bg-muted text-muted-foreground line-through" },
-  no_show: { label: "Huỷ", cls: "bg-muted text-muted-foreground line-through" },
+  cancelled: { label: "Đã huỷ", cls: "bg-muted-foreground/20 text-muted-foreground" },
+  no_show: { label: "Vắng", cls: "bg-muted-foreground/20 text-muted-foreground" },
 };
 
 /** Danh sách lịch hẹn hôm nay — CHỈ ĐỌC (thao tác nằm ở tab Bookings). */
@@ -42,9 +42,12 @@ export function TodayAppointments({ bookings }: { bookings: BookingForDay[] }) {
           <li
             key={b.id}
             className={cn(
-              "rounded-xl border bg-card p-3.5",
-              isNow && "border-primary bg-primary/5 ring-2 ring-primary",
-              isCancelled && "opacity-55",
+              "rounded-xl border p-3.5",
+              isCancelled
+                ? "border-muted-foreground/20 bg-muted/70 text-muted-foreground"
+                : isNow
+                  ? "border-primary bg-primary/5 ring-2 ring-primary"
+                  : "bg-card",
             )}
           >
             <div className="flex items-start justify-between gap-2">
