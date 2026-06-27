@@ -6,6 +6,9 @@ import type { PublicService } from "./types";
 const vnd = new Intl.NumberFormat("vi-VN");
 const formatPrice = (price: number) => vnd.format(price) + "đ";
 
+// Bộ màu kính crystal — mỗi dịch vụ một tông trong suốt khác nhau cho dễ phân biệt.
+const TINTS = ["glass-blue", "glass-violet", "glass-green"];
+
 interface ServicePickerProps {
   services: PublicService[];
   selectedIds: string[];
@@ -19,7 +22,7 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
         Chọn dịch vụ
       </h2>
       <div className="flex flex-col gap-3">
-        {services.map((service) => {
+        {services.map((service, i) => {
           const selected = selectedIds.includes(service.id);
           return (
             <button
@@ -28,11 +31,11 @@ export function ServicePicker({ services, selectedIds, onToggle }: ServicePicker
               aria-pressed={selected}
               onClick={() => onToggle(service.id)}
               className={cn(
-                // 1 dịch vụ / 1 hàng, cao bằng nhau. AURA: chọn = than chì.
-                "relative flex min-h-[92px] w-full flex-col justify-center rounded-2xl border p-4 text-left transition-colors",
+                // 1 dịch vụ / 1 hàng, cao bằng nhau. Mỗi thẻ một tông kính crystal.
+                "relative flex min-h-[92px] w-full flex-col justify-center rounded-2xl border p-4 text-left transition-all",
                 selected
-                  ? "border-primary bg-primary/[0.04] ring-1 ring-primary"
-                  : "glass border-border hover:bg-muted/40",
+                  ? "border-primary ring-2 ring-primary glass-tint " + TINTS[i % TINTS.length]
+                  : "glass-tint " + TINTS[i % TINTS.length] + " hover:brightness-[1.03]",
               )}
             >
               {selected && (
