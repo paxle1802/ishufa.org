@@ -31,7 +31,13 @@ export function getBookingByToken(token: string) {
     where: eq(bookings.cancelToken, token),
     with: {
       shop: {
-        columns: { name: true, address: true, contactPhone: true, cancelCutoffMin: true },
+        columns: {
+          slug: true,
+          name: true,
+          address: true,
+          contactPhone: true,
+          cancelCutoffMin: true,
+        },
       },
       items: { with: { service: { columns: { name: true } } } },
     },

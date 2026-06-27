@@ -20,7 +20,7 @@ export function SummaryBar({
   onBook,
 }: SummaryBarProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/70 px-4 py-3 backdrop-blur-xl">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background px-4 py-3">
       <div className="mx-auto flex max-w-md items-center gap-3">
         {/* Summary text */}
         <div className="flex-1 min-w-0">

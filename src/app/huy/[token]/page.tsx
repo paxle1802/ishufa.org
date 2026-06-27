@@ -1,3 +1,5 @@
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { cancelCutoffPassed } from "@/lib/booking/cancel-booking";
@@ -27,8 +29,15 @@ export default async function CancelPage({
   const isConfirmed = booking.status === "confirmed";
 
   return (
-    <main className="mx-auto max-w-md px-4 py-10">
-      <h1 className="text-xl font-bold">Huỷ lịch hẹn</h1>
+    <main className="mx-auto max-w-md px-4 py-8">
+      <Link
+        href={`/s/${booking.shop.slug}`}
+        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        <ChevronLeft className="size-4" />
+        Về trang đặt lịch
+      </Link>
+      <h1 className="font-heading text-2xl font-semibold">Huỷ lịch hẹn</h1>
       <p className="mt-1 text-sm text-muted-foreground">{booking.shop.name}</p>
 
       <div className="mt-5 space-y-2 rounded-2xl border bg-card p-5">

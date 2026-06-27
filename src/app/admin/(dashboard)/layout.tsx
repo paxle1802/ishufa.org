@@ -23,7 +23,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-dvh flex-col pb-16">
-      <header className="sticky top-0 z-30 border-b bg-background/95 px-4 py-3 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b bg-background px-4 py-3">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
           <span className="min-w-0 flex-1 truncate font-semibold">{shop?.name ?? "Salon"}</span>
           <span className="shrink-0 text-sm text-muted-foreground">{user.name}</span>
