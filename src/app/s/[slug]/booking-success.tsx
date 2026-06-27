@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
+
 import { buildIcs } from "@/lib/ics";
 import { formatLocal } from "@/lib/tz";
 import type { BookingSummary } from "./actions";
@@ -32,6 +35,11 @@ function downloadIcs(booking: BookingSummary) {
 }
 
 export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
+  // Khi vừa đặt xong, cuộn lên đầu trang để khách thấy thông báo thành công.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const dateTimeLabel = formatLocal(
     new Date(booking.startAt),
     "HH:mm 'ngày' dd/MM/yyyy"
@@ -41,7 +49,16 @@ export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
   const shortCode = booking.cancelToken.slice(0, 8).toUpperCase();
 
   return (
-    <div className="mx-auto w-full max-w-md px-4 py-10">
+    <div className="mx-auto w-full max-w-md px-4 py-6">
+      {/* Nút quay lại trang đặt lịch — nhỏ, ở trên cùng */}
+      <a
+        href={`/s/${shop.slug}`}
+        className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" aria-hidden />
+        Về trang đặt lịch
+      </a>
+
       {/* Success icon */}
       <div className="mb-6 flex flex-col items-center gap-3 text-center">
         <span
@@ -134,13 +151,6 @@ export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
 
       {/* Actions */}
       <div className="mt-5 flex flex-col gap-3">
-        <a
-          href={`/s/${shop.slug}`}
-          className="flex h-12 w-full items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
-        >
-          Về trang đặt lịch
-        </a>
-
         <button
           type="button"
           onClick={() => downloadIcs(booking)}
@@ -167,7 +177,7 @@ export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
 
         <a
           href={`/huy/${booking.cancelToken}`}
-          className="flex h-11 w-full items-center justify-center rounded-xl text-sm text-muted-foreground underline-offset-4 hover:underline"
+          className="flex h-11 w-full items-center justify-center rounded-full border border-destructive/50 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10"
           aria-label="Huỷ lịch hẹn này"
         >
           Huỷ lịch hẹn

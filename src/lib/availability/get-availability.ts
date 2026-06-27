@@ -8,6 +8,10 @@ import type { Shop } from "@/lib/db/schema";
 
 const MS_PER_DAY = 86_400_000;
 
+// Mặc định khi shop CHƯA cấu hình giờ làm việc nào: 8h–22h tất cả các ngày.
+const DEFAULT_OPEN = "08:00";
+const DEFAULT_CLOSE = "22:00";
+
 /** Weekday 0=CN..6=T7 của 1 ngày "yyyy-MM-dd" (theo lịch, độc lập tz). */
 function weekdayOf(date: string): number {
   return new Date(`${date}T00:00:00Z`).getUTCDay();
@@ -37,16 +41,12 @@ export async function getAvailability(params: {
   const dayEnd = new Date(dayStart.getTime() + MS_PER_DAY);
   const weekday = weekdayOf(date);
 
-  const [hours, closedRows, dayBookings] = await Promise.all([
+  const [allHours, closedRows, dayBookings] = await Promise.all([
+    // Lấy toàn bộ giờ làm của shop (≤7 dòng) để biết shop đã cấu hình hay chưa.
     db
       .select()
       .from(workingHours)
-      .where(
-        and(
-          eq(workingHours.shopId, shop.id),
-          eq(workingHours.weekday, weekday),
-        ),
-      ),
+      .where(eq(workingHours.shopId, shop.id)),
     db
       .select()
       .from(closures)
@@ -64,14 +64,23 @@ export async function getAvailability(params: {
       ),
   ]);
 
+  // Shop chưa đặt giờ nào → mặc định 8h–22h mỗi ngày.
+  // Đã cấu hình ít nhất 1 ngày → tôn trọng: ngày không có dòng = nghỉ.
+  const workingIntervals =
+    allHours.length === 0
+      ? [{ open: DEFAULT_OPEN, close: DEFAULT_CLOSE }]
+      : allHours
+          .filter((h) => h.weekday === weekday)
+          .map((h) => ({
+            // time cột trả "HH:mm:ss" → cắt còn "HH:mm"
+            open: h.openTime.slice(0, 5),
+            close: h.closeTime.slice(0, 5),
+          }));
+
   return computeSlots({
     date,
     now,
-    workingIntervals: hours.map((h) => ({
-      // time cột trả "HH:mm:ss" → cắt còn "HH:mm"
-      open: h.openTime.slice(0, 5),
-      close: h.closeTime.slice(0, 5),
-    })),
+    workingIntervals,
     isClosed: closedRows.length > 0,
     totalDurationMin,
     slotIntervalMin: shop.slotIntervalMin,
