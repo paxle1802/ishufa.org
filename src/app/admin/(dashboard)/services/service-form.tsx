@@ -237,7 +237,7 @@ export function ServiceForm({ open, onOpenChange, service, staff }: ServiceFormP
                     Xoá ảnh
                   </button>
                 )}
-                <span className="text-xs text-muted-foreground">PNG, JPG — tối đa 4 MB</span>
+                <span className="text-xs text-muted-foreground">PNG, JPG — tối đa 8 MB</span>
               </div>
             </div>
             <input

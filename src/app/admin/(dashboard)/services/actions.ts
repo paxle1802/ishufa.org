@@ -23,8 +23,8 @@ export async function uploadServiceImageAction(
     if (!(file instanceof File) || file.size === 0) {
       return { ok: false, error: "Vui lòng chọn file ảnh" };
     }
-    if (file.size > 4 * 1024 * 1024) {
-      return { ok: false, error: "Ảnh tối đa 4 MB" };
+    if (file.size > 8 * 1024 * 1024) {
+      return { ok: false, error: "Ảnh tối đa 8 MB" };
     }
 
     const shop = await getShopById(shopId);
