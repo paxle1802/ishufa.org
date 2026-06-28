@@ -1,57 +1,51 @@
-import { listBookingsForDay } from "@/lib/booking/queries";
-import { getTodayStats } from "@/lib/db/queries-dashboard";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { Card, CardContent } from "@/components/ui/card";
-import { TodayAppointments } from "./today-appointments";
+import { listBookingsForDay } from "@/lib/booking/queries";
+import { getFinanceSummary, listExpensesForDay } from "@/lib/db/queries-finance";
 
-const vnd = new Intl.NumberFormat("vi-VN");
+import { DailyMoney } from "./daily-money";
+import { ExpenseManager } from "./expenses/expense-manager";
+import { TodayAppointments } from "./today-appointments";
 
 function todayVn(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Saigon" }).format(new Date());
 }
 
-/** Dashboard "Hôm nay": thống kê chung + danh sách lịch hẹn (chỉ đọc). */
+/** Dashboard "Hôm nay": bảng tiền (thu/chi/lãi) + kê khai chi phí + lịch hẹn. */
 export default async function AdminTodayPage() {
   const { shopId } = await requireAdmin();
   const day = todayVn();
+  const month = day.slice(0, 7);
 
-  const [bookings, stats] = await Promise.all([
+  const [summary, expenseRows, bookings] = await Promise.all([
+    getFinanceSummary(shopId, day, month),
+    listExpensesForDay(shopId, day),
     listBookingsForDay(shopId, day),
-    getTodayStats(shopId, day),
   ]);
-
-  const done = bookings.filter((b) => b.status === "completed").length;
 
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-semibold">Hôm nay</h1>
 
-      {/* Thống kê chung */}
-      <div className="grid grid-cols-2 gap-2.5">
-        <StatCard label="Doanh thu" value={`${vnd.format(stats.revenue)}đ`} />
-        <StatCard label="Lịch hẹn" value={String(stats.bookingsToday)} />
-        <StatCard label="Đã thu tiền" value={String(done)} />
-        <StatCard label="KM đang chạy" value={String(stats.activePromos)} />
-      </div>
+      {/* Bảng tiền: Doanh thu / Chi phí / Lợi nhuận (Hôm nay ↔ Tháng này) */}
+      <DailyMoney day={summary.day} month={summary.month} />
 
-      {/* Lịch hẹn hôm nay — chỉ đọc, thao tác nằm ở tab Bookings */}
+      {/* Kê khai chi phí trong ngày */}
       <div>
         <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
-          Lịch hẹn hôm nay
+          Chi phí hôm nay
+        </h2>
+        <ExpenseManager
+          expenses={expenseRows.map((e) => ({ id: e.id, amount: e.amount, note: e.note }))}
+        />
+      </div>
+
+      {/* Lịch hẹn hôm nay — chỉ đọc, thao tác ở tab Bookings */}
+      <div>
+        <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+          Lịch hẹn hôm nay ({bookings.filter((b) => b.status !== "cancelled").length})
         </h2>
         <TodayAppointments bookings={bookings} />
       </div>
     </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="p-4 text-center">
-        <p className="font-heading truncate text-2xl font-semibold">{value}</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
-      </CardContent>
-    </Card>
   );
 }

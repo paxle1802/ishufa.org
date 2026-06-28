@@ -11,7 +11,6 @@ import {
   Ticket,
   Users,
   Users2,
-  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -33,7 +32,6 @@ const MORE_ITEMS = [
   { href: "/admin/staff", label: "Thợ", icon: Users2 },
   { href: "/admin/schedule", label: "Lịch & cấu hình", icon: CalendarClock },
   { href: "/admin/revenue", label: "Doanh thu", icon: LineChart },
-  { href: "/admin/expenses", label: "Chi phí & Lợi nhuận", icon: Wallet },
   { href: "/admin/promotions", label: "Khuyến mãi", icon: Ticket },
   { href: "/admin/packages", label: "Gói trả trước", icon: Package },
   { href: "/admin/shop", label: "Shop & QR", icon: Store },
