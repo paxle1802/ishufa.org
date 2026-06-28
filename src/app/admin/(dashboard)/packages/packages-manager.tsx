@@ -133,6 +133,9 @@ export function PackagesManager({ packages: initial, services }: PackagesManager
       )}
 
       <PackageForm
+        // Remount per target so the form always seeds from the right package
+        // (programmatic open doesn't trigger the dialog's onOpenChange reset).
+        key={editing?.id ?? "new"}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         pkg={editing}
