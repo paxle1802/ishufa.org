@@ -39,7 +39,9 @@ export function RevenueControls({ period, date }: Props) {
   }
 
   function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
-    push(period, e.target.value);
+    const v = e.target.value;
+    if (!v) return; // bỏ qua khi ô trống (đang gõ dở) → tránh date rỗng
+    push(period, v);
   }
 
   return (

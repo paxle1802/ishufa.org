@@ -26,9 +26,17 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
 
   const period: Period =
     rawPeriod === "day" ? "day" : rawPeriod === "year" ? "year" : "month";
+
+  // Validate date theo đúng định dạng của kỳ; sai/trống → dùng kỳ hiện tại.
+  // Tránh ngày không hợp lệ (vd ô năm bị xoá trống) lọt vào range → query lỗi.
+  const PATTERN: Record<Period, RegExp> = {
+    year: /^\d{4}$/,
+    month: /^\d{4}-\d{2}$/,
+    day: /^\d{4}-\d{2}-\d{2}$/,
+  };
   const defaultDate =
     period === "year" ? todayVN().slice(0, 4) : period === "month" ? thisMonthVN() : todayVN();
-  const date = rawDate ?? defaultDate;
+  const date = rawDate && PATTERN[period].test(rawDate) ? rawDate : defaultDate;
 
   const range =
     period === "year"
