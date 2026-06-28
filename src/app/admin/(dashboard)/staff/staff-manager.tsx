@@ -8,37 +8,38 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { createStaff, deleteStaff, setStaffCommission, updateStaff } from "./actions";
+import { Label } from "@/components/ui/label";
+import { createStaff, deleteStaff, setStaffPay, updateStaff } from "./actions";
 
 interface Staff {
   id: string;
   name: string;
   active: boolean;
-  commissionPct: number; // % thợ hưởng
+  baseSalary: number; // lương cứng VND/tháng
+  commissionPct: number; // % ăn chia
   sortOrder: number;
 }
 
-// Tỷ lệ Chủ–Thợ; lưu theo % THỢ hưởng. (Có thêm "Tuỳ chọn" để nhập số bất kỳ.)
-const RATIOS = [
-  { owner: 40, staff: 60 },
-  { owner: 50, staff: 50 },
-];
+const vnd = new Intl.NumberFormat("vi-VN");
 
-export function StaffManager({
-  staff,
-  showCommission = true,
-}: {
-  staff: Staff[];
-  showCommission?: boolean;
-}) {
+/** Tóm tắt cách tính lương để hiện trên nút. */
+function paySummary(base: number, pct: number): string {
+  const parts: string[] = [];
+  if (base > 0) parts.push(`${vnd.format(base)}đ`);
+  if (pct > 0) parts.push(`ăn chia ${pct}%`);
+  return parts.length ? parts.join(" + ") : "Đặt lương";
+}
+
+export function StaffManager({ staff }: { staff: Staff[] }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
-  const [ratioId, setRatioId] = useState<string | null>(null); // row đang mở chọn tỷ lệ
-  const [customStaff, setCustomStaff] = useState(""); // % thợ tuỳ chọn
+  // Row đang mở chỉnh lương + giá trị nhập.
+  const [payId, setPayId] = useState<string | null>(null);
+  const [payBase, setPayBase] = useState("");
+  const [payPct, setPayPct] = useState("");
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +75,7 @@ export function StaffManager({
       const result = await updateStaff(s.id, {
         name,
         active: s.active,
+        baseSalary: s.baseSalary,
         commissionPct: s.commissionPct,
         sortOrder: s.sortOrder,
       });
@@ -87,12 +89,28 @@ export function StaffManager({
     });
   };
 
-  const handleSetRatio = (s: Staff, staffPct: number) => {
+  const togglePay = (s: Staff) => {
+    if (payId === s.id) {
+      setPayId(null);
+      return;
+    }
+    setPayId(s.id);
+    setPayBase(String(s.baseSalary));
+    setPayPct(String(s.commissionPct));
+  };
+
+  const handleSavePay = (s: Staff) => {
+    const base = Number(payBase) || 0;
+    const pct = Number(payPct) || 0;
+    if (pct > 100) {
+      toast.error("Ăn chia tối đa 100%");
+      return;
+    }
     startTransition(async () => {
-      const result = await setStaffCommission(s.id, staffPct);
+      const result = await setStaffPay(s.id, base, pct);
       if (result.ok) {
-        toast.success(`Tỷ lệ chủ–thợ ${100 - staffPct}–${staffPct}`);
-        setRatioId(null);
+        toast.success("Đã lưu cách tính lương");
+        setPayId(null);
         router.refresh();
       } else {
         toast.error(result.error);
@@ -168,20 +186,14 @@ export function StaffManager({
                   ) : (
                     <>
                       <span className="min-w-0 flex-1 truncate font-medium">{s.name}</span>
-                      {showCommission && (
-                        <Button
-                          size="sm"
-                          variant={ratioId === s.id ? "default" : "outline"}
-                          onClick={() => {
-                            const open = ratioId === s.id ? null : s.id;
-                            setRatioId(open);
-                            setCustomStaff(String(s.commissionPct));
-                          }}
-                          disabled={isPending}
-                        >
-                          Tỷ lệ {100 - s.commissionPct}–{s.commissionPct}
-                        </Button>
-                      )}
+                      <Button
+                        size="sm"
+                        variant={payId === s.id ? "default" : "outline"}
+                        onClick={() => togglePay(s)}
+                        disabled={isPending}
+                      >
+                        {paySummary(s.baseSalary, s.commissionPct)}
+                      </Button>
                       <Button size="icon-sm" variant="ghost" onClick={() => startEdit(s)} disabled={isPending} title="Sửa tên">
                         <PencilIcon />
                       </Button>
@@ -192,64 +204,46 @@ export function StaffManager({
                   )}
                 </div>
 
-                {/* Bảng chọn tỷ lệ ăn chia (Chủ – Thợ) */}
-                {showCommission && ratioId === s.id && editingId !== s.id && (
-                  <div className="mt-3 border-t pt-3">
-                    <p className="mb-2 text-xs text-muted-foreground">
-                      Tỷ lệ ăn chia (Chủ – Thợ):
+                {/* Bảng cách tính lương: lương cứng + ăn chia % */}
+                {payId === s.id && editingId !== s.id && (
+                  <div className="mt-3 space-y-3 border-t pt-3">
+                    <p className="text-xs text-muted-foreground">
+                      Cách tính lương — điền 0 cho phần không dùng.
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {RATIOS.map((r) => {
-                        const active = s.commissionPct === r.staff;
-                        return (
-                          <button
-                            key={r.staff}
-                            type="button"
-                            disabled={isPending}
-                            onClick={() => handleSetRatio(s, r.staff)}
-                            className={cn(
-                              "rounded-xl border py-3 text-center transition-colors disabled:opacity-50",
-                              active
-                                ? "border-primary bg-primary text-primary-foreground"
-                                : "border-border hover:bg-muted/60",
-                            )}
-                          >
-                            <span className="block text-base font-bold">
-                              {r.owner}–{r.staff}
-                            </span>
-                            <span className="block text-[11px] opacity-80">
-                              Chủ {r.owner}% · Thợ {r.staff}%
-                            </span>
-                          </button>
-                        );
-                      })}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Lương cứng (đ/tháng)</Label>
+                        <Input
+                          inputMode="numeric"
+                          value={payBase}
+                          onChange={(e) =>
+                            setPayBase(e.target.value.replace(/\D/g, "").slice(0, 10))
+                          }
+                          placeholder="0"
+                          className="h-9"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Ăn chia (%)</Label>
+                        <Input
+                          inputMode="numeric"
+                          value={payPct}
+                          onChange={(e) =>
+                            setPayPct(e.target.value.replace(/\D/g, "").slice(0, 3))
+                          }
+                          placeholder="0"
+                          className="h-9"
+                        />
+                      </div>
                     </div>
-
-                    {/* Tuỳ chọn: nhập % thợ bất kỳ */}
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">Tuỳ chọn — Thợ:</span>
-                      <Input
-                        inputMode="numeric"
-                        value={customStaff}
-                        onChange={(e) => setCustomStaff(e.target.value.replace(/\D/g, "").slice(0, 3))}
-                        className="h-9 w-16 text-center"
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        % · Chủ {Math.max(0, 100 - (Number(customStaff) || 0))}%
-                      </span>
-                      <Button
-                        size="sm"
-                        className="ml-auto"
-                        disabled={
-                          isPending ||
-                          customStaff === "" ||
-                          Number(customStaff) > 100
-                        }
-                        onClick={() => handleSetRatio(s, Number(customStaff))}
-                      >
-                        Lưu
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      disabled={isPending}
+                      onClick={() => handleSavePay(s)}
+                    >
+                      Lưu cách tính lương
+                    </Button>
                   </div>
                 )}
               </CardContent>

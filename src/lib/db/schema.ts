@@ -79,8 +79,10 @@ export const staff = pgTable(
       .references(() => shops.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     active: boolean("active").notNull().default(true),
-    // % doanh thu thợ được hưởng (chủ shop hưởng phần còn lại). VD 60 = thợ 60 / chủ 40.
-    commissionPct: integer("commission_pct").notNull().default(50),
+    // Cách tính lương (kết hợp): lương cứng + ăn chia %. Đặt 0 cho phần không dùng.
+    baseSalary: integer("base_salary").notNull().default(0), // lương cứng VND/tháng
+    // % doanh thu thợ được hưởng (ăn chia). VD 20 = thợ hưởng 20% doanh thu mình làm.
+    commissionPct: integer("commission_pct").notNull().default(0),
     sortOrder: integer("sort_order").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()

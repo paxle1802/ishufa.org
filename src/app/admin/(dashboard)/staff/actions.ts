@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { db } from "@/lib/db";
-import { shops, staff } from "@/lib/db/schema";
+import { staff } from "@/lib/db/schema";
 import { staffSchema } from "@/lib/validation/staff";
 
 type Result = { ok: true } | { ok: false; error: string };
@@ -41,19 +41,23 @@ export async function updateStaff(staffId: string, input: unknown): Promise<Resu
   }
 }
 
-/** Đặt tỷ lệ ăn chia: % thợ hưởng (0–100), chủ shop hưởng phần còn lại. */
-export async function setStaffCommission(
+/** Đặt cách tính lương: lương cứng (VND/tháng) + ăn chia % (0–100). */
+export async function setStaffPay(
   staffId: string,
-  staffPct: number,
+  baseSalary: number,
+  commissionPct: number,
 ): Promise<Result> {
   try {
     const { shopId } = await requireAdmin();
-    if (!Number.isInteger(staffPct) || staffPct < 0 || staffPct > 100) {
-      return { ok: false, error: "Tỷ lệ không hợp lệ" };
+    if (!Number.isInteger(baseSalary) || baseSalary < 0) {
+      return { ok: false, error: "Lương cứng không hợp lệ" };
+    }
+    if (!Number.isInteger(commissionPct) || commissionPct < 0 || commissionPct > 100) {
+      return { ok: false, error: "Tỷ lệ ăn chia không hợp lệ" };
     }
     await db
       .update(staff)
-      .set({ commissionPct: staffPct })
+      .set({ baseSalary, commissionPct })
       .where(and(eq(staff.id, staffId), eq(staff.shopId, shopId)));
     revalidatePath("/admin/staff");
     revalidatePath("/admin/revenue");
@@ -69,22 +73,6 @@ export async function deleteStaff(staffId: string): Promise<Result> {
     await db.delete(staff).where(and(eq(staff.id, staffId), eq(staff.shopId, shopId)));
     revalidatePath("/admin/staff");
     revalidatePath("/admin/services");
-    return { ok: true };
-  } catch (e) {
-    return fail(e);
-  }
-}
-
-/** Chọn chế độ doanh thu: 'per_staff' (chia theo thợ) | 'combined' (gộp). */
-export async function saveRevenueMode(mode: "per_staff" | "combined"): Promise<Result> {
-  try {
-    const { shopId } = await requireAdmin();
-    if (mode !== "per_staff" && mode !== "combined") {
-      return { ok: false, error: "Chế độ không hợp lệ" };
-    }
-    await db.update(shops).set({ revenueMode: mode }).where(eq(shops.id, shopId));
-    revalidatePath("/admin/staff");
-    revalidatePath("/admin/revenue");
     return { ok: true };
   } catch (e) {
     return fail(e);
