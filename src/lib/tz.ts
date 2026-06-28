@@ -42,3 +42,11 @@ export function monthRange(month: string): { from: Date; to: Date } {
   const to = fromZonedTime(`${nextMonth}-01T00:00:00`, APP_TIME_ZONE);
   return { from, to };
 }
+
+/** Khoảng [from, to) UTC của 1 năm "yyyy" theo giờ địa phương. */
+export function yearRange(year: string): { from: Date; to: Date } {
+  const y = Number(year);
+  const from = fromZonedTime(`${year}-01-01T00:00:00`, APP_TIME_ZONE);
+  const to = fromZonedTime(`${y + 1}-01-01T00:00:00`, APP_TIME_ZONE);
+  return { from, to };
+}

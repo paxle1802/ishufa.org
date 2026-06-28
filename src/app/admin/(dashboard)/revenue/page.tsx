@@ -2,7 +2,9 @@ import { RevenueControls } from "@/components/revenue/revenue-controls";
 import { StaffRevenueTable } from "@/components/revenue/staff-revenue-table";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getStaffRevenue } from "@/lib/revenue/staff-revenue";
-import { dayRange, monthRange } from "@/lib/tz";
+import { dayRange, monthRange, yearRange } from "@/lib/tz";
+
+type Period = "day" | "month" | "year";
 
 interface Props {
   searchParams: Promise<{ period?: string; date?: string }>;
@@ -22,10 +24,18 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
   const { shopId } = await requireAdmin();
   const { period: rawPeriod, date: rawDate } = await searchParams;
 
-  const period = rawPeriod === "day" ? "day" : "month";
-  const date = rawDate ?? (period === "month" ? thisMonthVN() : todayVN());
+  const period: Period =
+    rawPeriod === "day" ? "day" : rawPeriod === "year" ? "year" : "month";
+  const defaultDate =
+    period === "year" ? todayVN().slice(0, 4) : period === "month" ? thisMonthVN() : todayVN();
+  const date = rawDate ?? defaultDate;
 
-  const range = period === "month" ? monthRange(date) : dayRange(date);
+  const range =
+    period === "year"
+      ? yearRange(date)
+      : period === "month"
+        ? monthRange(date)
+        : dayRange(date);
   // Báo cáo Doanh thu luôn chia theo thợ (không phụ thuộc chế độ Gộp).
   const report = await getStaffRevenue(shopId, range.from, range.to);
 
