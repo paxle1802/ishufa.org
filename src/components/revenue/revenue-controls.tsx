@@ -10,6 +10,8 @@ type Period = "day" | "month" | "year";
 interface Props {
   period: Period;
   date: string;
+  /** Năm để chọn: từ năm shop onboard → năm hiện tại (mới nhất trước). */
+  years?: number[];
 }
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -18,7 +20,7 @@ const PERIODS: { value: Period; label: string }[] = [
   { value: "day", label: "Ngày" },
 ];
 
-export function RevenueControls({ period, date }: Props) {
+export function RevenueControls({ period, date, years = [] }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -38,7 +40,9 @@ export function RevenueControls({ period, date }: Props) {
     push(p, newDate);
   }
 
-  function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleDateChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) {
     const v = e.target.value;
     if (!v) return; // bỏ qua khi ô trống (đang gõ dở) → tránh date rỗng
     push(period, v);
@@ -61,15 +65,17 @@ export function RevenueControls({ period, date }: Props) {
       </div>
 
       {period === "year" ? (
-        <input
-          suppressHydrationWarning
-          type="number"
-          min={2020}
-          max={2100}
+        <select
           value={date}
           onChange={handleDateChange}
-          className="h-8 w-24 rounded-lg border border-input bg-card px-2.5 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-        />
+          className="h-8 rounded-lg border border-input bg-card px-2.5 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
+        >
+          {years.map((y) => (
+            <option key={y} value={String(y)}>
+              Năm {y}
+            </option>
+          ))}
+        </select>
       ) : (
         <input
           suppressHydrationWarning

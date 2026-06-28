@@ -1,8 +1,9 @@
 import { RevenueControls } from "@/components/revenue/revenue-controls";
 import { StaffRevenueTable } from "@/components/revenue/staff-revenue-table";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { getShopById } from "@/lib/db/queries";
 import { getStaffRevenue } from "@/lib/revenue/staff-revenue";
-import { dayRange, monthRange, yearRange } from "@/lib/tz";
+import { dayRange, formatLocal, monthRange, yearRange } from "@/lib/tz";
 
 type Period = "day" | "month" | "year";
 
@@ -45,11 +46,20 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         ? monthRange(date)
         : dayRange(date);
   // Báo cáo Doanh thu luôn chia theo thợ (không phụ thuộc chế độ Gộp).
-  const report = await getStaffRevenue(shopId, range.from, range.to);
+  const [report, shop] = await Promise.all([
+    getStaffRevenue(shopId, range.from, range.to),
+    getShopById(shopId),
+  ]);
+
+  // Danh sách năm để chọn: từ năm shop onboard → năm hiện tại (mới nhất trước).
+  const currentYear = Number(todayVN().slice(0, 4));
+  const onboardYear = shop ? Number(formatLocal(shop.createdAt, "yyyy")) : currentYear;
+  const years: number[] = [];
+  for (let y = currentYear; y >= Math.min(onboardYear, currentYear); y--) years.push(y);
 
   return (
     <div className="space-y-4">
-      <RevenueControls period={period} date={date} />
+      <RevenueControls period={period} date={date} years={years} />
       <StaffRevenueTable report={report} />
     </div>
   );
