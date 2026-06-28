@@ -25,12 +25,17 @@ export async function sellPackage(
     if (!pkg || !pkg.active) return { ok: false, error: "Gói không khả dụng" };
 
     const expiresAt = new Date(Date.now() + pkg.validityDays * MS_PER_DAY);
+    const isPrepaid = pkg.kind === "prepaid";
     await tx.insert(customerPackages).values({
       shopId,
       customerId,
       packageId: pkg.id,
-      sessionsTotal: pkg.sessions,
-      sessionsRemaining: pkg.sessions,
+      kind: pkg.kind,
+      // combo: snapshot số buổi · prepaid: số dư = số tiền nạp.
+      sessionsTotal: isPrepaid ? 0 : pkg.sessions,
+      sessionsRemaining: isPrepaid ? 0 : pkg.sessions,
+      balanceTotal: isPrepaid ? pkg.price : 0,
+      balanceRemaining: isPrepaid ? pkg.price : 0,
       pricePaid: pkg.price,
       expiresAt,
     });

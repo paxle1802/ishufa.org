@@ -22,15 +22,19 @@ export async function createPackage(input: PackageInput): Promise<ActionResult> 
       return { ok: false, error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
     }
 
-    const { name, price, sessions, validityDays, serviceId, active, sortOrder } = parsed.data;
+    const { name, kind, price, sessions, validityDays, serviceId, active, sortOrder } =
+      parsed.data;
+    // Prepaid: không dùng số buổi & áp mọi dịch vụ.
+    const isPrepaid = kind === "prepaid";
 
     await db.insert(packages).values({
       shopId,
       name,
+      kind,
       price,
-      sessions,
+      sessions: isPrepaid ? 0 : sessions,
       validityDays,
-      serviceId: serviceId ?? null,
+      serviceId: isPrepaid ? null : serviceId ?? null,
       active,
       sortOrder,
     });
@@ -51,11 +55,22 @@ export async function updatePackage(id: string, input: PackageInput): Promise<Ac
       return { ok: false, error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
     }
 
-    const { name, price, sessions, validityDays, serviceId, active, sortOrder } = parsed.data;
+    const { name, kind, price, sessions, validityDays, serviceId, active, sortOrder } =
+      parsed.data;
+    const isPrepaid = kind === "prepaid";
 
     await db
       .update(packages)
-      .set({ name, price, sessions, validityDays, serviceId: serviceId ?? null, active, sortOrder })
+      .set({
+        name,
+        kind,
+        price,
+        sessions: isPrepaid ? 0 : sessions,
+        validityDays,
+        serviceId: isPrepaid ? null : serviceId ?? null,
+        active,
+        sortOrder,
+      })
       .where(and(eq(packages.id, id), eq(packages.shopId, shopId)));
 
     revalidate();

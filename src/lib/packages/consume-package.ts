@@ -9,19 +9,24 @@ export interface ConsumeResult {
 }
 
 /**
- * Trừ 1 buổi của gói combo khi booking hoàn tất.
- * Không chặn hoàn tất: nếu gói hết buổi/hết hạn → bỏ qua + trả cảnh báo.
+ * Trừ gói khi booking hoàn tất:
+ *  - combo   → trừ 1 buổi.
+ *  - prepaid → trừ `amount` (tổng tiền dịch vụ) khỏi số dư (sàn 0).
+ * Không chặn hoàn tất: hết buổi / hết số dư / hết hạn → bỏ qua + trả cảnh báo.
  */
-export async function consumePackageSession(
+export async function consumePackage(
   tx: Tx,
   shopId: string,
   customerPackageId: string,
+  amount: number,
   now: Date = new Date(),
 ): Promise<ConsumeResult> {
   const [cp] = await tx
     .select({
       id: customerPackages.id,
-      remaining: customerPackages.sessionsRemaining,
+      kind: customerPackages.kind,
+      sessionsRemaining: customerPackages.sessionsRemaining,
+      balanceRemaining: customerPackages.balanceRemaining,
       expiresAt: customerPackages.expiresAt,
     })
     .from(customerPackages)
@@ -33,12 +38,27 @@ export async function consumePackageSession(
     )
     .for("update");
 
-  if (!cp) return { consumed: false, warning: "Không tìm thấy gói combo." };
-  if (cp.remaining <= 0) return { consumed: false, warning: "Gói đã hết buổi." };
+  if (!cp) return { consumed: false, warning: "Không tìm thấy gói." };
   if (cp.expiresAt.getTime() < now.getTime()) {
     return { consumed: false, warning: "Gói đã hết hạn." };
   }
 
+  if (cp.kind === "prepaid") {
+    if (cp.balanceRemaining <= 0) {
+      return { consumed: false, warning: "Gói nạp tiền đã hết số dư." };
+    }
+    const deducted = Math.min(cp.balanceRemaining, amount);
+    await tx
+      .update(customerPackages)
+      .set({ balanceRemaining: sql`${customerPackages.balanceRemaining} - ${deducted}` })
+      .where(eq(customerPackages.id, cp.id));
+    const warning =
+      deducted < amount ? "Số dư không đủ — đã trừ hết số dư còn lại." : undefined;
+    return { consumed: true, warning };
+  }
+
+  // combo
+  if (cp.sessionsRemaining <= 0) return { consumed: false, warning: "Gói đã hết buổi." };
   await tx
     .update(customerPackages)
     .set({ sessionsRemaining: sql`${customerPackages.sessionsRemaining} - 1` })
@@ -46,11 +66,32 @@ export async function consumePackageSession(
   return { consumed: true };
 }
 
-/** Hoàn lại 1 buổi (khi đảo trạng thái khỏi completed), không vượt tổng. */
-export async function refundPackageSession(
+/**
+ * Hoàn lại khi đảo trạng thái khỏi `completed`:
+ *  - combo   → +1 buổi (không vượt tổng).
+ *  - prepaid → hoàn `amount` vào số dư (không vượt tổng đã nạp).
+ */
+export async function refundPackage(
   tx: Tx,
   customerPackageId: string,
+  amount: number,
 ): Promise<void> {
+  const [cp] = await tx
+    .select({ kind: customerPackages.kind })
+    .from(customerPackages)
+    .where(eq(customerPackages.id, customerPackageId));
+  if (!cp) return;
+
+  if (cp.kind === "prepaid") {
+    await tx
+      .update(customerPackages)
+      .set({
+        balanceRemaining: sql`LEAST(${customerPackages.balanceTotal}, ${customerPackages.balanceRemaining} + ${amount})`,
+      })
+      .where(eq(customerPackages.id, customerPackageId));
+    return;
+  }
+
   await tx
     .update(customerPackages)
     .set({

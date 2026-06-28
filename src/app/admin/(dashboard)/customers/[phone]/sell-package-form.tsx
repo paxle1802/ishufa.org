@@ -44,7 +44,8 @@ export function SellPackageForm({ customerId, packages }: Props) {
       >
         {packages.map((pkg) => (
           <option key={pkg.id} value={pkg.id}>
-            {pkg.name} — {vnd.format(pkg.price)}đ · {pkg.sessions} buổi
+            {pkg.name} — {vnd.format(pkg.price)}đ ·{" "}
+            {pkg.kind === "prepaid" ? "nạp tiền" : `${pkg.sessions} buổi`}
           </option>
         ))}
       </select>

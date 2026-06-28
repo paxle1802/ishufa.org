@@ -22,8 +22,12 @@ import type { ShopBank } from "./booking-list";
 export interface ActivePackage {
   id: string;
   name: string | null;
+  kind: string;
   sessionsRemaining: number;
+  balanceRemaining: number;
 }
+
+const vndPkg = new Intl.NumberFormat("vi-VN");
 
 export function BookingStatusControl({
   bookingId,
@@ -136,7 +140,7 @@ export function BookingStatusControl({
 
           {activePackages.length > 0 && (
             <div className="space-y-1">
-              <span className="text-sm font-medium">Trừ gói combo (nếu có):</span>
+              <span className="text-sm font-medium">Trừ gói của khách (nếu có):</span>
               <select
                 value={pkgId}
                 onChange={(e) => setPkgId(e.target.value)}
@@ -145,7 +149,10 @@ export function BookingStatusControl({
                 <option value="">Không trừ gói</option>
                 {activePackages.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.name ?? "Gói"} (còn {p.sessionsRemaining})
+                    {p.name ?? "Gói"}
+                    {p.kind === "prepaid"
+                      ? ` (số dư ${vndPkg.format(p.balanceRemaining)}đ)`
+                      : ` (còn ${p.sessionsRemaining} buổi)`}
                   </option>
                 ))}
               </select>

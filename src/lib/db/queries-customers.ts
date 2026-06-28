@@ -101,8 +101,11 @@ export async function getActiveCustomerPackages(
   const rows = await db
     .select({
       id: customerPackages.id,
+      kind: customerPackages.kind,
       sessionsTotal: customerPackages.sessionsTotal,
       sessionsRemaining: customerPackages.sessionsRemaining,
+      balanceTotal: customerPackages.balanceTotal,
+      balanceRemaining: customerPackages.balanceRemaining,
       pricePaid: customerPackages.pricePaid,
       purchasedAt: customerPackages.purchasedAt,
       expiresAt: customerPackages.expiresAt,
@@ -114,7 +117,11 @@ export async function getActiveCustomerPackages(
       and(
         eq(customerPackages.shopId, shopId),
         eq(customerPackages.customerId, customerId),
-        gt(customerPackages.sessionsRemaining, 0),
+        // còn hiệu lực: combo còn buổi HOẶC prepaid còn số dư
+        or(
+          gt(customerPackages.sessionsRemaining, 0),
+          gt(customerPackages.balanceRemaining, 0),
+        ),
         gt(customerPackages.expiresAt, new Date()),
       ),
     )

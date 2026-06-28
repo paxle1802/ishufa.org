@@ -24,8 +24,11 @@ interface PackageFormProps {
   services: Service[];
 }
 
+type PackageKind = "combo" | "prepaid";
+
 type FormState = {
   name: string;
+  kind: PackageKind;
   price: string;
   sessions: string;
   validityDays: string;
@@ -37,6 +40,7 @@ type FormState = {
 function buildInitialState(pkg?: Package | null): FormState {
   return {
     name: pkg?.name ?? "",
+    kind: (pkg?.kind as PackageKind) ?? "combo",
     price: pkg?.price?.toString() ?? "0",
     sessions: pkg?.sessions?.toString() ?? "1",
     validityDays: pkg?.validityDays?.toString() ?? "30",
@@ -65,10 +69,11 @@ export function PackageForm({ open, onOpenChange, pkg, services }: PackageFormPr
 
     const input = {
       name: form.name,
+      kind: form.kind,
       price: Number(form.price),
-      sessions: Number(form.sessions),
+      sessions: form.kind === "prepaid" ? 0 : Number(form.sessions),
       validityDays: Number(form.validityDays),
-      serviceId: form.serviceId === "" ? null : form.serviceId,
+      serviceId: form.kind === "prepaid" || form.serviceId === "" ? null : form.serviceId,
       sortOrder: Number(form.sortOrder),
       active: form.active,
     };
@@ -95,20 +100,46 @@ export function PackageForm({ open, onOpenChange, pkg, services }: PackageFormPr
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Loại gói */}
+          <div className="space-y-1.5">
+            <Label>Loại gói *</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {(
+                [
+                  { v: "combo", label: "Combo (theo buổi)" },
+                  { v: "prepaid", label: "Nạp tiền trước" },
+                ] as const
+              ).map((opt) => (
+                <Button
+                  key={opt.v}
+                  type="button"
+                  variant={form.kind === opt.v ? "default" : "outline"}
+                  onClick={() => setForm((prev) => ({ ...prev, kind: opt.v }))}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
           <div className="space-y-1">
             <Label htmlFor="pkg-name">Tên gói *</Label>
             <Input
               id="pkg-name"
               value={form.name}
               onChange={set("name")}
-              placeholder="VD: Gói 10 buổi cắt tóc"
+              placeholder={
+                form.kind === "prepaid" ? "VD: Nạp 1 triệu" : "VD: Gói 10 buổi cắt tóc"
+              }
               required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="pkg-price">Giá (đ) *</Label>
+              <Label htmlFor="pkg-price">
+                {form.kind === "prepaid" ? "Số tiền nạp (đ) *" : "Giá (đ) *"}
+              </Label>
               <Input
                 id="pkg-price"
                 type="number"
@@ -119,18 +150,20 @@ export function PackageForm({ open, onOpenChange, pkg, services }: PackageFormPr
                 required
               />
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="pkg-sessions">Số buổi *</Label>
-              <Input
-                id="pkg-sessions"
-                type="number"
-                min={1}
-                max={1000}
-                value={form.sessions}
-                onChange={set("sessions")}
-                required
-              />
-            </div>
+            {form.kind === "combo" && (
+              <div className="space-y-1">
+                <Label htmlFor="pkg-sessions">Số buổi *</Label>
+                <Input
+                  id="pkg-sessions"
+                  type="number"
+                  min={1}
+                  max={1000}
+                  value={form.sessions}
+                  onChange={set("sessions")}
+                  required
+                />
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -159,22 +192,30 @@ export function PackageForm({ open, onOpenChange, pkg, services }: PackageFormPr
             </div>
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="pkg-service">Áp dụng cho dịch vụ</Label>
-            <select
-              id="pkg-service"
-              value={form.serviceId}
-              onChange={set("serviceId")}
-              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="">Mọi dịch vụ</option>
-              {services.map((svc) => (
-                <option key={svc.id} value={svc.id}>
-                  {svc.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {form.kind === "combo" && (
+            <div className="space-y-1">
+              <Label htmlFor="pkg-service">Áp dụng cho dịch vụ</Label>
+              <select
+                id="pkg-service"
+                value={form.serviceId}
+                onChange={set("serviceId")}
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Mọi dịch vụ</option>
+                {services.map((svc) => (
+                  <option key={svc.id} value={svc.id}>
+                    {svc.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {form.kind === "prepaid" && (
+            <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+              Gói nạp tiền: số dư = số tiền nạp, dùng cho mọi dịch vụ. Khi Tính tiền
+              sẽ tự trừ vào số dư.
+            </p>
+          )}
 
           <div className="space-y-1">
             <Label>Trạng thái</Label>

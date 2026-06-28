@@ -9,8 +9,8 @@ import { pooledDb } from "@/lib/db/pooled";
 import { bookings, shops, type BookingStatus } from "@/lib/db/schema";
 import { accruePoints, reversePoints } from "@/lib/loyalty/accrue-points";
 import {
-  consumePackageSession,
-  refundPackageSession,
+  consumePackage,
+  refundPackage,
 } from "@/lib/packages/consume-package";
 
 const ALLOWED: BookingStatus[] = [
@@ -77,7 +77,7 @@ export async function setBookingStatus(
           await accruePoints(tx, shopId, shop.earnRate, customerId, b.id, b.totalPrice);
         }
         if (opts?.customerPackageId) {
-          const r = await consumePackageSession(tx, shopId, opts.customerPackageId);
+          const r = await consumePackage(tx, shopId, opts.customerPackageId, b.totalPrice);
           if (r.consumed) {
             await tx
               .update(bookings)
@@ -93,7 +93,7 @@ export async function setBookingStatus(
         );
         if (customerId) await reversePoints(tx, shopId, customerId, b.id);
         if (b.customerPackageId) {
-          await refundPackageSession(tx, b.customerPackageId);
+          await refundPackage(tx, b.customerPackageId, b.totalPrice);
           await tx
             .update(bookings)
             .set({ customerPackageId: null })

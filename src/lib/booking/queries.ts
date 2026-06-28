@@ -1,5 +1,5 @@
 import { fromZonedTime } from "date-fns-tz";
-import { and, asc, eq, gt, gte, inArray, lt, sql } from "drizzle-orm";
+import { and, asc, eq, gt, gte, inArray, lt, or, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { bookings, customerPackages, customers, packages } from "@/lib/db/schema";
@@ -52,7 +52,9 @@ export async function getActivePackagesForPhones(shopId: string, phones: string[
       phone: customers.phone,
       id: customerPackages.id,
       name: packages.name,
+      kind: customerPackages.kind,
       sessionsRemaining: customerPackages.sessionsRemaining,
+      balanceRemaining: customerPackages.balanceRemaining,
     })
     .from(customerPackages)
     .innerJoin(customers, eq(customerPackages.customerId, customers.id))
@@ -61,7 +63,10 @@ export async function getActivePackagesForPhones(shopId: string, phones: string[
       and(
         eq(customers.shopId, shopId),
         inArray(customers.phone, phones),
-        gt(customerPackages.sessionsRemaining, 0),
+        or(
+          gt(customerPackages.sessionsRemaining, 0),
+          gt(customerPackages.balanceRemaining, 0),
+        ),
         gt(customerPackages.expiresAt, sql`now()`),
       ),
     );

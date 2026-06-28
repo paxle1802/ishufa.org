@@ -106,7 +106,9 @@ export default async function CustomerDetailPage({
               <li key={p.id} className="rounded-xl border bg-card p-3 text-sm">
                 <p className="font-semibold">{p.packageName ?? "Gói không tên"}</p>
                 <p className="text-muted-foreground">
-                  {p.sessionsRemaining}/{p.sessionsTotal} buổi còn lại
+                  {p.kind === "prepaid"
+                    ? `Số dư: ${vnd.format(p.balanceRemaining)}đ`
+                    : `${p.sessionsRemaining}/${p.sessionsTotal} buổi còn lại`}
                 </p>
                 <p className="text-muted-foreground">
                   HSD: {formatLocal(p.expiresAt, "dd-MM-yyyy")}

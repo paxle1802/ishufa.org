@@ -239,8 +239,10 @@ export const packages = pgTable(
       .notNull()
       .references(() => shops.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    price: integer("price").notNull(), // int VND
-    sessions: integer("sessions").notNull(),
+    // Loại gói: "combo" = theo số buổi · "prepaid" = nạp tiền trước (số dư VND).
+    kind: text("kind").notNull().default("combo"),
+    price: integer("price").notNull(), // int VND (combo: giá bán · prepaid: số tiền nạp)
+    sessions: integer("sessions").notNull(), // prepaid: 0 (không dùng)
     validityDays: integer("validity_days").notNull(),
     serviceId: uuid("service_id").references(() => services.id, {
       onDelete: "set null",
@@ -268,8 +270,12 @@ export const customerPackages = pgTable(
     packageId: uuid("package_id").references(() => packages.id, {
       onDelete: "set null",
     }),
-    sessionsTotal: integer("sessions_total").notNull(),
-    sessionsRemaining: integer("sessions_remaining").notNull(),
+    // Loại gói đã mua (snapshot từ template).
+    kind: text("kind").notNull().default("combo"),
+    sessionsTotal: integer("sessions_total").notNull().default(0), // combo
+    sessionsRemaining: integer("sessions_remaining").notNull().default(0), // combo
+    balanceTotal: integer("balance_total").notNull().default(0), // prepaid (VND)
+    balanceRemaining: integer("balance_remaining").notNull().default(0), // prepaid (VND)
     pricePaid: integer("price_paid").notNull(),
     purchasedAt: timestamp("purchased_at", { withTimezone: true })
       .notNull()

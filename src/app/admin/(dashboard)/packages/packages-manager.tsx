@@ -81,16 +81,23 @@ export function PackagesManager({ packages: initial, services }: PackagesManager
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-medium">{pkg.name}</span>
+                      <Badge variant="secondary">
+                        {pkg.kind === "prepaid" ? "Nạp tiền" : "Combo"}
+                      </Badge>
                       {!pkg.active && <Badge variant="outline">Tắt</Badge>}
                     </div>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      {fmtVnd(pkg.price)} · {pkg.sessions} buổi · Hạn {pkg.validityDays} ngày
+                      {pkg.kind === "prepaid"
+                        ? `${fmtVnd(pkg.price)} · Hạn ${pkg.validityDays} ngày`
+                        : `${fmtVnd(pkg.price)} · ${pkg.sessions} buổi · Hạn ${pkg.validityDays} ngày`}
                     </p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      {pkg.serviceId
-                        ? (serviceMap.get(pkg.serviceId) ?? "Dịch vụ không tồn tại")
-                        : "Mọi dịch vụ"}
-                    </p>
+                    {pkg.kind === "combo" && (
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {pkg.serviceId
+                          ? (serviceMap.get(pkg.serviceId) ?? "Dịch vụ không tồn tại")
+                          : "Mọi dịch vụ"}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex shrink-0 items-center gap-1">

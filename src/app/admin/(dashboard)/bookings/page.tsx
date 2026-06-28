@@ -28,7 +28,9 @@ async function packagesByPhoneFor(
     (map[r.phone] ??= []).push({
       id: r.id,
       name: r.name,
+      kind: r.kind,
       sessionsRemaining: r.sessionsRemaining,
+      balanceRemaining: r.balanceRemaining,
     });
   }
   return map;

@@ -68,9 +68,13 @@ export default async function MyPage({
             {packages.map((p) => (
               <li key={p.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold">{p.packageName ?? "Gói combo"}</span>
+                  <span className="font-semibold">
+                    {p.packageName ?? (p.kind === "prepaid" ? "Gói nạp tiền" : "Gói combo")}
+                  </span>
                   <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
-                    còn {p.sessionsRemaining}/{p.sessionsTotal} buổi
+                    {p.kind === "prepaid"
+                      ? `số dư ${vnd.format(p.balanceRemaining)}đ`
+                      : `còn ${p.sessionsRemaining}/${p.sessionsTotal} buổi`}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
