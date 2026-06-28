@@ -1,7 +1,6 @@
 import { RevenueControls } from "@/components/revenue/revenue-controls";
 import { StaffRevenueTable } from "@/components/revenue/staff-revenue-table";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { getShopById } from "@/lib/db/queries";
 import { getStaffRevenue } from "@/lib/revenue/staff-revenue";
 import { dayRange, monthRange } from "@/lib/tz";
 
@@ -27,16 +26,13 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
   const date = rawDate ?? (period === "month" ? thisMonthVN() : todayVN());
 
   const range = period === "month" ? monthRange(date) : dayRange(date);
-  const [report, shop] = await Promise.all([
-    getStaffRevenue(shopId, range.from, range.to),
-    getShopById(shopId),
-  ]);
-  const combined = shop?.revenueMode === "combined";
+  // Báo cáo Doanh thu luôn chia theo thợ (không phụ thuộc chế độ Gộp).
+  const report = await getStaffRevenue(shopId, range.from, range.to);
 
   return (
     <div className="space-y-4">
       <RevenueControls period={period} date={date} />
-      <StaffRevenueTable report={report} combined={combined} />
+      <StaffRevenueTable report={report} />
     </div>
   );
 }
