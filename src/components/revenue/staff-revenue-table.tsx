@@ -31,9 +31,12 @@ export function StaffRevenueTable({ report, combined = false }: Props) {
         </div>
 
         {combined ? null : report.rows.length === 0 ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            Chưa có doanh thu trong kỳ
-          </p>
+          <div className="px-4 py-8 text-center">
+            <p className="font-heading text-3xl font-semibold text-foreground">0đ</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Chưa có doanh thu trong kỳ này
+            </p>
+          </div>
         ) : (
           <ul className="divide-y divide-border/50">
             {report.rows.map((row, i) => (
