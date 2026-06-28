@@ -9,10 +9,10 @@ import {
   listBookingsByPhone,
 } from "@/lib/db/queries-customers";
 import { formatLocal } from "@/lib/tz";
+import { CustomerPasswordForm } from "./customer-password-form";
 import { NotesEditor } from "./notes-editor";
 import { RedeemForm } from "./redeem-form";
 import { SellPackageForm } from "./sell-package-form";
-import { ShareLink } from "./share-link";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 
@@ -68,10 +68,13 @@ export default async function CustomerDetailPage({
         </div>
       </div>
 
-      {/* Chia sẻ "Trang của tôi" cho khách */}
+      {/* Mật khẩu để khách đăng nhập xem combo/điểm */}
       <section className="space-y-2">
-        <h2 className="font-medium">Trang của khách (combo / điểm)</h2>
-        <ShareLink token={customer.accessToken} />
+        <h2 className="font-medium">Mật khẩu khách hàng</h2>
+        <CustomerPasswordForm
+          customerId={customer.id}
+          hasPassword={Boolean(customer.passwordHash)}
+        />
       </section>
 
       {/* Ghi chú */}

@@ -191,8 +191,10 @@ export const customers = pgTable(
       .references(() => shops.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     phone: text("phone").notNull(),
-    // Token bí mật cho "Trang của tôi" công khai (/kh/[token]) — không cần login.
+    // Token bí mật cũ (không còn dùng để truy cập — giữ cột tránh migration).
     accessToken: text("access_token").notNull(),
+    // Mật khẩu khách (do chủ shop đặt/cấp) để đăng nhập xem combo/điểm. Null = chưa có tài khoản.
+    passwordHash: text("password_hash"),
     visitCount: integer("visit_count").notNull().default(0),
     totalSpent: integer("total_spent").notNull().default(0), // int VND
     loyaltyPoints: integer("loyalty_points").notNull().default(0),

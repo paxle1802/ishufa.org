@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { db } from "@/lib/db";
 import { customers } from "@/lib/db/schema";
+import { hashPassword } from "@/lib/customers/password";
 import { redeemPoints } from "@/lib/loyalty/redeem-points";
 import { sellPackage } from "@/lib/packages/sell-package";
 import { customerNotesSchema } from "@/lib/validation/customer";
@@ -17,6 +18,30 @@ type ActionResult = { ok: true } | { ok: false; error: string };
 function revalidateCustomerPaths(phone?: string) {
   revalidatePath("/admin/customers");
   if (phone) revalidatePath(`/admin/customers/${encodeURIComponent(phone)}`);
+}
+
+/** Chủ shop đặt/đổi mật khẩu cho khách (để khách đăng nhập xem combo/điểm). */
+export async function setCustomerPassword(
+  customerId: string,
+  password: string,
+): Promise<ActionResult> {
+  try {
+    const { shopId } = await requireAdmin();
+    if (typeof password !== "string" || password.length < 4) {
+      return { ok: false, error: "Mật khẩu tối thiểu 4 ký tự" };
+    }
+    const hash = await hashPassword(password);
+    const [row] = await db
+      .update(customers)
+      .set({ passwordHash: hash })
+      .where(and(eq(customers.id, customerId), eq(customers.shopId, shopId)))
+      .returning({ phone: customers.phone });
+    if (!row) return { ok: false, error: "Không tìm thấy khách" };
+    revalidateCustomerPaths(row.phone);
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Lỗi server, vui lòng thử lại" };
+  }
 }
 
 /** Lưu ghi chú khách hàng (admin). */

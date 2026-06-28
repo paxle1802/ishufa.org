@@ -1,14 +1,19 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { eq } from "drizzle-orm";
 
+import { db } from "@/lib/db";
+import { customers } from "@/lib/db/schema";
 import {
   getActiveCustomerPackages,
-  getCustomerByToken,
   listBookingsByPhone,
 } from "@/lib/db/queries-customers";
-import { getShopById } from "@/lib/db/queries";
+import { getShopBySlug } from "@/lib/db/queries";
+import { getCustomerSession } from "@/lib/customers/customer-session";
 import type { BookingStatus } from "@/lib/db/schema";
 import { formatLocal, formatDateStr } from "@/lib/tz";
+
+import { CustomerLoginForm } from "./login-form";
+import { CustomerLogoutButton } from "./logout-button";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 
@@ -19,43 +24,48 @@ const STATUS: Record<BookingStatus, { label: string; cls: string }> = {
   cancelled: { label: "Huỷ", cls: "bg-muted-foreground/20 text-muted-foreground" },
 };
 
-/**
- * "Trang của tôi" — công khai qua link token (không cần đăng nhập).
- * Hiển thị combo còn buổi, điểm thưởng, lịch sử đặt của khách. Chỉ đọc.
- */
-export default async function MyPage({
+/** "Trang của tôi" — yêu cầu đăng nhập SĐT + mật khẩu (salon cấp). */
+export default async function MyAccountPage({
   params,
 }: {
-  params: Promise<{ token: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { token } = await params;
-  const customer = await getCustomerByToken(token);
-  if (!customer) notFound();
+  const { slug } = await params;
+  const shop = await getShopBySlug(slug);
+  if (!shop) notFound();
 
-  const [shop, packages, history] = await Promise.all([
-    getShopById(customer.shopId),
-    getActiveCustomerPackages(customer.shopId, customer.id),
-    listBookingsByPhone(customer.shopId, customer.phone),
+  const customerId = await getCustomerSession();
+  const customer = customerId
+    ? await db.query.customers.findFirst({ where: eq(customers.id, customerId) })
+    : null;
+
+  // Chưa đăng nhập (hoặc phiên không thuộc shop này) → form đăng nhập.
+  if (!customer || customer.shopId !== shop.id) {
+    return <CustomerLoginForm slug={slug} shopName={shop.name} />;
+  }
+
+  const [packages, history] = await Promise.all([
+    getActiveCustomerPackages(shop.id, customer.id),
+    listBookingsByPhone(shop.id, customer.phone),
   ]);
 
   return (
     <main className="mx-auto w-full max-w-md px-4 py-6">
-      {/* Quay lại trang đặt lịch của salon */}
-      {shop && (
-        <a
-          href={`/s/${shop.slug}`}
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" aria-hidden />
-          Về trang đặt lịch
-        </a>
-      )}
+      <a
+        href={`/s/${slug}`}
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        ← Về trang đặt lịch
+      </a>
 
       {/* Header */}
       <header className="rounded-3xl bg-primary p-6 text-white shadow-lg">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
-          {shop?.name ?? "Salon"}
-        </p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
+            {shop.name}
+          </p>
+          <CustomerLogoutButton />
+        </div>
         <h1 className="font-heading mt-1 text-3xl font-semibold leading-tight">
           {customer.name}
         </h1>
@@ -66,14 +76,14 @@ export default async function MyPage({
         </div>
       </header>
 
-      {/* Combo còn hiệu lực */}
+      {/* Combo / số dư */}
       <section className="mt-5">
         <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
-          Gói combo của bạn
+          Gói của bạn
         </h2>
         {packages.length === 0 ? (
           <p className="rounded-xl border border-dashed py-6 text-center text-sm text-muted-foreground">
-            Chưa có gói combo nào đang dùng.
+            Chưa có gói nào đang dùng.
           </p>
         ) : (
           <ul className="flex flex-col gap-2.5">
@@ -98,7 +108,7 @@ export default async function MyPage({
         )}
       </section>
 
-      {/* Lịch sử đặt */}
+      {/* Lịch sử */}
       <section className="mt-5">
         <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
           Lịch sử đặt lịch
