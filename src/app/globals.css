@@ -214,4 +214,9 @@
     background-color: oklch(0.7 0.18 150 / 0.13);
     border-color: oklch(0.7 0.18 150 / 0.38);
   }
+  /* coral dịu — nền kính cho hero (tên shop) */
+  .glass-coral {
+    background-color: oklch(0.65 0.18 18 / 0.12);
+    border-color: oklch(0.65 0.18 18 / 0.3);
+  }
 }

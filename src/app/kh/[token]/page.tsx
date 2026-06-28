@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 import {
   getActiveCustomerPackages,
@@ -39,6 +40,17 @@ export default async function MyPage({
 
   return (
     <main className="mx-auto w-full max-w-md px-4 py-6">
+      {/* Quay lại trang đặt lịch của salon */}
+      {shop && (
+        <a
+          href={`/s/${shop.slug}`}
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" aria-hidden />
+          Về trang đặt lịch
+        </a>
+      )}
+
       {/* Header */}
       <header className="rounded-3xl bg-primary p-6 text-white shadow-lg">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">

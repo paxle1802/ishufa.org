@@ -159,25 +159,25 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
     <div className="mx-auto w-full max-w-md pb-28">
       {/* Shop header — thẻ feature AURA nền than chì, chữ trắng + nhấn vàng */}
       <header className="px-4 pt-5">
-        <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-white shadow-lg">
+        <div className="glass-tint glass-coral relative overflow-hidden rounded-3xl border p-6 shadow-sm">
           {shop.logoUrl && (
             <img
               src={shop.logoUrl}
               alt={`Logo ${shop.name}`}
-              className="mb-4 h-12 w-12 rounded-2xl object-cover ring-2 ring-white/30"
+              className="mb-4 h-12 w-12 rounded-2xl object-cover ring-2 ring-primary/20"
             />
           )}
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
             Đặt lịch tại
           </p>
-          <h1 className="font-heading mt-2 text-3xl font-semibold leading-tight">
+          <h1 className="font-heading mt-2 text-3xl font-semibold leading-tight text-foreground">
             {shop.name}
           </h1>
           {shop.address && (
-            <p className="mt-2 text-sm text-white/70">{shop.address}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{shop.address}</p>
           )}
           {shop.description && (
-            <p className="mt-2 text-sm leading-relaxed text-white/65">
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               {shop.description}
             </p>
           )}
@@ -201,7 +201,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
         <div className="px-4 pt-3">
           <a
             href={`/kh/${myToken}`}
-            className="flex items-center justify-center gap-1.5 rounded-2xl border border-primary/40 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary"
+            className="flex h-12 items-center justify-center gap-1.5 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
           >
             Xem combo &amp; điểm của tôi →
           </a>
