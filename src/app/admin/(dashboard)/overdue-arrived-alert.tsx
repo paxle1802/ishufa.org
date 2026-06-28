@@ -34,8 +34,8 @@ export function OverdueArrivedAlert({ bookings }: { bookings: OverdueArrived[] }
         {bookings.map((b) => (
           <li key={b.id}>
             <Link
-              href={`/admin/bookings?date=${formatLocal(b.startAt, "yyyy-MM-dd")}`}
-              className="flex items-center justify-between gap-2 rounded-lg bg-white/70 px-3 py-2 text-sm ring-1 ring-amber-200"
+              href={`/admin/bookings?date=${formatLocal(b.startAt, "yyyy-MM-dd")}#b-${b.id}`}
+              className="flex items-center justify-between gap-2 rounded-lg bg-white/70 px-3 py-2 text-sm ring-1 ring-amber-200 transition-colors hover:bg-white"
             >
               <span className="min-w-0 truncate">
                 <span className="font-medium">{b.customerName}</span>

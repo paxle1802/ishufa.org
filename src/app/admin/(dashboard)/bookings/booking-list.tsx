@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,20 @@ export function BookingList({
 
   const now = Date.now();
 
+  // Khi mở từ link "#b-<id>" (cảnh báo Hôm nay) → cuộn tới đúng đơn + nháy sáng.
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash.startsWith("#b-")) return;
+    const elemId = hash.slice(1);
+    const el = document.getElementById(elemId);
+    if (!el) return;
+    el.scrollIntoView({ block: "center", behavior: "smooth" });
+    setHighlightId(elemId);
+    const t = setTimeout(() => setHighlightId(null), 2600);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <ul className="flex flex-col gap-3">
       {bookings.map((b) => {
@@ -65,13 +80,16 @@ export function BookingList({
           !isCancelled &&
           now >= b.startAt.getTime() &&
           now < b.endAt.getTime();
+        const highlighted = highlightId === `b-${b.id}`;
         return (
         <li
           key={b.id}
+          id={`b-${b.id}`}
           className={cn(
-            "rounded-xl border p-3",
+            "scroll-mt-20 rounded-xl border p-3 transition-shadow",
             STATUS_CARD[b.status],
             isNow && "ring-2 ring-primary",
+            highlighted && "ring-2 ring-amber-500 ring-offset-2",
           )}
         >
           <div className="flex items-start justify-between gap-2">
