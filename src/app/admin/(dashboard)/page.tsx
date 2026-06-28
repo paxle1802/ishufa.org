@@ -1,9 +1,12 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { listBookingsForDay } from "@/lib/booking/queries";
 import { getFinanceSummary, listExpensesForDay } from "@/lib/db/queries-finance";
+import { listOverdueArrived } from "@/lib/db/queries-dashboard";
+import { dayRange } from "@/lib/tz";
 
 import { DailyMoney } from "./daily-money";
 import { ExpenseManager } from "./expenses/expense-manager";
+import { OverdueArrivedAlert } from "./overdue-arrived-alert";
 import { TodayAppointments } from "./today-appointments";
 
 function todayVn(): string {
@@ -16,15 +19,20 @@ export default async function AdminTodayPage() {
   const day = todayVn();
   const month = day.slice(0, 7);
 
-  const [summary, expenseRows, bookings] = await Promise.all([
+  const todayStart = dayRange(day).from;
+  const [summary, expenseRows, bookings, overdue] = await Promise.all([
     getFinanceSummary(shopId, day, month),
     listExpensesForDay(shopId, day),
     listBookingsForDay(shopId, day),
+    listOverdueArrived(shopId, todayStart),
   ]);
 
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-semibold">Hôm nay</h1>
+
+      {/* Nhắc đóng đơn "Đang làm" còn sót từ ngày trước */}
+      <OverdueArrivedAlert bookings={overdue} />
 
       {/* Bảng tiền: Doanh thu / Chi phí / Lợi nhuận (Hôm nay ↔ Tháng này) */}
       <DailyMoney day={summary.day} month={summary.month} />
