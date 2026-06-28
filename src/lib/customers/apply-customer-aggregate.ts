@@ -2,6 +2,7 @@ import { and, eq, sql } from "drizzle-orm";
 
 import type { Tx } from "@/lib/db/pooled";
 import { customers } from "@/lib/db/schema";
+import { generateAccessToken } from "@/lib/customers/access-token";
 import { normalizePhone } from "@/lib/validation/booking";
 
 /**
@@ -28,6 +29,7 @@ export async function applyCustomerAggregate(
         shopId,
         name,
         phone,
+        accessToken: generateAccessToken(),
         visitCount: 1,
         totalSpent: amount,
         lastVisitAt: visitAt,

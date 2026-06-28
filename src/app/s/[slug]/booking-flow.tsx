@@ -32,6 +32,7 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
   const [promoCode, setPromoCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<BookingSummary | null>(null);
+  const [myToken, setMyToken] = useState<string | null>(null);
 
   // Latest-wins guard: track a counter so stale responses are ignored
   const reqIdRef = useRef(0);
@@ -41,9 +42,10 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
     try {
       const saved = localStorage.getItem("shufa-customer");
       if (saved) {
-        const c = JSON.parse(saved) as { name?: string; phone?: string };
+        const c = JSON.parse(saved) as { name?: string; phone?: string; token?: string };
         if (c.name) setName(c.name);
         if (c.phone) setPhone(normalizePhone(c.phone));
+        if (c.token) setMyToken(c.token);
       }
     } catch {
       /* localStorage không khả dụng (private mode) */
@@ -193,6 +195,18 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
           </p>
         </div>
       </div>
+
+      {/* Lối tắt: khách quen đã có token → xem combo/điểm của mình */}
+      {myToken && (
+        <div className="px-4 pt-3">
+          <a
+            href={`/kh/${myToken}`}
+            className="flex items-center justify-center gap-1.5 rounded-2xl border border-primary/40 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary"
+          >
+            Xem combo &amp; điểm của tôi →
+          </a>
+        </div>
+      )}
 
       <div className="mt-3 flex flex-col gap-6">
         <ServicePicker

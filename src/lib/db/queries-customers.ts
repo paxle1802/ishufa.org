@@ -53,6 +53,13 @@ export function getCustomerByPhone(shopId: string, phone: string) {
   });
 }
 
+/** Lấy 1 khách theo access_token (cho trang công khai /kh/[token]). */
+export function getCustomerByToken(token: string) {
+  return db.query.customers.findFirst({
+    where: eq(customers.accessToken, token),
+  });
+}
+
 /** Lịch sử booking của 1 SĐT trong shop (kèm dịch vụ). */
 export function listBookingsByPhone(shopId: string, phone: string) {
   return db.query.bookings.findMany({

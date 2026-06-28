@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 
 import { autoCancelStaleBookings } from "@/lib/booking/auto-cancel";
 import { createBooking, SlotUnavailableError } from "@/lib/booking/create-booking";
+import { ensureCustomerToken } from "@/lib/customers/ensure-customer";
 import { sendShopNotification } from "@/lib/push/send";
 import { formatLocal } from "@/lib/tz";
 import { PromoInvalidError } from "@/lib/promotions/apply-promotion";
@@ -82,6 +83,7 @@ export interface BookingSummary {
   serviceNames: string[];
   shopName: string;
   shopAddress: string | null;
+  customerToken?: string; // token "Trang của tôi" (combo/điểm/lịch sử)
 }
 
 export type CreateResult =
@@ -144,6 +146,18 @@ export async function createBookingAction(
       promoCode: data.promoCode,
     });
 
+    // Cấp/lấy token "Trang của tôi" cho khách (best-effort, không chặn luồng đặt).
+    let customerToken: string | undefined;
+    try {
+      customerToken = await ensureCustomerToken(
+        shop.id,
+        data.customerPhone,
+        data.customerName,
+      );
+    } catch {
+      /* bỏ qua — màn thành công chỉ ẩn phần "Trang của tôi" */
+    }
+
     // Thông báo đẩy cho chủ shop (best-effort, không chặn luồng đặt).
     try {
       await sendShopNotification(shop.id, {
@@ -170,6 +184,7 @@ export async function createBookingAction(
         serviceNames: chosen.map((s) => s.name),
         shopName: shop.name,
         shopAddress: shop.address,
+        customerToken,
       },
     };
   } catch (err) {

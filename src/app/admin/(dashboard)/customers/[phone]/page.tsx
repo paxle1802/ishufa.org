@@ -12,6 +12,7 @@ import { formatLocal } from "@/lib/tz";
 import { NotesEditor } from "./notes-editor";
 import { RedeemForm } from "./redeem-form";
 import { SellPackageForm } from "./sell-package-form";
+import { ShareLink } from "./share-link";
 
 const vnd = new Intl.NumberFormat("vi-VN");
 
@@ -66,6 +67,12 @@ export default async function CustomerDetailPage({
           </span>
         </div>
       </div>
+
+      {/* Chia sẻ "Trang của tôi" cho khách */}
+      <section className="space-y-2">
+        <h2 className="font-medium">Trang của khách (combo / điểm)</h2>
+        <ShareLink token={customer.accessToken} />
+      </section>
 
       {/* Ghi chú */}
       <section className="space-y-2">

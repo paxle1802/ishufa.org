@@ -4,6 +4,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../src/lib/db";
 import { bookings, customers } from "../src/lib/db/schema";
+import { generateAccessToken } from "../src/lib/customers/access-token";
 import { normalizePhone } from "../src/lib/validation/booking";
 
 interface Agg {
@@ -59,6 +60,7 @@ async function main() {
         shopId: a.shopId,
         name: a.name,
         phone: a.phone,
+        accessToken: generateAccessToken(),
         visitCount: a.visitCount,
         totalSpent: a.totalSpent,
         lastVisitAt: a.lastVisitAt,

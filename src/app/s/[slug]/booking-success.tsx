@@ -7,6 +7,7 @@ import { buildIcs } from "@/lib/ics";
 import { formatLocal } from "@/lib/tz";
 import type { BookingSummary } from "./actions";
 import { CheckinQr } from "./checkin-qr";
+import { MyPageLink } from "./my-page-link";
 import type { PublicShop } from "./types";
 
 const vnd = new Intl.NumberFormat("vi-VN");
@@ -39,6 +40,20 @@ export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Nhớ token "Trang của tôi" trên thiết bị để lần sau tự gợi ý lối tắt.
+  useEffect(() => {
+    if (!booking.customerToken) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem("shufa-customer") || "{}");
+      localStorage.setItem(
+        "shufa-customer",
+        JSON.stringify({ ...saved, token: booking.customerToken }),
+      );
+    } catch {
+      /* localStorage không khả dụng */
+    }
+  }, [booking.customerToken]);
 
   const dateTimeLabel = formatLocal(
     new Date(booking.startAt),
@@ -148,6 +163,9 @@ export function BookingSuccess({ booking, shop }: BookingSuccessProps) {
 
       {/* Mã QR đặt chỗ — khách lưu lại, tới salon giơ ra để shop quét */}
       <CheckinQr token={booking.cancelToken} shortCode={shortCode} />
+
+      {/* Trang của tôi — combo/điểm/lịch sử (không cần đăng nhập) */}
+      {booking.customerToken && <MyPageLink token={booking.customerToken} />}
 
       {/* Actions */}
       <div className="mt-5 flex flex-col gap-3">

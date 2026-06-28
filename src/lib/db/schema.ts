@@ -189,6 +189,8 @@ export const customers = pgTable(
       .references(() => shops.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     phone: text("phone").notNull(),
+    // Token bí mật cho "Trang của tôi" công khai (/kh/[token]) — không cần login.
+    accessToken: text("access_token").notNull(),
     visitCount: integer("visit_count").notNull().default(0),
     totalSpent: integer("total_spent").notNull().default(0), // int VND
     loyaltyPoints: integer("loyalty_points").notNull().default(0),
@@ -200,6 +202,7 @@ export const customers = pgTable(
   },
   (t) => [
     uniqueIndex("customers_shop_phone_uniq").on(t.shopId, t.phone),
+    uniqueIndex("customers_access_token_uniq").on(t.accessToken),
     index("customers_shop_name_idx").on(t.shopId, t.name),
   ],
 );
