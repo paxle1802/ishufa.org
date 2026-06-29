@@ -32,3 +32,24 @@ export async function ensureCustomerToken(
   });
   return existing?.accessToken ?? "";
 }
+
+/** Đảm bảo có bản ghi khách và trả customerId (tạo nếu chưa có). */
+export async function ensureCustomerId(
+  shopId: string,
+  rawPhone: string,
+  name: string,
+): Promise<string> {
+  const phone = normalizePhone(rawPhone);
+  const [inserted] = await db
+    .insert(customers)
+    .values({ shopId, name, phone, accessToken: generateAccessToken() })
+    .onConflictDoNothing({ target: [customers.shopId, customers.phone] })
+    .returning({ id: customers.id });
+  if (inserted) return inserted.id;
+
+  const existing = await db.query.customers.findFirst({
+    where: and(eq(customers.shopId, shopId), eq(customers.phone, phone)),
+    columns: { id: true },
+  });
+  return existing?.id ?? "";
+}

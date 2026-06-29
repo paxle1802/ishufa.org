@@ -289,6 +289,31 @@ export const customerPackages = pgTable(
   (t) => [index("customer_packages_customer_idx").on(t.customerId)],
 );
 
+// --- Yêu cầu mua gói online (khách đặt, chủ xác nhận chuyển khoản) ---
+export const packagePurchases = pgTable(
+  "package_purchases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    shopId: uuid("shop_id")
+      .notNull()
+      .references(() => shops.id, { onDelete: "cascade" }),
+    packageId: uuid("package_id").references(() => packages.id, {
+      onDelete: "set null",
+    }),
+    packageName: text("package_name").notNull(), // snapshot tên gói lúc đặt
+    customerName: text("customer_name").notNull(),
+    customerPhone: text("customer_phone").notNull(),
+    amount: integer("amount").notNull(), // số tiền cần chuyển (VND)
+    refCode: text("ref_code").notNull(), // mã đối soát ghi trong nội dung CK
+    status: text("status").notNull().default("pending"), // pending | confirmed | cancelled
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
+  },
+  (t) => [index("package_purchases_shop_status_idx").on(t.shopId, t.status)],
+);
+
 // --- Booking ---
 export const bookings = pgTable(
   "bookings",

@@ -194,13 +194,19 @@ export function BookingFlow({ shop, services }: BookingFlowProps) {
         </div>
       </div>
 
-      {/* Lối tắt: đăng nhập xem combo & điểm của mình */}
-      <div className="px-4 pt-3">
+      {/* Lối tắt: mua gói + xem combo/điểm */}
+      <div className="grid grid-cols-2 gap-2 px-4 pt-3">
+        <a
+          href={`/s/${shop.slug}/combo`}
+          className="flex h-12 items-center justify-center gap-1.5 rounded-full bg-primary px-3 text-sm font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
+        >
+          Mua gói combo
+        </a>
         <a
           href={`/s/${shop.slug}/toi`}
-          className="flex h-12 items-center justify-center gap-1.5 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
+          className="flex h-12 items-center justify-center gap-1.5 rounded-full border border-primary/40 px-3 text-sm font-bold text-primary transition-colors hover:bg-primary/5"
         >
-          Xem combo &amp; điểm của tôi →
+          Combo &amp; điểm của tôi
         </a>
       </div>
 

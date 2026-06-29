@@ -5,13 +5,73 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { db } from "@/lib/db";
-import { packages } from "@/lib/db/schema";
+import { packagePurchases, packages } from "@/lib/db/schema";
+import { ensureCustomerId } from "@/lib/customers/ensure-customer";
+import { sellPackage } from "@/lib/packages/sell-package";
 import { packageSchema, type PackageInput } from "@/lib/validation/package";
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
 function revalidate() {
   revalidatePath("/admin/packages");
+}
+
+/** Chủ shop xác nhận đã nhận tiền → kích hoạt gói cho khách. */
+export async function confirmPackagePurchase(id: string): Promise<ActionResult> {
+  try {
+    const { shopId } = await requireAdmin();
+    const [pp] = await db
+      .select()
+      .from(packagePurchases)
+      .where(
+        and(
+          eq(packagePurchases.id, id),
+          eq(packagePurchases.shopId, shopId),
+          eq(packagePurchases.status, "pending"),
+        ),
+      );
+    if (!pp) return { ok: false, error: "Không tìm thấy yêu cầu" };
+    if (!pp.packageId) return { ok: false, error: "Gói không còn tồn tại, không thể kích hoạt" };
+
+    const customerId = await ensureCustomerId(shopId, pp.customerPhone, pp.customerName);
+    if (!customerId) return { ok: false, error: "Không tạo được khách hàng" };
+
+    const sold = await sellPackage(shopId, customerId, pp.packageId);
+    if (!sold.ok) return sold;
+
+    await db
+      .update(packagePurchases)
+      .set({ status: "confirmed", confirmedAt: new Date() })
+      .where(eq(packagePurchases.id, id));
+
+    revalidate();
+    revalidatePath("/admin");
+    revalidatePath("/admin/customers");
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Lỗi server, vui lòng thử lại" };
+  }
+}
+
+/** Huỷ/từ chối yêu cầu mua gói. */
+export async function cancelPackagePurchase(id: string): Promise<ActionResult> {
+  try {
+    const { shopId } = await requireAdmin();
+    await db
+      .update(packagePurchases)
+      .set({ status: "cancelled" })
+      .where(
+        and(
+          eq(packagePurchases.id, id),
+          eq(packagePurchases.shopId, shopId),
+          eq(packagePurchases.status, "pending"),
+        ),
+      );
+    revalidate();
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Lỗi server, vui lòng thử lại" };
+  }
 }
 
 export async function createPackage(input: PackageInput): Promise<ActionResult> {
